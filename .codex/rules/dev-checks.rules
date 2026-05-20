@@ -1,0 +1,108 @@
+prefix_rule(
+    pattern = ["uv", "run", "ruff", "check", "."],
+    decision = "allow",
+    justification = "Template-standard lint command.",
+    match = [
+        "uv run ruff check .",
+    ],
+    not_match = [
+        "uv run ruff format .",
+        "uv run python -m ruff check .",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "run", "mypy", "."],
+    decision = "allow",
+    justification = "Template-standard type-check command for whole-project layouts.",
+    match = [
+        "uv run mypy .",
+    ],
+    not_match = [
+        "uv run mypy tests",
+        "uv run python -m mypy .",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "run", "mypy", "src"],
+    decision = "allow",
+    justification = "Template-standard type-check command for src layouts.",
+    match = [
+        "uv run mypy src",
+    ],
+    not_match = [
+        "uv run mypy tests",
+        "uv run python -m mypy src",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "lock", "--check"],
+    decision = "allow",
+    justification = "Template-standard lockfile verification command.",
+    match = [
+        "uv lock --check",
+    ],
+    not_match = [
+        "uv lock",
+        "uv sync --locked",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "sync", "--locked"],
+    decision = "allow",
+    justification = "Template-standard environment bootstrap using the locked dependency set.",
+    match = [
+        "uv sync --locked",
+    ],
+    not_match = [
+        "uv sync",
+        "uv sync --extra dev",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "sync", "--extra", "dev"],
+    decision = "allow",
+    justification = "Template-standard developer environment bootstrap with dev dependencies.",
+    match = [
+        "uv sync --extra dev",
+    ],
+    not_match = [
+        "uv sync",
+        "uv sync --extra prod",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "sync", "--locked", "--extra", "dev"],
+    decision = "allow",
+    justification = "Template-standard locked developer environment bootstrap.",
+    match = [
+        "uv sync --locked --extra dev",
+    ],
+    not_match = [
+        "uv sync --locked",
+        "uv sync --extra prod",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "run", "pytest"],
+    decision = "allow",
+    justification = "Template-level trust rule for any pytest invocation under uv.",
+    match = [
+        "uv run pytest",
+        "uv run pytest -q",
+        "uv run pytest tests/unit -q",
+        "uv run pytest -m gpu -q",
+        "uv run pytest tests/foo --maxfail=1 -x",
+    ],
+    not_match = [
+        "uv run python -m pytest -q",
+        "uv run pytests -q",
+        "uv run streamlit run app.py",
+    ],
+)

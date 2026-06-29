@@ -1,9 +1,9 @@
 ---
-name: LEARN
-description: Use when the prompt includes [LEARN]. Review the work done, identify lessons, mistakes and repeated problems/workarounds, and update AI_SPACE/AI_LEARNINGS_LOG.md and AI_SPACE/TODO.md accordingly.
---- 
+name: learn
+description: Use when the prompt contains [LEARN], or when work has produced lessons, mistakes, debugging discoveries, or course corrections that should update AI_SPACE/AI_LEARNINGS_LOG.md and AI_SPACE/TODO.md.
+---
 
-# Workflow
+# [LEARN]
 
 `AI_LEARNINGS_LOG.md` store lessons, mistakes and vital information you pick up through work. Keep it clean.
 - Fail fast, frequently and with maximum explainability - learn from mistakes in `AI_SPACE/AI_LEARNINGS_LOG.md` 

@@ -1,9 +1,9 @@
 ---
-name: PLAN_REVIEW
-description: Review a plan for completeness, correctness, and alignment with the spec. Identify gaps, risks, and follow-up work.
---- 
+name: plan-review
+description: Use when the prompt contains [PLAN.REVIEW], or when a plan needs review.
+---
 
-# Plans
+# [PLAN.REVIEW]
 - Planning should be done considering all layers of the project. Get as much of the documentation & code into your context as possible to minimise errors.
 - All plans should consider consequences, for example:
     - If a variable changes type, where is it used? Do we still assume the old type anywhere?
@@ -34,5 +34,5 @@ sessions/
           - plan.md
 ```
 
-# Sub Plans
-See Skill: [PLAN_SUB](./plan-sub/SKILL.md) for more details, but in short, a subplan is planned work nested within a main plan. The agent will return to the original plan after the subplan is completed. subplans need to be stored in nested files according to the workflow structure.
+# SubPlans
+See Skill: [PLAN.SUB](./plan-sub/SKILL.md) for more details, but in short, a subplan is planned work nested within a main plan. The agent will return to the original plan after the subplan is completed. subplans need to be stored in nested files according to the workflow structure.

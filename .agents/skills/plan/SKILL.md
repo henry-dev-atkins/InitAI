@@ -1,9 +1,9 @@
 ---
-name: PLAN
-description: Plan work, generally from the SPEC, and sometimes as a sub-plan.
---- 
+name: plan
+description: Use when the prompt contains [PLAN], or when work needs a written plan before editing, testing, validation, or implementation.
+---
 
-# Plans
+# [PLAN]
 - Planning should be done considering all layers of the project. Get as much of the documentation & code into your context as possible to minimise errors.
 - All plans should consider consequences, for example:
     - If a variable changes type, where is it used? Do we still assume the old type anywhere?
@@ -24,3 +24,4 @@ description: Plan work, generally from the SPEC, and sometimes as a sub-plan.
 - Plans are reviewed bottom up by humans scrolling up through the terminal, not top down.
 - If a plan implementation will/does end with "X helped only a little, but Y is still the real blocker":
     - it is a planning/diagnosis failure, so stop, re-`[DIAGNOSE]`, and re-plan before planning/implementing more.
+- Plans must contain a [PLAN.TERMINAL_CONDITION] section, which defines the conditions under which the plan is considered complete and the agent can exit goal mode through either `[DONE]` or `[BLOCKED]`. 

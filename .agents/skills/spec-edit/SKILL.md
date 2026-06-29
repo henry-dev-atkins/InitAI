@@ -1,13 +1,13 @@
 ---
-name: EDIT_SPEC
-description: Use only when the prompt includes [SPEC EDIT REQUIRED]. Plans, reviews, and applies a minimal edit to AI_SPACE/SPEC.md, then reviews downstream consequences.
---- 
+name: spec-edit
+description: Use only when the prompt contains [SPEC.EDIT_REQUIRED]. Plan, review, and apply a minimal edit to AI_SPACE/SPEC.md, then review downstream consequences.
+---
 
-# Workflow
-The SPEC file may be edited only if `[SPEC EDIT REQUIRED]` is present in the prompt.
+# Editing The Spec
+The SPEC file may be edited only if `[SPEC.EDIT_REQUIRED]` is present in the prompt.
 Edits must follow a strict workflow to ensure consequences are carefully followed, if any phase fails, the workflow must be restarted from the beginning. The workflow is as follows:
-1) Is [EDIT_SPEC] present in prompt?
+1) Is `[SPEC.EDIT_REQUIRED]` present in prompt?
 2) Plan the edit
-3) PLAN_REVIEW of the plan
-4) SPEC_REVIEW of the prosed plan
+3) [PLAN.REVIEW] of the plan
+4) [SPEC.REVIEW] of the proposed plan
 5) Implement the edit

@@ -11,7 +11,7 @@ description: Indicates when the requested work has been completed and validated.
 - Config, docs and outputs have been updated where behaviour changed.
 - Obsolete assumptions and replaced logic in touched areas have been cleaned up.
 - Learnings, TODOs and handovers have been updated when relevant.
-- Required spec alignment passes a `[SPEC_REVIEW]`, although the review may fail on sections not covered by the plan.
+- Required spec alignment passes a `[SPEC.REVIEW]`, although the review may fail on sections not covered by the plan.
 - A plan's implementation is complete, with no gaps, no surprises, no laziness and no workarounds.
 - There are no known in-scope gaps, placeholders, workarounds, cosmetic completions or silently deferred items.
 - Remaining limitations or next steps are allowed only when:

@@ -1,13 +1,13 @@
 ---
-name: ORCHESTRATOR
-description: Your role is to orchestrate subagents to prompt/spec requirements, do not make changes yourself.
---- 
+name: orchestrator
+description: Use when the prompt contains [ORCHESTRATOR], [agentic], or asks for subagent-led orchestration, independent exploration, review, diagnosis, or plan critique.
+---
 
-# Workflow
+# [ORCHESTRATOR] / [agentic]
 You are the main thread, and will not implement any code.
 
-You will manage subagents through PLAN_SUB, PLAN_REVIEW, SPEC_REVIEW, LEARN, MONITOR, DIAGNOSE, and SUBPLAN. You will plan work, and allocate paralell work to be implemented. 
-You will manage the workflow structure, write plans and allocate plans/sub-plans to agents, MONITOR-ing their progress.
+You will manage subagents through [PLAN.SUB], [PLAN.REVIEW], [SPEC.REVIEW], [LEARN], [MONITOR], and [DIAGNOSE]. You will plan work, and allocate parallel work to be implemented. 
+You will manage the workflow structure, write plans and allocate plans/sub-plans to agents, [MONITOR]-ing their progress.
 
 
 

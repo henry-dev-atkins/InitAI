@@ -36,12 +36,34 @@ Our spec is at `AI_SPACE/SPEC.md`. If it is not present, please throw an error.
     - Classified gap
     - Proof consolidation gap
 - Your space is `AI_SPACE/`, with folders for:
-    - `sessions/` store every sesion->plan->subplan->... you generate (timestamp in name)
+    - `sessions/` store every session->plan->subplan->... you generate (timestamp in name)
     - `handovers/` context dump of the work for tomorrow
     - `AI_LEARNINGS_LOG.md` store lessons, mistakes and vital information you pick up through work. Keep it clean.
     - `TODO.md` is a rolling store of tasks (live task list) that you add to, align with `sessions/` and use for progress tracking. Do not delete elements unless perfectly implemented.
-- If 'agentic' is requested, use subagents for independent exploration, review, diagnosis, or plan critique.
+- If 'agentic' is requested, use `$orchestrator` and subagents for independent exploration, review, diagnosis, or plan critique.
 - All code must run from inside your sandbox/repo, no 'external' runs.
+
+
+# Action routing
+Capitalised bracket keywords are the human-facing action language. Keep them visible in prompts, plans, reports and skill headings. Use lowercase hyphenated Codex skill names and matching folder names under `.agents/skills/`.
+
+- `[SESSION.START]` -> `$session-start`
+- `[SESSION.CLEAN]` -> `$session-clean`
+- `[SESSION.END]` -> `$session-end`
+- `[PLAN]` -> `$plan`
+- `[PLAN.REVIEW]` -> `$plan-review`
+- `[PLAN.SUB]` -> `$plan-sub`
+- `[PLAN.TERMINAL_CONDITION]` -> `$plan-terminal-condition`
+- `[LEARN]` -> `$learn`
+- `[MONITOR]` -> `$monitor`
+- `[DIAGNOSE]` -> `$diagnose`
+- `[SPEC.REVIEW]` -> `$spec-review`
+- `[SPEC.EDIT_REQUIRED]` -> `$spec-edit`
+- `[DONE]` / `[BLOCKED]` final reports -> `$final-report`
+- `[agentic]` or `[ORCHESTRATOR]` -> `$orchestrator`
+- `[WORKFLOW_STRUCTURE]` -> `$workflow-structure`
+
+If a capitalised trigger is present and skill support is available, invoke the mapped `$skill-name`. If skill invocation is unavailable, apply the corresponding `.agents/skills/<skill-name>/SKILL.md` workflow directly.
 
 
 # Guide:

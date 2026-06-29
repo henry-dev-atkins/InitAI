@@ -1,9 +1,9 @@
 ---
-name: PLAN_SUB
-description: A Plan requries a previous plan contains work which is too large to be 'a part of a plan'. This skill allows for a plan to be split into subplans, which can be worked on in parallel or sequentially. The subplan is a temporary aside, and the agent will return to the original plan after the subplan is completed.
---- 
+name: plan-sub
+description: Use when the prompt contains [SUBPLAN], or when a plan needs to split out a temporary aside/nest that returns to the parent plan after completion.
+---
 
-# Plans
+# [SUBPLAN]
 - Planning should be done considering all layers of the project. Get as much of the documentation & code into your context as possible to minimise errors.
 - All plans should consider consequences, for example:
     - If a variable changes type, where is it used? Do we still assume the old type anywhere?

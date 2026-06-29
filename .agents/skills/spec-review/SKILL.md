@@ -1,9 +1,9 @@
 ---
-name: SPEC_REVIEW
-description: Compares implementation to the specification and identifies misalignments.
---- 
+name: spec-review
+description: Use when the prompt contains [SPEC.REVIEW], or when implementation must be compared against AI_SPACE/SPEC.md.
+---
 
-# Workflow
+# [SPEC.REVIEW]
 
 Compare implementation to the specification (may be a subset of spec).
   - Check alignment agentically by type:

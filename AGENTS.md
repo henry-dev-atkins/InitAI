@@ -40,7 +40,7 @@ Our spec is at `AI_SPACE/SPEC.md`.
     - `plans/` store every plan you generate (timestamp in name)
     - `handovers/` context dump of the work for tomorrow
     - `AI_LEARNINGS_LOG.md` store lessons, mistakes and vital information you pick up through work. Keep it clean.
-    - `TODO.md` is a rolling store of tasks that you add to, align with `plans/` and use for progress tracking. Do not delete elements.
+    - `TODO.md` is a rolling store of tasks (live task list) that you add to, align with `plans/` and use for progress tracking. Do not delete elements unless perfectly implemented.
 - If 'agentic' is requested, fire up an agent for it. `[agentic]`: use a standalone independent agent.
 - All code must run from inside your sandbox/repo, no 'external' runs.
 
@@ -88,12 +88,15 @@ Our spec is at `AI_SPACE/SPEC.md`.
         - "X helped only a little, but Y is still the real blocker"
         - then you have not met the terminal condition; return to work
 - When inside \goal mode a `[DONE]` means a small subtask is done, not the goal, so keep iterating.
+- If agent cannot be started, please terminate the agent if it is running and restart, if you cannot do that, error for human intervention.
+- Do not let work loops became too reactive to small failures - ensure you're challenging the direction when iterating through many small changes.
 
 
 # Commands
 - `[SESSION.START]`: Teach me the project, philosophy, goals, idea and then note down progress, last steps, current steps, next steps.
 - `[SESSION.CLEAN]`: Move clutter/fluff/noise from repo into the `archive/` folder, or move files into their correct place.
     - Look for old handovers, progress reports, intermediate results, etc.
+    - Please conduct a cleanup pass, cleaning: [to do, handovers, plans and AI_learnings]. For each entry it can be many of the following options: CORRECT, OUTDATED, INCORRECT, IRRELEVANT, DUPLICATE_<CLUSTER_NAME>, COMPLETED. Once labelled, make sure to collate/aggregate any relevant info within the correct doc, and remove info from docs for which it is not needed anymore.
 - `[SESSION.END]`: Update docs, learnings, to-do's, progress and write a detailed handover note (name = today's date & time) for full reproducibility.
     - Include: what changed, why, exact commands run, results, current state, open issues and next steps
     - Open issues are not closure. If open issues are in-scope, mark `[BLOCKED]` unless the human explicitly deferred them.
@@ -140,13 +143,14 @@ Our spec is at `AI_SPACE/SPEC.md`.
     - This is the same as a goal, any `[TERMINAL_CONDITION]` usage is within a goal, it is not the end goal.
 - `[SPEC_REVIEW]`: Compare implementation to the specification (may be a subset of spec).
     - Check alignment agentically by type:
+        - Capability
         - Logic
         - Implementation
         - Correctness
         - Documentation
         - Outputs
         - Defensibility
-        - Laziness
+        - Implementation Laziness
     - Write each misalignment point into the `AI_SPACE/TODO.md`, in order of severity and grouped by issue.
 
 
@@ -165,7 +169,7 @@ Our spec is at `AI_SPACE/SPEC.md`.
     - architecture/course corrections
     - mistakes
 - Update `AI_SPACE/TODO.md` only with concrete unresolved follow-up work.
-- Do not fill TODOs with vague ideas, duplicates or already-completed work.
+- Do not fill TODOs with vague ideas, duplicates, already-completed work, and do not give options: name a fix/method/solution, not options.
 - Always run the `[LEARN]` operation when updating learnings.
 - Do not use TODO/learnings updates as a substitute for completing the requested implementation, proof, validation or spec-alignment work.
 

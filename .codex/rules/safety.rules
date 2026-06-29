@@ -38,11 +38,81 @@ prefix_rule(
 )
 
 prefix_rule(
+    pattern = ["git", "restore"],
+    decision = "prompt",
+    justification = "Restoring files can discard work. Explain what is being restored and why.",
+    match = [
+        "git restore file.py",
+        "git restore .",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "checkout", "--"],
+    decision = "prompt",
+    justification = "Checkout of paths can discard work. Explain what is being restored and why.",
+    match = [
+        "git checkout -- file.py",
+        "git checkout -- .",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "forbidden",
+    justification = "Do not push remote changes from agent sessions unless explicitly authorised by the human.",
+    match = [
+        "git push",
+        "git push origin main",
+    ],
+)
+
+prefix_rule(
+    pattern = ["sudo"],
+    decision = "forbidden",
+    justification = "Do not escalate privileges from agent sessions.",
+    match = [
+        "sudo apt install foo",
+        "sudo rm -rf /tmp/foo",
+    ],
+)
+
+prefix_rule(
+    pattern = ["chmod", "-R"],
+    decision = "prompt",
+    justification = "Recursive permission changes can damage the repo. Explain scope and reason.",
+    match = [
+        "chmod -R 777 .",
+        "chmod -R u+w outputs/",
+    ],
+)
+
+prefix_rule(
     pattern = ["uv", "add"],
     decision = "prompt",
     justification = "Every new dependency needs justification.",
     match = [
         "uv add numpy",
         "uv add --dev pytest",
+    ],
+)
+
+prefix_rule(
+    pattern = ["pip", "install"],
+    decision = "prompt",
+    justification = "Prefer repo-standard dependency management. Every dependency change needs justification.",
+    match = [
+        "pip install numpy",
+        "pip install -r requirements.txt",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "pip", "install"],
+    decision = "prompt",
+    justification = "Prefer declared dependencies. Every dependency change needs justification.",
+    match = [
+        "uv pip install numpy",
+        "uv pip install -r requirements.txt",
     ],
 )

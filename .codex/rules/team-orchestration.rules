@@ -1,0 +1,85 @@
+prefix_rule(
+    pattern = ["git", "status"],
+    decision = "allow",
+    justification = "Safe repo inspection for orchestration and merge review.",
+    match = [
+        "git status",
+        "git status --short",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "diff"],
+    decision = "allow",
+    justification = "Safe diff inspection for worker scope and merge review.",
+    match = [
+        "git diff",
+        "git diff --stat",
+        "git diff -- AGENTS.md",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "log"],
+    decision = "allow",
+    justification = "Safe commit history inspection for handovers and merge review.",
+    match = [
+        "git log --oneline",
+        "git log --oneline -5",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "switch", "-c"],
+    decision = "prompt",
+    justification = "Creating worker branches is allowed for orchestrated work, but the plan/task packet should name the branch.",
+    match = [
+        "git switch -c codex/P001-example",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "worktree", "add"],
+    decision = "prompt",
+    justification = "Parallel write work should use explicit worktree/branch names from the session board.",
+    match = [
+        "git worktree add ../repo-P001 codex/P001-example",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "worktree", "remove"],
+    decision = "prompt",
+    justification = "Removing a worktree can discard files. Confirm the branch is merged/staged and no artefacts need archiving.",
+    match = [
+        "git worktree remove ../repo-P001",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "commit"],
+    decision = "prompt",
+    justification = "Commits must follow the declared work type, validation gate and prefix policy.",
+    match = [
+        "git commit -m 'FEAT: add training feature'",
+        "git commit -am 'FIX: repair config handling'",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "merge"],
+    decision = "prompt",
+    justification = "Worker branches must be merged serially after validation, spec review and merge-captain review.",
+    match = [
+        "git merge codex/P001-example",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "rebase"],
+    decision = "prompt",
+    justification = "Rebasing can rewrite branch history and complicate worker result packets.",
+    match = [
+        "git rebase main",
+    ],
+)

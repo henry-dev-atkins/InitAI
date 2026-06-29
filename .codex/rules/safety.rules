@@ -1,0 +1,48 @@
+prefix_rule(
+    pattern = ["rm"],
+    decision = "forbidden",
+    justification = "Never delete files. Move unwanted files into archive/ instead.",
+    match = [
+        "rm file.py",
+        "rm -rf outputs/",
+    ],
+)
+
+prefix_rule(
+    pattern = ["rmdir"],
+    decision = "forbidden",
+    justification = "Never delete folders. Move unwanted folders into archive/ instead.",
+    match = [
+        "rmdir old_folder",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "clean"],
+    decision = "forbidden",
+    justification = "Do not delete untracked files. Inspect and archive clutter instead.",
+    match = [
+        "git clean -fd",
+        "git clean -xdf",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+    justification = "Do not discard repo state. Revert deliberately or ask the human.",
+    match = [
+        "git reset --hard",
+        "git reset --hard HEAD",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "add"],
+    decision = "prompt",
+    justification = "Every new dependency needs justification.",
+    match = [
+        "uv add numpy",
+        "uv add --dev pytest",
+    ],
+)

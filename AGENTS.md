@@ -62,6 +62,8 @@ Capitalised bracket keywords are the human-facing action language. Keep them vis
 - `[DONE]` / `[BLOCKED]` final reports -> `$final-report`
 - `[agentic]` or `[ORCHESTRATOR]` -> `$orchestrator`
 - `[WORKFLOW_STRUCTURE]` -> `$workflow-structure`
+- `[WORKFLOW_ONTOLOGY]` -> `$workflow-ontology`
+- All `[PLAN]`, `[PLAN_REVIEW]`, `[SUBPLAN]`, `[TERMINAL_CONDITION]`, and `[SPEC_REVIEW]` workflows must apply `[WORKFLOW_ONTOLOGY]`.
 
 If a capitalised trigger is present and skill support is available, invoke the mapped `$skill-name`. If skill invocation is unavailable, apply the corresponding `.agents/skills/<skill-name>/SKILL.md` workflow directly.
 
@@ -114,6 +116,32 @@ If a capitalised trigger is present and skill support is available, invoke the m
 - When inside \goal mode a `[DONE]` means a small subtask is done, not the goal, so keep iterating.
 - If agent cannot be started, please terminate the agent if it is running and restart, if you cannot do that, error for human intervention.
 - Do not let work loops became too reactive to small failures - ensure you're challenging the direction when iterating through many small changes.
+- All plans, prompts, heuristics, rules of thumb and things of note must be documented/logged/tracked: eitehr in `AI_SPACE/` or in the repo itself.
+
+
+
+# WORKFLOW_ONTOLOGY
+Every plan must declare exactly one Primary [WORKFLOW_ONTOLOGY] work type.
+
+Primary Work Types:
+
+- `CAPABILITY.RESEARCH`: spec-backed durable research behaviour. Commit required. Counts as capability progress.
+- `CAPABILITY.PRODUCT`: spec-backed durable product/user behaviour. Commit required. Counts as capability progress.
+- `EVIDENCE.VALIDATION`: durable validation evidence. Commit only reusable/lightweight evidence. Does not itself count as capability progress.
+- `FIX.ALIGNMENT`: durable root-cause correction to match spec or prompt. Commit required. Counts as capability progress only when it restores/unlocks a capability.
+- `DEPENDENCY.LOCAL`: portable local/repo infrastructure needed for work. Commit only if reusable and justified. Does not count as capability progress.
+- `TEMPORARY.DIAGNOSTIC`: scratch debugging/probing/logging. Do not commit. Must be removed or archived before `[DONE]`.
+- `ENVIRONMENT.ADAPTATION`: isolated local/sandbox/platform adaptation. Do not commit unless explicitly approved. Must not alter core behaviour.
+- `FLUFF.DISPOSABLE`: one-off plots, dumps, exploratory artefacts. Do not commit. Archive or remove.
+- `DOCS.MEMORY`: docs, TODOs, learnings, handovers, agent instructions. Commit when useful/requested. Does not substitute for implementation.
+- `CLEANUP.HYGIENE`: repo organisation without behaviour change. Commit if durable.
+- `SPEC.EDIT`: spec change. Requires `[SPEC EDIT REQUIRED]`. Commit with `SPEC_EDIT:`.
+
+- If work has more than one durable purpose, split it into separate plans.
+- Supporting work must be labelled as a subplan, diagnostic step, cleanup step, or validation step.
+- Only `CAPABILITY.RESEARCH` and `CAPABILITY.PRODUCT` count as capability progress.
+- A capability plan cannot close as `[DONE]` if its durable changes are only docs, cleanup, dependency work, temporary diagnostics, environment adaptation, or fluff.
+- Apply `$workflow-ontology` during `[PLAN]`, `[PLAN_REVIEW]`, `[SUBPLAN]`, `[TERMINAL_CONDITION]`, and `[SPEC_REVIEW]`.
 
 
 

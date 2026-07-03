@@ -124,6 +124,7 @@ Work Type Rules:
 - `TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` work must not be committed.
 - `DEPENDENCY.LOCAL`, `DOCS.MEMORY`, `AGENT.WORKFLOW`, `CLEANUP.HYGIENE`, `EVIDENCE.VALIDATION` and `SPEC.EDIT` may be committed when durable and justified, but they do not count as capability progress.
 - If the agent cannot classify work into one Primary Work Type, split the work or report `[BLOCKED]` with the ambiguity.
+- Work Type must be present in every commit message. 
 
 # Guide
 
@@ -158,6 +159,7 @@ Work Type Rules:
 - Git commits should start with `CLEANUP:`, `FEAT:`, `CONFIG:`, `DOCS:`, `FIX:`, `TEST:`, `AI:` or `SPEC_EDIT:`.
 - Prefer repo-standard tools and commands over ad hoc alternatives.
 - Efficiently design entry points to minimise permission/approval delays.
+- For allow-listed safe inspection commands, announce with `***` and proceed without asking for permission. Prefer stable commands such as `rg`, `rg --files`, `Get-Content`, `Get-ChildItem`, and `Select-String`; avoid aliases such as `cat`, `grep`, `find`, and `ls` in durable guidance, and avoid PowerShell pipelines for routine inspection.
 - No workarounds as deliverables.
     - No stubs.
     - No named shortfalls as deliverables.
@@ -176,16 +178,16 @@ Work Type Rules:
 - The usage comes later, and generally the spec is swapped out for an explicit implementation guide.
 
 # Learnings
+- Apply `[LEARN]` when you:
+    - Solve a problem,
+    - Create a workaround,
+    - Human tells you to-do/not-to-do something,
+    - Terminology to look for:
+        - "That was wrong",
+        - "Next time I should",
+        - "Instead I should have",
 
-- Update `AI_SPACE/AI_LEARNINGS_LOG.md` after:
-    - failures
-    - debugging discoveries
-    - architecture/course corrections
-    - mistakes
-- Update `AI_SPACE/TODO.md` only with concrete unresolved follow-up work.
-- Do not fill TODOs with vague ideas, duplicates, already-completed work, and do not give options: name a fix/method/solution, not options.
-- Always run the `[LEARN]` operation when updating learnings.
-- Do not use TODO/learnings updates as a substitute for completing the requested implementation, proof, validation or spec-alignment work.
+
 
 # Plans
 
@@ -214,56 +216,4 @@ Work Type Rules:
 - Plans are reviewed bottom up by humans scrolling up through the terminal, not top down.
 - If a plan implementation will/does end with "X helped only a little, but Y is still the real blocker", it is a planning/diagnosis failure: stop, re-run `[DIAGNOSE]`, and re-plan before implementing more.
 
-# Done Means
 
-- The requested change exists in the repo state, not only in docs/plans/reports.
-- The code/config/docs change is complete, coherent and aligned with the spec or explicit human instruction.
-- Relevant checks or real runs have been completed at the right stage.
-- Exact validation commands/checks and pass results are reported.
-- Config, docs and outputs have been updated where behaviour changed.
-- Obsolete assumptions and replaced logic in touched areas have been cleaned up.
-- Learnings, TODOs and handovers have been updated when relevant.
-- Required spec alignment passes a `[SPEC.REVIEW]` or `[SPEC_REVIEW]`.
-- A plan's implementation is complete, with no gaps, no surprises, no laziness and no workarounds.
-- There are no known in-scope gaps, stubs, workarounds, cosmetic completions or silently deferred items.
-- Remaining limitations or next steps are allowed only when:
-    - they are outside the requested scope, or
-    - they are explicitly approved human deferrals, or
-    - the task is reported as `[BLOCKED]`, not `[DONE]`.
-- If validation fails or cannot be run, Done Means is not satisfied unless the human explicitly requested no validation.
-- The deliverable is the completed repo change plus validation evidence, not a plan, diagnosis, classification, note or named shortfall.
-- Do not stop after naming, documenting or categorising a shortfall. If the requested work is not complete, continue the work loop or report `[BLOCKED]`.
-- `[DONE]` is allowed only when the requested work exists in the repo and the relevant validation has passed, or when the human explicitly requested analysis, diagnosis, planning or documentation only.
-- Worker `[DONE]` during orchestrated work is normally a work-package completion, not a real session exit.
-- `[BLOCKED]` is not completion. Use it only after a concrete implementation/validation attempt fails for a reason outside current authority, available tools or safe operating limits.
-- Blocker reports must include:
-    - exact command/check that failed or could not be run
-    - exact error or missing authority/tooling
-    - files changed
-    - concrete attempts made
-    - smallest next action needed from a human
-- Forbidden completion substitutes:
-    - "I have documented that ..."
-    - "classified as ..."
-    - "the remaining work is ..."
-    - "X helped only a little, but Y is still the real blocker"
-    - TODO-only, note-only or documentation-only changes unless explicitly requested
-- If a gap is found, close it. Do not preserve it as a named category.
-
-## Final Report Contract
-
-- For implementation, proof, debugging, refactoring and spec-alignment tasks, the final response must begin with either `[DONE]` or `[BLOCKED]`.
-- `[DONE]` reports:
-    - files changed
-    - validation commands/checks run
-    - pass result
-    - behaviour/spec outcome
-    - work type outcome
-    - branch/worktree/commit status when orchestrated
-- `[BLOCKED]` reports:
-    - exact failed/unavailable command or check
-    - exact remaining error/blocker
-    - concrete repair attempts already made
-    - files changed
-    - smallest next human decision/action needed
-- Do not report `[DONE]` if validation failed, validation was skipped by choice, or the requested behaviour is still absent.

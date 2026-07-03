@@ -1,0 +1,129 @@
+prefix_rule(
+    pattern = ["rg"],
+    decision = "allow",
+    justification = "Safe repo text search for inspection and diagnosis.",
+    match = [
+        "rg -n TODO AI_SPACE",
+        "rg -n decision .codex/rules",
+    ],
+    not_match = [
+        "rg pattern | Select-Object -First 20",
+    ],
+)
+
+prefix_rule(
+    pattern = ["rg", "--files"],
+    decision = "allow",
+    justification = "Safe repo file listing for inspection and diagnosis.",
+    match = [
+        "rg --files",
+        "rg --files .codex",
+    ],
+)
+
+prefix_rule(
+    pattern = ["Get-Content"],
+    decision = "allow",
+    justification = "Safe file reading for repo inspection.",
+    match = [
+        "Get-Content AGENTS.md",
+        "Get-Content .codex/config.toml",
+    ],
+    not_match = [
+        "Get-Content file.txt | Select-Object -First 20",
+    ],
+)
+
+prefix_rule(
+    pattern = ["Get-ChildItem"],
+    decision = "allow",
+    justification = "Safe directory listing for repo inspection.",
+    match = [
+        "Get-ChildItem",
+        "Get-ChildItem AI_SPACE/sessions",
+        "Get-ChildItem -Force",
+    ],
+    not_match = [
+        "Get-ChildItem -Recurse | Remove-Item",
+    ],
+)
+
+prefix_rule(
+    pattern = ["Select-String"],
+    decision = "allow",
+    justification = "Safe PowerShell-native text search for repo inspection.",
+    match = [
+        "Select-String -Path AGENTS.md -Pattern SPEC",
+        "Select-String -Path .codex/rules/*.rules -Pattern decision",
+    ],
+)
+
+prefix_rule(
+    pattern = ["Measure-Object"],
+    decision = "allow",
+    justification = "Safe output counting and measurement for inspection.",
+    match = [
+        "Measure-Object",
+        "Measure-Object -Line",
+    ],
+)
+
+prefix_rule(
+    pattern = ["Select-Object", "-First"],
+    decision = "allow",
+    justification = "Safe display trimming for inspection output.",
+    match = [
+        "Select-Object -First 5",
+        "Select-Object -First 20",
+    ],
+)
+
+prefix_rule(
+    pattern = ["Select-Object", "-Last"],
+    decision = "allow",
+    justification = "Safe display trimming for inspection output.",
+    match = [
+        "Select-Object -Last 5",
+        "Select-Object -Last 20",
+    ],
+)
+
+prefix_rule(
+    pattern = ["Sort-Object"],
+    decision = "allow",
+    justification = "Safe output ordering for inspection.",
+    match = [
+        "Sort-Object",
+        "Sort-Object Name",
+        "Sort-Object LastWriteTime",
+    ],
+)
+
+prefix_rule(
+    pattern = ["Get-Date"],
+    decision = "allow",
+    justification = "Safe local date/time inspection.",
+    match = [
+        "Get-Date",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "show"],
+    decision = "allow",
+    justification = "Safe commit/content inspection for repo diagnosis and review.",
+    match = [
+        "git show --stat --oneline -1",
+        "git show --name-only --oneline -1",
+    ],
+)
+
+prefix_rule(
+    pattern = ["git", "ls-files"],
+    decision = "allow",
+    justification = "Safe tracked-file listing for repo inspection.",
+    match = [
+        "git ls-files",
+        "git ls-files AI_SPACE",
+    ],
+)

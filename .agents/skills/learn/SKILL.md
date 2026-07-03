@@ -13,3 +13,14 @@ description: Use when the prompt contains [LEARN], or when work has produced les
 - Update `AI_SPACE/TODO.md` only with concrete unresolved follow-up work.
 - Do not use TODO/learnings updates as a substitute for completing requested implementation, proof, validation or spec-alignment work.
 - For orchestrated work, record agent/team process lessons only when they change future behaviour.
+
+## Approval friction lessons
+
+When repeated approval prompts interrupt routine work:
+
+- Diagnose whether `.codex/rules/` is missing narrow allow rules or whether the command style prevents prefix matching.
+- Prefer durable, repo-local allow rules for read-only inspection commands that the human repeatedly authorises.
+- Keep mutating commands guarded even when they are repeatedly approved.
+- Record command-style lessons in `AI_SPACE/AI_LEARNINGS_LOG.md` when they change future behaviour.
+- Prefer stable command names over aliases: use `Get-Content` instead of `cat`, `rg` instead of `grep`, and `Get-ChildItem` instead of `ls`.
+- Avoid PowerShell pipelines and complex inline shell syntax for routine inspection; use separate simple commands or direct `rg -e ... -- path` searches.

@@ -1,13 +1,14 @@
 prefix_rule(
-    pattern = ["rg"],
+    pattern = ["rg", "--files"],
     decision = "allow",
-    justification = "Safe repo text search for inspection and diagnosis.",
+    justification = "List repo files for inspection.",
     match = [
-        "rg -n TODO AI_SPACE",
-        "rg -n decision .codex/rules",
+        "rg --files",
+        "rg --files src",
     ],
     not_match = [
-        "rg pattern | Select-Object -First 20",
+        "rg TODO",
+        "rg pattern '|' Select-Object -First 20",
     ],
 )
 
@@ -28,23 +29,17 @@ prefix_rule(
     match = [
         "Get-Content AGENTS.md",
         "Get-Content .codex/config.toml",
-    ],
-    not_match = [
         "Get-Content file.txt | Select-Object -First 20",
     ],
 )
 
 prefix_rule(
-    pattern = ["Get-ChildItem"],
-    decision = "allow",
-    justification = "Safe directory listing for repo inspection.",
+    pattern = ["Remove-Item"],
+    decision = "forbidden",
+    justification = "Do not delete files from inspection rules.",
     match = [
-        "Get-ChildItem",
-        "Get-ChildItem AI_SPACE/sessions",
-        "Get-ChildItem -Force",
-    ],
-    not_match = [
-        "Get-ChildItem -Recurse | Remove-Item",
+        "Remove-Item file.txt",
+        "Remove-Item -Recurse .",
     ],
 )
 

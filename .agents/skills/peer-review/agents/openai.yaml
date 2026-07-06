@@ -1,0 +1,5 @@
+interface:
+  display_name: "Peer Review"
+  short_description: "Stress-test research for publication review"
+  default_prompt: "Use $peer-review to assess whether these methods would withstand rigorous top-tier peer review."
+

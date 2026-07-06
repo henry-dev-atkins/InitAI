@@ -13,6 +13,7 @@ description: Use when the prompt contains [LEARN], or when work has produced les
 - Update `AI_SPACE/TODO.md` only with concrete unresolved follow-up work.
 - Do not use TODO/learnings updates as a substitute for completing requested implementation, proof, validation or spec-alignment work.
 - For orchestrated work, record agent/team process lessons only when they change future behaviour.
+- If work has turned into process churn or repeated setup migration, run `retro`, assess throughput against the user's actual goal, and pivot to the smallest packet that produces or protects the target outcome.
 
 ## Approval friction lessons
 

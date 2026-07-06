@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain Review"
+  short_description: "Review repo drift from core capability"
+  default_prompt: "Use $maintain-review to check whether this repo change stays focused on core spec capabilities without adding avoidable complexity."

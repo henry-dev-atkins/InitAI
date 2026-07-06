@@ -170,6 +170,9 @@ Work Type Rules:
 - If an agent cannot be started, terminate/restart it if possible; otherwise report `[BLOCKED]` for human intervention.
 - Do not let work loops become too reactive to small failures. Challenge the direction when iterating through many small changes.
 - All plans, prompts, heuristics, rules of thumb and things of note must be documented/logged/tracked in `AI_SPACE/` or the repo itself.
+- Do not create small helper methods that are referenced only once.
+- Avoid spaghettification, tech debt and code explosions. Keep repo changes focused on core spec capabilities; surrounding software must earn its place by directly enabling, simplifying or validating those capabilities.
+- Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.
 
 # SPEC usage
 
@@ -215,5 +218,4 @@ Work Type Rules:
 - All plans should end in a short, human-facing executive summary of the work. The summary is not a terminal condition.
 - Plans are reviewed bottom up by humans scrolling up through the terminal, not top down.
 - If a plan implementation will/does end with "X helped only a little, but Y is still the real blocker", it is a planning/diagnosis failure: stop, re-run `[DIAGNOSE]`, and re-plan before implementing more.
-
 

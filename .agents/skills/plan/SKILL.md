@@ -16,12 +16,13 @@ Every plan must start with a `[WORK_TYPE]` classification block.
 3. `Authority`
 4. `Scope`
 5. `Assumptions`
-6. `Implementation Steps`
-7. `Validation Gate`
-8. `Cleanup Before [DONE]`
-9. `Risks / Tradeoffs`
-10. `Review Requirements`
-11. `Executive Summary`
+6. `Implementation Order Rationale`
+7. `Implementation Steps`
+8. `Validation Gate`
+9. `Cleanup Before [DONE]`
+10. `Risks / Tradeoffs`
+11. `Review Requirements`
+12. `Executive Summary`
 
 ## Work Classification block
 
@@ -49,6 +50,14 @@ Every plan must consider consequences, for example:
 - Which files are in scope and off-limits?
 - Does this need a subplan?
 - Does this create an orchestration or merge conflict?
+
+## Implementation order rationale
+
+Explain why the first implementation steps are the right starting point.
+
+Use the Work Type classification as the main signal. When a core `CAPABILITY.*` or `FIX.ALIGNMENT` target is still missing, plans should normally bias towards that target before surrounding support work. Support work can come first only when the plan explains how it directly enables the next behaviour step.
+
+Examples of support work that needs an ordering rationale when it appears early include runners, config frameworks, logging, reporting, orchestration, cleanup, dependency setup, and validation scaffolding. These examples are warning signs, not fixed bans; the spec and local implementation context decide what is genuinely required. The goal is to avoid spaghettification, tech debt, and code explosions while keeping work focused on core spec capabilities.
 
 ## Agentic plan review
 

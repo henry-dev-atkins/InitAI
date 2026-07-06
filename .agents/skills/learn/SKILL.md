@@ -14,6 +14,9 @@ description: Use when the prompt contains [LEARN], or when work has produced les
 - Do not use TODO/learnings updates as a substitute for completing requested implementation, proof, validation or spec-alignment work.
 - For orchestrated work, record agent/team process lessons only when they change future behaviour.
 - If work has turned into process churn or repeated setup migration, run `retro`, assess throughput against the user's actual goal, and pivot to the smallest packet that produces or protects the target outcome.
+- Use `maintain-review` when a learning is about repo work drifting into avoidable surrounding software, wrapper code, or non-capability work.
+- Use `maintain-techdebt` when a learning exposes durable repo/codebase maintenance debt.
+- Use `maintain-despaghettify` when a learning shows tangled code ownership, duplicated implementation paths, or unclear module boundaries.
 
 ## Approval friction lessons
 

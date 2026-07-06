@@ -112,6 +112,22 @@ Counts as capability progress: no; it only enables capability work.
 Typical commit prefixes: `CONFIG:`, `FIX:`, `AI:`.  
 Required closure: dependency is justified, documented, reproducible, and does not silently change research/product behaviour.
 
+### `AGENT.WORKFLOW`
+
+Durable agent tooling, routing, instructions, skills, prompt templates, and review workflows.
+
+Examples:
+- `AGENTS.md` updates
+- `.agents/skills/` changes
+- `.codex/agents/` or `.codex/rules/` changes
+- task packet, review, or orchestration instruction templates
+- skill instructions and metadata
+
+Commit policy: commit when useful or requested.  
+Counts as capability progress: no.  
+Typical commit prefixes: `AI:`, `DOCS:`.  
+Required closure: skill or instruction content is validated, trigger descriptions are accurate, and no product/research capability progress is claimed.
+
 ### `TEMPORARY.DIAGNOSTIC`
 
 Temporary work used to understand a failure or inspect behaviour.

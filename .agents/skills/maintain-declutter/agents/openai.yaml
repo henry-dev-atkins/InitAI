@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain Declutter"
+  short_description: "Audit repo files for commit or archive"
+  default_prompt: "Use $maintain-declutter to audit repo files for commit, archive, move, or human-review decisions without changing files."

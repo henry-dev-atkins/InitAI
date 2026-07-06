@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain Techdebt"
+  short_description: "Review repo technical debt"
+  default_prompt: "Use $maintain-techdebt to review this repo change for technical debt and capability impact."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Elegance"
+  short_description: "Review proposed solution elegance"
+  default_prompt: "Use $plan-elegance to review whether this proposed repo change is the simplest coherent solution and fits the repo cleanly."

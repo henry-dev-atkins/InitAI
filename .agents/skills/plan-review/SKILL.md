@@ -14,7 +14,12 @@ Review a plan before implementation or agent spawning.
 - Minimalism: smallest coherent repo change
 - Overengineering
 - Technical debt
+- Solution elegance: use `plan-elegance` when the plan may miss a simpler, cleaner, more repo-fitting implementation
+- Repo maintainability: use `maintain-review` when the plan may drift away from core spec capabilities through avoidable surrounding software or repo complexity
+- Repo structure: use `maintain-despaghettify` when the plan changes code/module boundaries, introduces broad abstractions, or risks tangled responsibilities
+- Technical debt: use `maintain-techdebt` when the plan introduces durable code, dependency, data-flow, or maintenance cost
 - Missing consequences
+- Implementation order: the plan explains why its first steps are the right starting point
 - File ownership and orchestration safety
 - Validation strength
 - Cleanup before `[DONE]`
@@ -28,6 +33,8 @@ Reject the plan if:
 - no Primary Work Type is declared
 - more than one Primary Work Type is declared
 - a capability plan is mostly dependency/docs/cleanup/temp/agent-workflow work
+- a plan starts with support work while a core capability or alignment target is still missing, and the ordering rationale does not show that the support work directly enables the next behaviour step
+- `plan-elegance` finds a clearly simpler repo-fitting solution and the plan does not adopt it or justify rejecting it
 - temporary diagnostics are allowed to survive into commit
 - one-off plots are being treated as validation evidence without reproducibility
 - local environment adaptation changes core behaviour
@@ -62,5 +69,7 @@ required_plan_changes:
   - {change-or-none}
 implementation_permission: yes | no
 ```
+
+Return `NEEDS_REVISION` with `implementation_permission: no` when the implementation order rationale is missing or weak. Do not block useful compromises: early support work is acceptable when the plan shows it is the shortest practical route to the next spec-backed behaviour. 
 
 Plan reviews must feed back into implementation. Do not stop at "plan reviewed".

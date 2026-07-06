@@ -21,6 +21,8 @@ Review:
 - one-off plots/fluff
 - obsolete duplicate skill folders
 
+Before moving or aggregating files, use `maintain-declutter` when a report-only commit/archive/move audit is needed. Use `maintain-despaghettify` when cleanup reveals tangled repo/code organisation that should be reviewed before restructuring.
+
 For each entry, label as one or more of:
 
 - CORRECT

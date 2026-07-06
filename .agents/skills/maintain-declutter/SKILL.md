@@ -1,9 +1,9 @@
 ---
-name: session-clean-declutter
+name: maintain-declutter
 description: Report-only repo declutter and commit-worthiness audit. Use when Codex is asked to review repo files for clutter, permanence, archive recommendations, move recommendations, commit candidates, untracked files, "should this be committed?", "what should be archived?", or file cleanup decisions without changing files.
 ---
 
-# Session Clean Declutter
+# Maintain Declutter
 
 Perform a non-mutating repo declutter audit. Inspect tracked and untracked files, classify relevant files, and report what should be committed, kept uncommitted, archived, moved, ignored as temporary, or decided by a human.
 
@@ -12,14 +12,14 @@ Do not move, delete, stage, commit, format, rewrite, or generate cleanup artefac
 ## Scope
 
 - Work from inside the current repo.
-- Check `AI_SPACE/SPEC.md` if present. If absent, do not infer project intent; limit conclusions to repo hygiene and agent-workflow evidence.
+- Check `AI_SPACE/SPEC.md` if present. If absent, do not infer project intent; limit conclusions to repo hygiene and explicit repo-maintenance evidence.
 - Inspect `git status --short`, tracked files, untracked files, and relevant directories.
 - Exclude `.git/`.
 - Avoid dependency folders, cache churn, virtual environments, generated build trees, large datasets, checkpoints, and machine-local state unless the user explicitly asks to include them.
 - Preserve current uncommitted user work. Call it out separately when it appears related to active work.
 - Do not expose secrets. If a file may contain secrets, say that it needs human review without quoting secret-like content.
 
-## Classification Labels
+## Output
 
 Use exactly these labels for file decisions:
 
@@ -31,36 +31,6 @@ Use exactly these labels for file decisions:
 - `NEEDS_HUMAN_DECISION`: Ambiguous, risky, secret-adjacent, large, ownership-sensitive, or intent-unclear material.
 
 For every relevant file or coherent file group, include the reason and confidence: `high`, `medium`, or `low`.
-
-## Safety Rules
-
-- Never delete files.
-- Treat archive as a proposed move, not a completed action.
-- Do not recommend archiving secrets, large datasets, checkpoints, dependency folders, virtual environments, or machine-local state without explicit human instruction.
-- Do not silently ignore untracked files. Either classify them or explain why they are out of scope.
-- Do not use archive recommendations as a substitute for preserving useful project memory; recommend consolidation first when a file contains active TODOs, lessons, or handover value.
-- Do not classify files by filename alone when nearby context is cheap to inspect.
-- Do not run mutating commands. In `Next Commands`, include only non-mutating inspection commands unless the user separately requests execution of moves.
-
-## Suggested Inspection
-
-Use repo-standard, non-mutating inspection commands such as:
-
-```powershell
-git status --short
-git ls-files
-rg --files
-Get-ChildItem -Force
-Get-ChildItem -Recurse AI_SPACE
-Get-Content <path>
-git diff -- <path>
-```
-
-Read enough surrounding context to justify decisions. Prefer grouping obvious families, such as related session packet files, generated logs, or a skill folder, when group-level reasoning is clearer than per-file repetition.
-
-## Output Contract
-
-Produce this structure by default:
 
 ```text
 Declutter Verdict: CLEAN | ACTIONS_RECOMMENDED | BLOCKED
@@ -88,3 +58,13 @@ Next Commands
 ```
 
 Use `Declutter Verdict: CLEAN` only when no commit, archive, move, or human-decision action is recommended. Use `ACTIONS_RECOMMENDED` when the repo is workable but has proposed actions. Use `BLOCKED` when evidence is insufficient or safety rules prevent a useful report.
+
+## Safety Rules
+
+- Never delete files.
+- Treat archive as a proposed move, not a completed action.
+- Do not recommend archiving secrets, large datasets, checkpoints, dependency folders, virtual environments, or machine-local state without explicit human instruction.
+- Do not silently ignore untracked files. Either classify them or explain why they are out of scope.
+- Do not use archive recommendations as a substitute for preserving useful project memory; recommend consolidation first when a file contains active TODOs, lessons, or handover value.
+- Do not classify files by filename alone when nearby context is cheap to inspect.
+- Do not run mutating commands. In `Next Commands`, include only non-mutating inspection commands unless the user separately requests execution of moves.

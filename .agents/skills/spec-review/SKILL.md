@@ -20,6 +20,10 @@ Review categories:
 - Work Type classification
 - Capability progress claims
 
+Use `maintain-review` when implementation or worker results may be claiming progress through repo complexity, dependency work, cleanup, documentation, wrapper code, or support software instead of spec-backed behaviour. Use `maintain-elegance` when repo-wide implementation shape affects capability clarity or merge readiness. Use `maintain-techdebt` for repo technical debt that affects merge permission. If `AI_SPACE/SPEC.md` is absent, do not infer project intent; report the missing spec and limit review to explicit prompt/task authority.
+
+When returning findings for planning, separate core behaviour gaps from surrounding support/software gaps. Do not force one universal ordering rule: use reviewer judgement and the Work Type ontology. The next plan should generally target core behaviour first unless a support item directly enables the next spec-backed behaviour step.
+
 ## Orchestrated review
 
 For worker branches/result packets, check:
@@ -44,6 +48,11 @@ blocking_findings:
   - {finding-or-none}
 non_blocking_findings:
   - {finding-or-none}
+core_behaviour_gaps:
+  - {finding-or-none}
+support_software_gaps:
+  - {finding-or-none}
+planning_priority: core_behaviour | direct_support_enabler | reviewer_judgement | not_applicable
 capability_progress_supported: yes | no | not_applicable
 merge_permission: yes | no | not_applicable
 ```

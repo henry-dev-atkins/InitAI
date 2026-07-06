@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain Despaghettify"
+  short_description: "Review tangled repo structure"
+  default_prompt: "Use $maintain-despaghettify to identify the smallest untangling action for this repo/code structure."

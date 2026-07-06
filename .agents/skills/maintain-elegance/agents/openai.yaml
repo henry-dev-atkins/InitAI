@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain Elegance"
+  short_description: "Review repo-wide codebase elegance"
+  default_prompt: "Use $maintain-elegance to review whether this repo expresses its core capabilities as simply and coherently as possible."

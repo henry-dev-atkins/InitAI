@@ -1,150 +1,80 @@
 ---
 name: peer-review
-description: Use when assessing whether research methods, experiments, evaluation, claims, or publication materials would withstand rigorous peer review at top-tier journals or conferences. Trigger for prompts asking about publication defensibility, reviewer objections, methodology scrutiny, statistical validity, reproducibility, ablations, baselines, limitations, or how a methods section would stand up to peer review.
+description: Review a submitted repo/codebase as a sceptical peer reviewer after reading the associated paper or project claim. Use when Codex needs to assess repo defensibility, reproducibility, implementation correctness, paper-code consistency, function-name versus function-logic mismatches, silent fallbacks, leakage risk, validation reliability, artefact traceability, baseline fairness, or whether the codebase would raise reviewer objections.
 ---
 
 # Peer Review
 
-Act as a rigorous, publication-focused reviewer for top-tier journals and conferences.
+Act as a rigorous reviewer who has read the paper or project claim and is now inspecting the submitted online repo or zip file.
 
-The goal is not to be encouraging. The goal is to identify what a capable, sceptical reviewer could reject, misunderstand, or demand evidence for.
+Review the codebase, commands, configs, data paths, validation, outputs, and implementation choices. Do not primarily judge whether the paper’s method is scientifically correct from first principles; judge whether the repo implementation is faithful, reproducible, correctly named, operationally clear, and defensible as supporting code.
 
-## Core stance
+Do not use a required structured output. Write a direct reviewer-style critique with concrete repo-grounded findings and repair actions.
 
-- Review claims against evidence, not intent.
-- Prefer concrete rejection risks over vague quality commentary.
-- Treat missing methodological detail as a defect, not as implied competence.
-- Separate fatal issues, major revision issues, minor issues, and optional improvements.
-- Do not invent unavailable evidence.
-- Do not accept toy validation, undocumented assumptions, or convenience baselines as proof of a research claim.
-- Use UK English.
+## Review Stance
 
-## Required workflow
+- Be sceptical, specific, and repo-grounded.
+- Identify what a capable reviewer could reject, misunderstand, or distrust after opening the codebase.
+- Do not be encouraging or sycophantic.
+- Do not fabricate a review from absent code, configs, artefacts, or commands.
+- Do not accept toy validation, smoke tests, or documentation-only changes as proof of a real implementation claim.
+- Separate paper-method concerns from repo-implementation concerns. Mention paper-method issues only when the repo contradicts, weakens, or fails to support the claim.
 
-1. Identify the submission target when available: field, venue level, paper type, and claimed contribution.
-2. Extract the central claims and the evidence offered for each claim.
-3. Review the method, data, experiments, statistics, and interpretation for defensibility.
-4. Generate reviewer-style objections and author-side repair actions.
-5. Return a verdict that makes the publication risk explicit.
+## Repo Defensibility Checks
 
-If the artefact is unavailable or too vague to review, ask for the methods section, experiment description, results tables, figures, code/config references, or target venue. Do not fabricate a review from absent material.
+- Can a fresh clone reproduce the claimed behaviour from documented commands?
+- Do environment files, dependencies, hardware requirements, CUDA/GPU assumptions, seeds, data access, and expected runtime line up with the actual code?
+- Do function, module, CLI, config, metric, and output names describe what the code really does?
+- Are unsupported paths, missing GPU/CUDA, missing data, failed runs, invalid inputs, and incompatible configs loud failures rather than silent fallbacks?
+- Are results traceable to exact code, config, command, seed, data split, checkpoint, and output artefact locations?
+- Does validation prove the repo behaviour that supports the claim, or only a convenient smoke path?
+- Could results depend on implementation quirks, undocumented defaults, stale caches, local files, hidden state, or accidental shortcuts?
+- Are train/validation/test splits, preprocessing, augmentation, prompt construction, benchmark handling, and checkpoint selection free from leakage?
+- Are baselines and comparisons run through fair, current, consistently configured code paths?
+- Do logs, plots, tables, metrics, summaries, and saved artefacts say the same thing as the code that produced them?
+- Are failed runs, excluded runs, missing data, partial outputs, and outliers handled transparently?
+- Are randomness, nondeterministic kernels, dataloader workers, augmentation, and repeated-run variance controlled or disclosed where material?
+- Are boundary conditions and invalid-use cases handled explicitly enough for a reviewer to trust the implementation?
 
-## Review dimensions
+## Example Reviewer Findings
 
-### Claim defensibility
+- `compute_kl_divergence` actually computes MSE, Jensen-Shannon distance, or a symmetric distance while downstream text treats it as KL divergence.
+- `normalise_by_train_stats` recomputes statistics on the full dataset, leaking validation/test distribution information into preprocessing.
+- `train_gpu.py` silently falls back to CPU when CUDA is unavailable, so runtime, determinism, and claimed GPU behaviour are not what the command name implies.
+- Config says `seed: 123`, but dataloader workers, augmentation randomness, NumPy, or CUDA kernels are unseeded.
+- Evaluation CLI says `--test-split`, but the code loads validation data or a default split when the test file is missing.
+- Result table claims “best validation checkpoint”, but the export script reads the latest checkpoint.
+- A baseline uses different preprocessing, augmentation, number of epochs, data split, early stopping, or checkpoint selection from the proposed method.
+- A plot script reads cached CSVs without verifying they match the current run ID, config, commit, seed, or dataset split.
+- Error handling catches exceptions, logs a warning, and writes partial outputs as if the run succeeded.
+- README commands only work because of machine-local paths, untracked files, existing cache directories, or stale artefacts.
+- A config option exists and is documented, but the training or evaluation path ignores it.
+- A metric name in logs or plots differs from the metric actually computed.
+- Data split files can be regenerated differently without warning, changing results across reruns.
+- A “deterministic” run still depends on nondeterministic kernels or undisclosed randomness.
+- A checkpoint, plot, table, or result artefact cannot be linked back to the command and config that produced it.
+- A function named `load_clean_dataset` silently drops invalid rows or classes without reporting exclusions.
+- A validation script imports test utilities or fixtures that are not part of the submitted repo path.
+- A benchmark wrapper swaps label order, class names, units, or thresholds relative to the paper claim.
+- A “real run” command uses a reduced debug dataset unless an undocumented flag is passed.
+- The code supports multiple modes, but only the easiest mode is tested while the claimed mode has no exercised path.
+- The repo has two implementations of the same logic and the documented command calls the older or weaker one.
 
-- Are the main claims precise, bounded, and supported by direct evidence?
-- Are causal, generalisation, or superiority claims justified?
-- Are conclusions stronger than the experimental design allows?
-- Are limitations explicit enough to prevent overclaiming?
-- Would a reviewer find unsupported language in the title, abstract, contribution list, or conclusion?
+## Repair Guidance
 
-### Novelty and positioning
+For each material objection, say what would make the repo defensible:
 
-- Is the contribution clearly distinguishable from prior work?
-- Are the closest baselines and related methods acknowledged?
-- Is the claimed novelty methodological, empirical, theoretical, systems-level, or application-specific?
-- Does the paper solve the stated problem or a narrower substitute problem?
-- Is the venue likely to consider the contribution substantial enough?
+- rename misleading functions, metrics, commands, configs, or artefacts;
+- make unsupported behaviour fail loudly;
+- remove silent fallbacks or make them explicit opt-in modes;
+- link outputs to exact commands, configs, commits, seeds, data splits, and checkpoints;
+- align baselines and comparisons through fair shared paths;
+- replace toy validation with a real repo run or targeted behavioural test;
+- document material hardware, runtime, VRAM/RAM, dependency, and data requirements;
+- remove stale cache dependence or verify cache provenance;
+- narrow claims when the repo cannot support the broader behaviour.
 
-### Method validity
 
-- Is the method specified precisely enough to reproduce?
-- Are assumptions, heuristics, thresholds, exclusions, and tuning choices explicit?
-- Could results depend on implementation quirks or undocumented defaults?
-- Are failure modes, boundary conditions, and invalid-use cases discussed?
-- Does the method include any silent fallback behaviour, leakage, shortcut, or unsupported path?
 
-### Experimental design
 
-- Are baselines current, strong, fairly configured, and honestly compared?
-- Are ablations sufficient to isolate the claimed contribution?
-- Are comparisons apples-to-apples for data, compute, model size, training budget, tuning budget, and evaluation conditions?
-- Are negative controls, sanity checks, or stress tests needed?
-- Are datasets, splits, seeds, preprocessing, and selection criteria defensible?
-
-### Data and measurement integrity
-
-- Is there any train/test, validation/test, prompt, benchmark, or preprocessing leakage risk?
-- Are datasets representative of the claimed deployment or scientific setting?
-- Are labels, annotations, instruments, or ground truth reliable?
-- Are missing data, exclusions, outliers, and failed runs handled transparently?
-- Are licensing, privacy, consent, ethics, and safety constraints addressed where relevant?
-
-### Statistical defensibility
-
-- Are repeated runs, uncertainty intervals, variance, and effect sizes reported?
-- Are statistical tests appropriate for the data and claims?
-- Is there multiple-comparison, researcher-degree-of-freedom, or cherry-picking risk?
-- Is sample size or benchmark coverage sufficient?
-- Are practical significance and cost considered, not just statistical significance?
-
-### Reproducibility
-
-- Could an independent lab reproduce the result from the paper and repository?
-- Are code, configs, environment, dependencies, hardware, seeds, and data access described?
-- Are nondeterministic components controlled or disclosed?
-- Are compute cost, runtime, VRAM/RAM needs, and failure conditions reported when material?
-- Are generated artefacts and evaluation outputs traceable to exact commands/configs?
-
-### AI and ML-specific scrutiny
-
-- Are hyperparameters, prompts, decoding settings, checkpoints, pretrained weights, and external datasets disclosed?
-- Is validation data overused for iterative tuning?
-- Are foundation-model or third-party-model behaviours evaluated fairly and reproducibly?
-- Are automated metrics sufficient for the claim, or is human/task-grounded validation required?
-- Are robustness, calibration, distribution shift, memorisation, contamination, or safety risks relevant?
-
-### Results interpretation
-
-- Do tables, figures, and prose say exactly the same thing?
-- Are negative results, regressions, and tradeoffs reported?
-- Are examples representative rather than cherry-picked?
-- Are improvements practically meaningful relative to added complexity or compute?
-- Are alternative explanations tested or at least discussed?
-
-## Output format
-
-Use this structure unless the user requests a narrower review:
-
-```text
-Peer Review Verdict: PASS | WEAK PASS | MAJOR REVISION RISK | LIKELY REJECTION | BLOCKED
-
-Top Rejection Risks
-- ...
-
-Reviewer Questions
-- ...
-
-Required Repairs
-- ...
-
-Evidence Needed
-- ...
-
-Publication-Ready Claim Boundaries
-- ...
-```
-
-Use `BLOCKED` only when the material needed for review is absent or inaccessible.
-
-## Severity guide
-
-- `LIKELY REJECTION`: a central claim is unsupported, a critical baseline/control is missing, there is likely leakage, the method is not reproducible, or the evaluation cannot support the paper.
-- `MAJOR REVISION RISK`: the work may be valid, but reviewers can reasonably demand substantial new experiments, clearer statistics, stronger baselines, or narrower claims.
-- `WEAK PASS`: the core is defensible, but there are notable presentation, robustness, limitation, or evidence gaps.
-- `PASS`: claims, evidence, method detail, statistics, and reproducibility are strong enough that remaining issues are minor.
-
-## Repair guidance
-
-For each serious issue, include a concrete author action:
-
-- Add or replace a baseline.
-- Add an ablation, control, stress test, or robustness check.
-- Narrow a claim.
-- Report uncertainty, repeated runs, or effect sizes.
-- Expose config, code path, seed, dataset split, or command provenance.
-- Move unsupported interpretation into limitations.
-- State ethics, licensing, compute, or deployment constraints.
-
-Do not treat documentation-only changes as sufficient when the defect is missing evidence, missing validation, or flawed experimental design.
+# This is a non-exhaustive list. Be creative and imaginative with what the reviewers may find/focus on/misunderstand.

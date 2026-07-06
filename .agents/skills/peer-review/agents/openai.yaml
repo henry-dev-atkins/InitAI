@@ -1,5 +1,4 @@
 interface:
   display_name: "Peer Review"
-  short_description: "Stress-test research for publication review"
-  default_prompt: "Use $peer-review to assess whether these methods would withstand rigorous top-tier peer review."
-
+  short_description: "Review repo defensibility"
+  default_prompt: "Use $peer-review to inspect this submitted repo/codebase for reproducibility, correctness, silent fallbacks, and reviewer-facing defensibility issues."

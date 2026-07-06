@@ -5,7 +5,7 @@ The project spec is `AI_SPACE/SPEC.md`.
 If `AI_SPACE/SPEC.md` is missing, do not invent project intent. Report `[BLOCKED]` and ask for the spec or permission to create it.
 
 # Rules
-
+- No sycophancy.
 - No secrets in code.
 - No secrets in logs, configs, handovers or artefacts.
 - No spec rewriting unless `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` is present.

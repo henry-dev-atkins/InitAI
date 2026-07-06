@@ -7,7 +7,7 @@ description: Review a submitted repo/codebase as a sceptical peer reviewer after
 
 Act as a rigorous reviewer who has read the paper or project claim and is now inspecting the submitted online repo or zip file.
 
-Review the codebase, commands, configs, data paths, validation, outputs, and implementation choices. Do not primarily judge whether the paper’s method is scientifically correct from first principles; judge whether the repo implementation is faithful, reproducible, correctly named, operationally clear, and defensible as supporting code.
+Review the codebase, commands, configs, data paths, validation, outputs, and implementation choices. Do not primarily judge whether the paper's method is scientifically correct from first principles; judge whether the repo implementation is faithful, reproducible, correctly named, operationally clear, and defensible as supporting code.
 
 Do not use a required structured output. Write a direct reviewer-style critique with concrete repo-grounded findings and repair actions.
 
@@ -43,7 +43,7 @@ Do not use a required structured output. Write a direct reviewer-style critique 
 - `train_gpu.py` silently falls back to CPU when CUDA is unavailable, so runtime, determinism, and claimed GPU behaviour are not what the command name implies.
 - Config says `seed: 123`, but dataloader workers, augmentation randomness, NumPy, or CUDA kernels are unseeded.
 - Evaluation CLI says `--test-split`, but the code loads validation data or a default split when the test file is missing.
-- Result table claims “best validation checkpoint”, but the export script reads the latest checkpoint.
+- Result table claims "best validation checkpoint", but the export script reads the latest checkpoint.
 - A baseline uses different preprocessing, augmentation, number of epochs, data split, early stopping, or checkpoint selection from the proposed method.
 - A plot script reads cached CSVs without verifying they match the current run ID, config, commit, seed, or dataset split.
 - Error handling catches exceptions, logs a warning, and writes partial outputs as if the run succeeded.
@@ -51,12 +51,12 @@ Do not use a required structured output. Write a direct reviewer-style critique 
 - A config option exists and is documented, but the training or evaluation path ignores it.
 - A metric name in logs or plots differs from the metric actually computed.
 - Data split files can be regenerated differently without warning, changing results across reruns.
-- A “deterministic” run still depends on nondeterministic kernels or undisclosed randomness.
+- A "deterministic" run still depends on nondeterministic kernels or undisclosed randomness.
 - A checkpoint, plot, table, or result artefact cannot be linked back to the command and config that produced it.
 - A function named `load_clean_dataset` silently drops invalid rows or classes without reporting exclusions.
 - A validation script imports test utilities or fixtures that are not part of the submitted repo path.
 - A benchmark wrapper swaps label order, class names, units, or thresholds relative to the paper claim.
-- A “real run” command uses a reduced debug dataset unless an undocumented flag is passed.
+- A "real run" command uses a reduced debug dataset unless an undocumented flag is passed.
 - The code supports multiple modes, but only the easiest mode is tested while the claimed mode has no exercised path.
 - The repo has two implementations of the same logic and the documented command calls the older or weaker one.
 

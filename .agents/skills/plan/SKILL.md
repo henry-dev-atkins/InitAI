@@ -21,8 +21,9 @@ Every plan must start with a `[WORK_TYPE]` classification block.
 8. `Validation Gate`
 9. `Cleanup Before [DONE]`
 10. `Risks / Tradeoffs`
-11. `Review Requirements`
-12. `Executive Summary`
+11. `Am I going in Circles?`
+12. `Review Requirements`
+13. `Executive Summary`
 
 ## Work Classification block
 

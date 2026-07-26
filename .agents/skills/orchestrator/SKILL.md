@@ -79,6 +79,8 @@ Do not spawn write agents until the board and packets pass `[PLAN.REVIEW]`.
 
 ## Phase 2 — Plan packets
 
+Full agentic & parallel spec-review pass which is deduplicated, collated and formatted into independent work streams. 
+
 For each independent package, create `plan.md` and `task_packet.md`. Each packet includes one Primary Work Type, one owner, exact file scope, off-limits files, validation commands, allowed subagents and result schema.
 
 ## Phase 3 — Spawn agents
@@ -116,3 +118,8 @@ For each completed packet:
 After accepted work is integrated in the checkout, run the highest-value practical repository validation, final `[SPEC.REVIEW]`, update concrete TODOs/learnings, and optionally create one final local commit.
 
 Use `[DONE]` only when all accepted work is present, validation passed, review passed, and no in-scope packet is unresolved. Otherwise use `[BLOCKED]`.
+
+
+## Phase 7 - Commit and Loop
+
+Commit (maybe several, depending on if the work needs splitting up) and return to Phase 0 for the next loop iteration. 

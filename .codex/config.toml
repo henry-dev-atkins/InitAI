@@ -1,13 +1,20 @@
-# Project-local Codex configuration for autonomous work inside this repository.
-# Project-scoped config and rules load only after the repository is trusted.
+# Autonomous inside the repository, blocked outside it.
+default_permissions = "project-edit"
+approval_policy = "never"
 
-sandbox_mode = "workspace-write"
-approval_policy = "on-request"
-approvals_reviewer = "auto_review"
-allow_login_shell = false
+[permissions.project-edit.filesystem]
+":minimal" = "read"
 
-[sandbox_workspace_write]
-network_access = false
+[permissions.project-edit.filesystem.":workspace_roots"]
+"." = "write"
+
+[permissions.project-edit.network]
+enabled = false
+
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 8
+interrupt_message = true
 
 [agents]
 enabled = true

@@ -65,7 +65,7 @@ Worker/domain agents own:
 - assigned plan implementation
 - assigned `result_packet.md`
 - validation evidence inside approved output locations
-- commits on their assigned branch/worktree only
+- edits only their assigned files in the current checkout; workers do not commit
 
 ## File locks
 

@@ -27,7 +27,7 @@ A session `[DONE]` additionally requires:
 - session board updated
 - result packets collected
 - merge/integration status reported
-- accepted worker branches merged or explicitly staged for human review
+- accepted worker changes integrated in the current checkout or explicitly left for human review
 - global validation complete
 - final `[SPEC.REVIEW]` complete
 - no unresolved in-scope worker remains
@@ -43,6 +43,6 @@ Report:
 - concrete repair attempts already made
 - files changed
 - smallest next human decision/action needed
-- branch/worktree/worker status when orchestrated
+- checkout/worker/integration status when orchestrated
 
 Do not report `[DONE]` if validation failed, validation was skipped by choice, or the requested behaviour is still absent.

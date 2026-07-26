@@ -48,7 +48,7 @@ Reject the plan if:
 Reject the plan if:
 
 - write ownership overlaps another active plan without serialisation
-- branch/worktree is missing for durable parallel work
+- exact file ownership or integration order is missing for durable parallel work
 - validation gate is missing or vague
 - the owner agent is not named for orchestrated work
 - task packet return schema is missing for worker agents

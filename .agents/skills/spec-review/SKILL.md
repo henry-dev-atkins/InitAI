@@ -28,7 +28,7 @@ Spec review's shoudl highlight large misalignments over smaller ones. This means
 
 ## Orchestrated review
 
-For worker branches/result packets, check:
+For worker result packets and the accumulated checkout, check:
 
 - task packet authority
 - files changed versus allowed scope

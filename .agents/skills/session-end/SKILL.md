@@ -16,7 +16,7 @@ Include:
 - current state
 - work types completed
 - agents/workers used, if orchestrated
-- branches/worktrees/commits
+- checkout state and final commit, if any
 - validation status
 - open issues and next steps
 

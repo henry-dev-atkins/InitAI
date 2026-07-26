@@ -1,124 +1,83 @@
 prefix_rule(
-    pattern = ["rg", "--files"],
+    pattern = ["rg"],
     decision = "allow",
-    justification = "List repo files for inspection.",
-    match = [
-        "rg --files",
-        "rg --files src",
-    ],
-    not_match = [
-        "rg TODO",
-        "rg pattern '|' Select-Object -First 20",
-    ],
-)
-
-prefix_rule(
-    pattern = ["rg", "--files"],
-    decision = "allow",
-    justification = "Safe repo file listing for inspection and diagnosis.",
-    match = [
-        "rg --files",
-        "rg --files .codex",
-    ],
+    justification = "Safe repository text search and file listing.",
+    match = ["rg --files", "rg --files src", "rg TODO AGENTS.md"],
 )
 
 prefix_rule(
     pattern = ["Get-Content"],
     decision = "allow",
-    justification = "Safe file reading for repo inspection.",
-    match = [
-        "Get-Content AGENTS.md",
-        "Get-Content .codex/config.toml",
-        "Get-Content file.txt | Select-Object -First 20",
-    ],
+    justification = "Safe file reading for repository inspection.",
+    match = ["Get-Content AGENTS.md", "Get-Content .codex/config.toml"],
 )
 
 prefix_rule(
-    pattern = ["Remove-Item"],
-    decision = "forbidden",
-    justification = "Do not delete files from inspection rules.",
-    match = [
-        "Remove-Item file.txt",
-        "Remove-Item -Recurse .",
-    ],
+    pattern = ["Get-ChildItem"],
+    decision = "allow",
+    justification = "Safe directory inspection.",
+    match = ["Get-ChildItem", "Get-ChildItem AI_SPACE"],
+)
+
+prefix_rule(
+    pattern = ["Test-Path"],
+    decision = "allow",
+    justification = "Safe path existence check.",
+    match = ["Test-Path AGENTS.md", "Test-Path AI_SPACE/SPEC.md"],
+)
+
+prefix_rule(
+    pattern = ["Resolve-Path"],
+    decision = "allow",
+    justification = "Safe repository path resolution.",
+    match = ["Resolve-Path .", "Resolve-Path AGENTS.md"],
 )
 
 prefix_rule(
     pattern = ["Select-String"],
     decision = "allow",
-    justification = "Safe PowerShell-native text search for repo inspection.",
-    match = [
-        "Select-String -Path AGENTS.md -Pattern SPEC",
-        "Select-String -Path .codex/rules/*.rules -Pattern decision",
-    ],
+    justification = "Safe PowerShell-native text search.",
+    match = ["Select-String -Path AGENTS.md -Pattern SPEC"],
 )
 
 prefix_rule(
     pattern = ["Measure-Object"],
     decision = "allow",
-    justification = "Safe output counting and measurement for inspection.",
-    match = [
-        "Measure-Object",
-        "Measure-Object -Line",
-    ],
+    justification = "Safe output measurement.",
+    match = ["Measure-Object", "Measure-Object -Line"],
 )
 
 prefix_rule(
-    pattern = ["Select-Object", "-First"],
+    pattern = ["Select-Object", ["-First", "-Last"]],
     decision = "allow",
-    justification = "Safe display trimming for inspection output.",
-    match = [
-        "Select-Object -First 5",
-        "Select-Object -First 20",
-    ],
-)
-
-prefix_rule(
-    pattern = ["Select-Object", "-Last"],
-    decision = "allow",
-    justification = "Safe display trimming for inspection output.",
-    match = [
-        "Select-Object -Last 5",
-        "Select-Object -Last 20",
-    ],
+    justification = "Safe output trimming.",
+    match = ["Select-Object -First 20", "Select-Object -Last 20"],
 )
 
 prefix_rule(
     pattern = ["Sort-Object"],
     decision = "allow",
-    justification = "Safe output ordering for inspection.",
-    match = [
-        "Sort-Object",
-        "Sort-Object Name",
-        "Sort-Object LastWriteTime",
-    ],
+    justification = "Safe output ordering.",
+    match = ["Sort-Object", "Sort-Object Name"],
 )
 
 prefix_rule(
     pattern = ["Get-Date"],
     decision = "allow",
     justification = "Safe local date/time inspection.",
-    match = [
-        "Get-Date",
-    ],
+    match = ["Get-Date"],
 )
 
 prefix_rule(
-    pattern = ["git", "show"],
+    pattern = ["git", ["show", "ls-files", "rev-parse"]],
     decision = "allow",
-    justification = "Safe commit/content inspection for repo diagnosis and review.",
-    match = [
-        "git show --stat --oneline -1",
-        "git show --name-only --oneline -1",
-    ],
+    justification = "Safe Git inspection.",
+    match = ["git show --stat --oneline -1", "git ls-files", "git rev-parse --show-toplevel"],
 )
 
 prefix_rule(
-    pattern = ["git", "ls-files"],
-    decision = "allow",
-    justification = "Safe tracked-file listing for repo inspection.",
-    match = [
-        "git ls-files",
-        "git ls-files AI_SPACE",
-    ],
+    pattern = ["Remove-Item"],
+    decision = "forbidden",
+    justification = "Move unwanted files into an archive folder instead of deleting them.",
+    match = ["Remove-Item file.txt", "Remove-Item -Recurse ."],
 )

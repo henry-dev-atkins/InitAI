@@ -1,85 +1,76 @@
 prefix_rule(
     pattern = ["git", "status"],
     decision = "allow",
-    justification = "Safe repo inspection for orchestration and merge review.",
-    match = [
-        "git status",
-        "git status --short",
-    ],
+    justification = "Safe repository inspection for orchestration and review.",
+    match = ["git status", "git status --short", "git status --short --branch"],
 )
 
 prefix_rule(
     pattern = ["git", "diff"],
     decision = "allow",
-    justification = "Safe diff inspection for worker scope and merge review.",
-    match = [
-        "git diff",
-        "git diff --stat",
-        "git diff -- AGENTS.md",
-    ],
+    justification = "Safe diff inspection for scope and integration review.",
+    match = ["git diff", "git diff --stat", "git diff -- AGENTS.md"],
 )
 
 prefix_rule(
     pattern = ["git", "log"],
     decision = "allow",
-    justification = "Safe commit history inspection for handovers and merge review.",
-    match = [
-        "git log --oneline",
-        "git log --oneline -5",
-    ],
+    justification = "Safe commit history inspection.",
+    match = ["git log --oneline", "git log --oneline -5"],
 )
 
 prefix_rule(
-    pattern = ["git", "switch", "-c"],
-    decision = "prompt",
-    justification = "Creating worker branches is allowed for orchestrated work, but the plan/task packet should name the branch.",
-    match = [
-        "git switch -c codex/P001-example",
-    ],
+    pattern = ["git", "branch", "--show-current"],
+    decision = "allow",
+    justification = "Safe current-branch inspection.",
+    match = ["git branch --show-current"],
 )
 
 prefix_rule(
-    pattern = ["git", "worktree", "add"],
-    decision = "prompt",
-    justification = "Parallel write work should use explicit worktree/branch names from the session board.",
-    match = [
-        "git worktree add ../repo-P001 codex/P001-example",
-    ],
+    pattern = ["git", "worktree", "list"],
+    decision = "allow",
+    justification = "Safe worktree inspection.",
+    match = ["git worktree list", "git worktree list --porcelain"],
 )
 
 prefix_rule(
-    pattern = ["git", "worktree", "remove"],
-    decision = "prompt",
-    justification = "Removing a worktree can discard files. Confirm the branch is merged/staged and no artefacts need archiving.",
-    match = [
-        "git worktree remove ../repo-P001",
-    ],
+    pattern = ["git", "add"],
+    decision = "allow",
+    justification = "Local staging is reversible and is performed only after orchestrator review.",
+    match = ["git add AGENTS.md", "git add ."],
 )
 
 prefix_rule(
     pattern = ["git", "commit"],
-    decision = "prompt",
-    justification = "Commits must follow the declared work type, validation gate and prefix policy.",
-    match = [
-        "git commit -m 'FEAT: add training feature'",
-        "git commit -am 'FIX: repair config handling'",
-    ],
+    decision = "allow",
+    justification = "One final local commit is allowed after validation and integration review.",
+    match = ["git commit -m 'FIX: example'"],
 )
 
 prefix_rule(
-    pattern = ["git", "merge"],
-    decision = "prompt",
-    justification = "Worker branches must be merged serially after validation, spec review and merge-captain review.",
-    match = [
-        "git merge codex/P001-example",
-    ],
+    pattern = ["git", "switch"],
+    decision = "forbidden",
+    justification = "The orchestrator workflow uses one session checkout. Start a separate top-level Codex worktree chat for isolated branch work.",
+    match = ["git switch main", "git switch -c codex/P001-example"],
 )
 
 prefix_rule(
-    pattern = ["git", "rebase"],
-    decision = "prompt",
-    justification = "Rebasing can rewrite branch history and complicate worker result packets.",
-    match = [
-        "git rebase main",
-    ],
+    pattern = ["git", "checkout"],
+    decision = "forbidden",
+    justification = "Do not change branches or discard paths inside a shared orchestrator session checkout.",
+    match = ["git checkout main", "git checkout -- file.py"],
+)
+
+prefix_rule(
+    pattern = ["git", "worktree", ["add", "remove", "move", "prune"]],
+    decision = "forbidden",
+    justification = "Nested worktree management is not part of this workflow. Use separate top-level Codex app worktree chats instead.",
+    match = ["git worktree add ../repo-P001 codex/P001-example", "git worktree remove ../repo-P001"],
+)
+
+prefix_rule(
+    pattern = ["git", ["merge", "rebase"]],
+    decision = "forbidden",
+    justification = "Subagents share one checkout, so no worker-branch merge or rebase should occur.",
+    match = ["git merge codex/P001-example", "git rebase main"],
 )

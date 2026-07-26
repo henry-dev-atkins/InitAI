@@ -4,43 +4,36 @@
 
 {one-paragraph mission}
 
-## Active Constraints
+## Active constraints
 
-- Spec source: `AI_SPACE/SPEC.md`
-- Current branch:
+- Spec/prompt source:
+- Current checkout:
+- Parent permission mode:
+- Repository trusted: yes/no
 - Available GPU:
-- Human flags present:
-- Commit policy:
-- Forbidden work today:
+- Commit policy: one optional final orchestrator commit
 
-## Dependency Graph
+## Work packages
 
-1. {P001 dependency statement}
-2. {P002 dependency statement}
+| Plan ID | Primary Work Type | Owner Agent | Files in Scope | Depends On | Integration Order | Status |
+|---|---|---|---|---|---|---|
+| P001 | {WORK_TYPE} | {agent} | {paths} | none | 1 | PLANNED |
 
-## Work Packages
+## File ownership rule
 
-| Plan ID | Primary Work Type | Owner Agent | Branch/Worktree | Files in Scope | Depends On | Merge Order | Status |
-|---|---|---|---|---|---|---|---|
-| P001 | {WORK_TYPE} | {agent} | codex/P001-{short-name} | {paths} | none | 1 | PLANNED |
+Parallel write packages must have disjoint file scopes. Any overlap is serialised in Integration Order.
 
-## GPU / Resource Schedule
+## Global done gate
 
-| Plan ID | Resource | Scheduling rule |
-|---|---|---|
-| PXXX | GPU | serial only |
-
-## Global Done Gate
-
-- All accepted plans validated.
-- Worker branches either merged or explicitly staged for human review.
+- All accepted packages validated.
+- Accumulated checkout reviewed.
 - Final `[SPEC.REVIEW]` complete.
-- Final `[LEARN]` run where relevant.
-- Final `[SESSION.END]` run if ending session.
+- No write agent is permission-blocked.
+- No unhandled temporary artefacts remain.
 
-## Stop Conditions
+## Stop conditions
 
-- Spec conflict cannot be resolved.
+- Parent turn is read-only.
+- Project config/rules are not loaded because the repository is untrusted.
 - Required authority/tooling/data is unavailable.
-- Two write packages require the same files and cannot be serialised safely.
 - Validation repeatedly fails without new diagnostic evidence.

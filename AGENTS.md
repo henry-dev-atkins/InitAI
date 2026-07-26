@@ -73,16 +73,20 @@ All `[PLAN]`, `[PLAN.REVIEW]`, `[PLAN.SUB]`, `[PLAN.TERMINAL_CONDITION]`, `[SPEC
 
 When `$orchestrator` is active:
 
-- The main thread is the control plane. It normally does not implement code.
-- The main thread owns direction, context, plan quality, dependency graph, file ownership, merge order, validation gates and final reporting.
+- The main thread is the control plane. It MUST NOT implement or edit project code while `$orchestrator` is active.
+- The main thread may write only orchestration artefacts under `AI_SPACE/`, run inspection/validation, review diffs, and create one final local commit after review.
+- If a write-capable agent cannot start or write, report `[BLOCKED]`; the main thread must not take over implementation.
+- The main thread owns direction, context, plan quality, dependency graph, file ownership, integration order, validation gates and final reporting.
 - Domain agents own bounded work packages.
 - Subagents are used for read-only exploration, diagnosis, review and validation critique by default.
 - Nested write-capable subagents require explicit task-packet authority.
-- One durable write plan has one owner agent and one branch/worktree.
+- One orchestrator session uses one current checkout. Do not create or switch branches/worktrees inside the subagent workflow.
+- One durable write plan has one owner agent and an exact file scope.
 - Two write-capable agents must not own the same files unless the orchestrator serialises the work.
+- Workers do not stage or commit; the orchestrator may create one final local commit after all gates pass.
 - Worker `[DONE]` means the worker packet is complete, not that the whole session is complete.
-- Session `[DONE]` requires orchestrator review, accepted merge/integration state, validation and final `[SPEC.REVIEW]`.
-- Merge worker branches serially even if implementation happened in parallel.
+- Session `[DONE]` requires orchestrator review, accepted integration state in the current checkout, validation and final `[SPEC.REVIEW]`.
+- Integrate and review write packages serially when their file scopes overlap, even if independent work happened in parallel.
 - Schedule GPU-heavy runs serially unless the human explicitly authorises parallel GPU contention.
 
 Required orchestrator artefacts live under:
@@ -158,7 +162,7 @@ Work Type Rules:
 - Large datasets and checkpoints should follow repo storage conventions and must not be casually committed.
 - Git commits should start with `CLEANUP:`, `FEAT:`, `CONFIG:`, `DOCS:`, `FIX:`, `TEST:`, `AI:` or `SPEC_EDIT:`.
 - Prefer repo-standard tools and commands over ad hoc alternatives.
-- Efficiently design entry points to minimise permission/approval delays.
+- Efficiently design entry points to minimise permission/approval delays. Subagents inherit the parent turn permission mode, so confirm the parent is writable before spawning write agents.
 - For allow-listed safe inspection commands, announce with `***` and proceed without asking for permission. Prefer stable commands such as `rg`, `rg --files`, `Get-Content`, `Get-ChildItem`, and `Select-String`; avoid aliases such as `cat`, `grep`, `find`, and `ls` in durable guidance, and avoid PowerShell pipelines for routine inspection.
 - No workarounds as deliverables.
     - No stubs.
@@ -167,7 +171,7 @@ Work Type Rules:
     - No cosmetic completion.
     - A failing command/check is the next repair target, not an endpoint.
 - When inside goal mode, a worker `[DONE]` means a small subtask is done, not the whole goal, so keep iterating.
-- If an agent cannot be started, terminate/restart it if possible; otherwise report `[BLOCKED]` for human intervention.
+- If an agent cannot be started or cannot write in the current checkout, terminate/restart it if possible; otherwise report `[BLOCKED]`. The orchestrator must not implement as a fallback.
 - Do not let work loops become too reactive to small failures. Challenge the direction when iterating through many small changes.
 - All plans, prompts, heuristics, rules of thumb and things of note must be documented/logged/tracked in `AI_SPACE/` or the repo itself.
 - Do not create small helper methods that are referenced only once.
@@ -196,7 +200,7 @@ Work Type Rules:
 
 - Planning should be done considering all layers of the project. Get as much documentation and code into context as possible to minimise errors.
 - Every plan must include a `Work Classification` block from `$work-type`.
-- Every durable write plan must include owner, file scope, branch/worktree, validation gate and commit policy.
+- Every durable write plan must include owner, exact file scope, validation gate and integration order.
 - All plans must consider consequences, for example:
     - If a variable changes type, where is it used?
     - Do we still assume the old type anywhere?

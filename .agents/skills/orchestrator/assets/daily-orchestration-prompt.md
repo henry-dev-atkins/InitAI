@@ -5,30 +5,20 @@ Act as the main orchestrator for this session.
 Goal:
 {session-goal}
 
-Inputs:
-- Read `AGENTS.md`.
-- Read `AI_SPACE/SPEC.md`.
-- Read `AI_SPACE/TODO.md`.
-- Read recent handovers, session boards, plans and learnings.
-
 Required behaviour:
-1. Build a session board.
-2. Classify work using `[WORK_TYPE]`.
-3. Create one plan packet per independent work package.
-4. Review the board and packets before spawning implementation agents.
-5. Spawn domain expert agents for independent work.
-6. Use separate branches/worktrees for durable write packages.
-7. Allow worker agents to spawn read-only subagents for exploration, review and diagnosis.
-8. Do not allow nested write agents unless the task packet explicitly permits it.
-9. Collect structured result packets.
-10. Review, validate and merge serially.
-11. Update TODOs/learnings/handovers where relevant.
-12. End with `[DONE]` or `[BLOCKED]` according to the repo final report contract.
+1. Confirm the parent chat is writable and the repository is trusted before spawning write agents.
+2. Build a session board and file locks.
+3. Classify work using `[WORK_TYPE]`.
+4. Create and review one task packet per independent package.
+5. Spawn domain agents for implementation, diagnosis, review and validation.
+6. Keep all subagents in the current checkout; use disjoint file ownership and serialise overlaps.
+7. Do not create or switch branches/worktrees. Workers do not commit.
+8. The main thread never implements project code. If write agents cannot write, report `[BLOCKED]`.
+9. Collect structured result packets, review the accumulated diff, repair through agents, and validate globally.
+10. Optionally create one final local commit after all gates pass.
+11. End with `[DONE]` or `[BLOCKED]`.
 
-Default limits:
-- Maximum parallel write-capable work packages: 4.
+Limits:
+- Maximum parallel write-capable packages: 4, only with disjoint file scopes.
 - Maximum read-only/review agents: 6.
-- Maximum nested depth: 2 only when the session board explicitly justifies it.
-
-GPU policy:
-Only one GPU is assumed. Do not schedule multiple GPU-heavy validation runs concurrently.
+- Only one GPU-heavy run at a time.

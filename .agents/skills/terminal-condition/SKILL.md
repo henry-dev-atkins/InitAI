@@ -13,7 +13,7 @@ Iterate through stages:
     1. Apply `[WORK_TYPE]`.
     2. Write a plan.
     3. Run `[PLAN.REVIEW]`.
-2. Implement.
+2. Implement through the assigned write-capable agent. In `$orchestrator` mode the main thread never implements.
 3. Test/validate.
 4. Review.
     1. `[SPEC.REVIEW]`
@@ -48,4 +48,4 @@ In `$orchestrator` mode:
 
 - Worker `[DONE]` means the worker packet is done, not the session.
 - Session `[DONE]` requires merge/integration review, accepted branch state, global validation and final `[SPEC.REVIEW]`.
-- If a worker reports `[BLOCKED]`, the orchestrator must decide whether to repair, reassign, split, defer with human approval, or block the session.
+- If a worker reports `[BLOCKED]`, the orchestrator must repair through another write-capable agent, reassign, split, defer with human approval, or block the session. It must not take over implementation.

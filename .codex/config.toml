@@ -1,13 +1,15 @@
-# Project-local Codex configuration for team/orchestrator sessions.
-# Project config is intended to be loaded only after the repo is trusted.
+# Project-local Codex configuration for autonomous work inside this repository.
+# Project-scoped config and rules load only after the repository is trusted.
+
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+approvals_reviewer = "auto_review"
+allow_login_shell = false
+
+[sandbox_workspace_write]
+network_access = false
 
 [agents]
-# Enough room for one orchestrator, several write workers, and read-only reviewers.
-max_threads = 8
-
-# Normal work should stay at depth 1. Depth 2 is reserved for explicit [TEAM]/[ORCHESTRATOR] sessions
-# where task packets authorise worker agents to spawn read-only review/diagnosis subagents.
-max_depth = 2
-
-# Long research/validation jobs should use [MONITOR] and explicit result packets.
-job_max_runtime_seconds = 7200
+enabled = true
+max_concurrent_threads_per_session = 8
+interrupt_message = true

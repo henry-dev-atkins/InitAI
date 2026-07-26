@@ -1,8 +1,8 @@
 # AGENTS.md
 
-The project spec is `AI_SPACE/SPEC.md`.
+The project spec is `AI_SPACE/SPEC.md` when present.
 
-If `AI_SPACE/SPEC.md` is missing, do not invent project intent. Report `[BLOCKED]` and ask for the spec or permission to create it.
+If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it supplies concrete project intent and acceptance criteria. Otherwise report `[BLOCKED]`; do not invent project intent.
 
 # Rules
 - No sycophancy.

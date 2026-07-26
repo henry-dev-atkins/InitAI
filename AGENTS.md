@@ -216,6 +216,6 @@ Work Type Rules:
 - Plans must state assumptions, key tradeoffs, unresolved risks and follow-up work.
 - Final reports may state follow-up work only after `[DONE]`, `[BLOCKED]`, or human-approved deferral. Follow-up work is not closure.
 - All plans should end in a short, human-facing executive summary of the work. The summary is not a terminal condition.
+- Every plan must include a section headed `AM I GOING IN CIRCLES?` with a direct yes/no answer, the reason, and the stop/pivot condition if the work starts repeating without new evidence.
 - Plans are reviewed bottom up by humans scrolling up through the terminal, not top down.
 - If a plan implementation will/does end with "X helped only a little, but Y is still the real blocker", it is a planning/diagnosis failure: stop, re-run `[DIAGNOSE]`, and re-plan before implementing more.
-

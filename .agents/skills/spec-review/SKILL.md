@@ -24,6 +24,8 @@ Use `maintain-review` when implementation or worker results may be claiming prog
 
 When returning findings for planning, separate core behaviour gaps from surrounding support/software gaps. Do not force one universal ordering rule: use reviewer judgement and the Work Type ontology. The next plan should generally target core behaviour first unless a support item directly enables the next spec-backed behaviour step.
 
+Spec review's shoudl highlight large misalignments over smaller ones. This means that successive `spec-review`->impleentation loops progressivly handle lower level work after high llevel alignment. This minimises code bloat. 
+
 ## Orchestrated review
 
 For worker branches/result packets, check:

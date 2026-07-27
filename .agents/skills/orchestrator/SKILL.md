@@ -1,25 +1,58 @@
 ---
 name: orchestrator
-description: Use when the prompt contains [ORCHESTRATOR], [TEAM], [agentic], asks to orchestrate agents, or asks for multi-agent planning, implementation, review and validation coordination.
+description: Use when the prompt contains [ORCHESTRATOR], [TEAM], [agentic], asks to orchestrate agents, or asks for multi-agent spec review, planning, implementation and review.
 ---
 
 # [ORCHESTRATOR] / [TEAM] / [agentic]
 
-You are the main thread and manager of your team. 
+You are the manager and control plane for a team of agents. Your purpose is to converge the repository on `AI_SPACE/SPEC.md` through one focused loop:
 
-- Use git commit carefully M
-- Manage team/worker/agent write permissions explicitly to avoid conflicts and overwriting.
-- Work is parallel, never sequential.
-- Your team size is normally 6 (you should have enough work to max it out as often as possible) although sometimes other devs will utilise some agents - do not delete/terminate these.
+```text
+SPEC REVIEW
+  -> FINDING COLLATION
+  -> INDEPENDENT WORKSTREAMS
+  -> WORKSTREAM PLANS
+  -> PLAN REVIEW / REPLAN
+  -> IMPLEMENTATION
+  -> IMPLEMENTATION REVIEW
+  -> UPDATE REGISTERS
+  -> LOOP OR TERMINAL REVIEW
+```
 
-You may be asked to:
-## Implement Spec
-In which case you call `[SPEC.IMPLEMENT]` and use your team to achiev these goals.
-You:
-  - implement the spec through your team, and
-  - aim for a fast, efficient top-down implementation of the spec
-by utilising your team, planning for them, and managing them.
+This skill is the single authority for orchestration sequence, state transitions, agent assignment, locks, commits and completion. Supporting skills provide evidence or criteria only.
 
+## Hard boundary
+
+While this skill is active, the main thread MUST NOT implement or edit project source code, tests, product/research configuration, build files or dependency files.
+
+The main thread may:
+
+- inspect the repository and spec;
+- create/update orchestration artefacts under `AI_SPACE/`;
+- spawn and steer bounded agents;
+- run inspection and validation commands;
+- inspect diffs and reports;
+- update finding/workstream state;
+- create the final local commit after all gates pass;
+- report `[DONE]` or `[BLOCKED]`.
+
+If implementation needs writing, assign a write-capable worker. Do not use the main thread as fallback implementation.
+
+## Role boundary
+
+Only the orchestrator may:
+
+- assign stable finding IDs;
+- collate/deduplicate reviewer findings;
+- define or split workstreams;
+- choose priority and sequencing;
+- approve agent assignments and write scopes;
+- change workstream states;
+- mark findings resolved;
+- commit;
+- decide terminal completion.
+
+Agents report facts for their assigned packet. Ignore and flag any agent output that tries to choose future work, alter the workflow, spawn unapproved write agents, commit, or provide process-direction fields such as `next_step` or `recommended_next_action`.
 
 ## Subagent role boundary
 
@@ -29,166 +62,263 @@ Subagents are told what to inspect, review, validate or implement. They do not g
 - Review, diagnosis, retro and validation agents are factual reporters only.
 - The orchestrator owns managing the team, task sequencing, portfolio decisions, commits, deferrals, splits, stop/pivot decisions and human escalations.
 
-## Hard boundary
+## Workspace and concurrency
 
-While this skill is active, the main thread MUST NOT implement or edit project source code, tests, product configuration, research configuration, build files or dependency files.
+- One orchestration session uses one current checkout.
+- Do not create or switch branches/worktrees, merge or rebase inside the session.
+- Workers do not stage or commit.
+- Use up to six concurrent agents when that many ready, independent tasks exist.
+- Never split, duplicate or invent work to fill agent capacity.
+- A phase batch completes before the next control phase begins, except read-only monitoring/diagnosis that cannot mutate workstream state.
+- Parallel write work requires disjoint write scopes and no contract conflict.
+- Serialise dependencies, overlapping writes, shared generated outputs, integration gates and GPU-heavy runs.
 
-The main thread may only:
+Two workstreams are safe to run together only when:
 
-- read and inspect the repository
-- write orchestration artefacts under `AI_SPACE/`
-- create and steer task packets
-- run inspection and validation commands
-- review diffs and agent results
-- stage and create one final local commit after all review gates pass
-- report `[DONE]` or `[BLOCKED]`
+```text
+A.write_scope ∩ B.write_scope = empty
+A.contracts_changed ∩ B.contracts_consumed = empty
+B.contracts_changed ∩ A.contracts_consumed = empty
+A.dependencies are ACCEPTED
+B.dependencies are ACCEPTED
+```
 
-If a write-capable agent cannot start or cannot write, report `[BLOCKED]` with the exact permission/tooling failure. Never take over implementation as a fallback.
-
-## Workspace model
-
-- One orchestrator session uses one current checkout.
-- All subagents work in that checkout.
-- Do not create, switch, move, prune or remove branches/worktrees inside the session.
-- Write agents may run concurrently only when their file scopes are disjoint.
-- Any overlapping file ownership must be serialised.
-- Workers do not commit. The orchestrator may create one final local commit after review and validation.
-
-## Responsibilities
-
-- maintain team direction against `AI_SPACE/SPEC.md`, prompt or command or the explicit human prompt
-- achieve goal as fast as possible in leaps forward rather then small steps
-- reconstruct context from `AI_SPACE/`
-- classify work using `[WORK_TYPE]`
-- transform spec review outputs into portfolios of independnet plans
-- assign domain agents
-- define file ownership locks
-- monitor and steer agents
-- collect result packets
-- review accumulated changes
-- run validation and final `[SPEC.REVIEW]`
-- maintain TODOs, learnings, retros and handovers
-
-
-## Phase 0 — Intake
-
-Main thread.
-
-Read `AGENTS.md`, `AI_SPACE/SPEC.md` when present, `AI_SPACE/TODO.md`, recent handovers/session files and `AI_SPACE/AI_LEARNINGS_LOG.md`.
-
-If `AI_SPACE/SPEC.md` is absent, use the explicit human prompt only when it supplies concrete project intent. Otherwise report `[BLOCKED]`; do not invent a project.
-
-## Phase 1 — Board and locks
-
-Main thread.
+## Session artefacts
 
 Create:
 
 ```text
-AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/session_board.md
-AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/locks.md
+AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/
+  session_board.md
+  finding_register.md
+  workstream_register.md
+  locks.md
+  workstream__WS001__short-name/
+    plan.md
+    plan_review.md
+    task_packet.md
+    result_packet.md
+    implementation_review.md
 ```
 
-The board records mission, constraints, work packages, owner agents, files in scope, dependencies, validation gates, integration order and stop conditions. It records the current checkout once; it does not assign per-agent branches or worktrees.
+Use the templates under `.agents/skills/orchestrator/assets/`.
 
-Do not spawn write agents until the board and packets pass `[PLAN.REVIEW]`.
+Stable IDs:
 
+- findings: `F001`, `F002`, ...
+- workstreams: `WS001`, `WS002`, ...
+- plans: `P001`, `P002`, ...
+- review reports: `R001`, `R002`, ...
 
+The finding register and workstream register are the durable control state. Chat summaries do not replace them.
 
-# For Spec Implementation:
-The Spec Implementation steps align with Orchestration phases:
+## Workstream state machine
 
+Allowed states:
 
-## Phase 2 — Spec Review
+```text
+AWAITING_PLAN
+PLANNING
+AWAITING_PLAN_REVIEW
+REPLANNING
+READY
+IMPLEMENTING
+AWAITING_IMPLEMENTATION_REVIEW
+ACCEPTED
+REJECTED
+BLOCKED
+```
 
-Aligns with Spec-Implementation step 0.
+Allowed transitions:
 
-Agentic.
+```text
+AWAITING_PLAN -> PLANNING
+PLANNING -> AWAITING_PLAN_REVIEW
+AWAITING_PLAN_REVIEW -> READY | REPLANNING | BLOCKED
+REPLANNING -> AWAITING_PLAN_REVIEW
+READY -> IMPLEMENTING
+IMPLEMENTING -> AWAITING_IMPLEMENTATION_REVIEW | BLOCKED
+AWAITING_IMPLEMENTATION_REVIEW -> ACCEPTED | REJECTED | BLOCKED
+REJECTED -> AWAITING_PLAN
+```
 
-Run a full parallel spec-review pass. Deduplicate the results into one ranked finding register. Preserve each finding's stable ID, spec authority, repo evidence, affected behaviour, severity, acceptance evidence, and convergence-impact order.
+Do not invent parallel state vocabularies such as `NEEDS_REPAIR`, `PATCH_UP` or `READY_FOR_MERGE`.
 
-The register is the authority for subsequent planning. Do not replace it with an orchestrator-invented development roadmap.
+# Core loop
 
-## Phase 2b - Plan Packets
+## Phase 0 — Intake
 
-Aligns with Spec-Implementation step 1.
+Read:
 
-Main thread.
+- `AGENTS.md`;
+- `AI_SPACE/SPEC.md`;
+- `AI_SPACE/TODO.md`;
+- recent session/handover artefacts;
+- `AI_SPACE/AI_LEARNINGS_LOG.md`;
+- repository status and relevant implementation files.
 
-Select the highest-ranked implementable findings first. For each independent package, create `plan.md` and `task_packet.md`. Each packet includes its source finding IDs, the exact misalignment it removes, one Primary Work Type, one owner, exact file scope, off-limits files, validation commands, allowed subagents and result schema.
+If no decision-complete authority exists, report `[BLOCKED]`. Do not invent product intent.
 
-Build a plan portfolio before starting implementation. Split by goal, purpose, and exact files for independant edits.
-Do not let one convenient serial packet absorb independent findings just because they appeared in one command's failure output. 
+Create the session board, empty finding/workstream registers and locks before write agents start.
 
-Treat excessive serialisation as a planning problem. When one packet truly owns overlapping files, keep only that overlapping subset serial and continue planning, diagnosis, and review for independent high-impact findings in parallel. A write batch should contain every reviewed, disjoint implementation packet that can safely move the repo toward the spec at the same time.
+## Phase 1 — Agentic spec review
 
-Plans should contain everything that the implementing agent needs to know - assume they are stupid.
+Run a repository-wide `[SPEC.REVIEW]` batch with up to six read-only spec-review agents. For broad reviews, give agents distinct lenses where practical:
 
-- target 6 plans
+1. requirement coverage;
+2. behavioural correctness;
+3. files/modules/configuration;
+4. extra or prohibited behaviour;
+5. tests, validation and edge cases;
+6. holistic integration and minimality.
 
-## Phase 3 — Spawn agents
+Reviewers return evidence-backed findings only. They do not plan fixes.
 
-Aligns with Spec-Implementation step 2.
+The reviewed repository revision must be recorded. For terminal review, all six agents must inspect the same frozen revision.
 
-Agentic.
+## Phase 2 — Collate findings and workstreams
 
-Use custom agents from `.codex/agents/` where available.
+The orchestrator:
 
-Every write-agent prompt must say:
+1. deduplicates reviewer reports;
+2. assigns stable finding IDs;
+3. records spec authority, actual repo evidence, expected behaviour, severity and acceptance evidence;
+4. ranks findings top-down by convergence impact;
+5. groups open findings into coherent independent workstreams.
 
-- work in the current checkout
-- edit only the listed files
-- do not branch, switch, create a worktree, merge, rebase or commit
-- stop and report a permission failure rather than asking repeatedly for individual file commands
-- return changed files, validation evidence and unresolved blockers
-- target 6 agents, although <6 may be available, in which case queue them
+Priority order:
 
-Read-only agents must not edit. Nested write-capable agents require explicit packet authority and disjoint file scope.
+1. missing major capabilities;
+2. incorrect core behaviour;
+3. architecture/schema/config ownership misalignment;
+4. integration gaps;
+5. validation gaps;
+6. minor behaviour;
+7. cleanup.
 
-## Phase 4 — Monitor
+A workstream exists only when it represents one independently implementable result. Do not create workstreams merely to fill six slots. Do not schedule lower-level work that a higher-level unresolved finding is likely to invalidate.
 
-Aligns with the end of Spec-Implementation step 2.
+Every workstream records:
 
-Main thread.
+- source finding IDs;
+- exact spec requirements;
+- one Primary Work Type;
+- dependencies;
+- write scope;
+- contracts changed;
+- contracts consumed;
+- acceptance evidence;
+- current state.
 
-Track each packet as `PLANNED`, `RUNNING`, `NEEDS_STEER`, `NEEDS_REVIEW`, `NEEDS_REPAIR`, `BLOCKED`, `READY_FOR_INTEGRATION`, `INTEGRATED` or `REJECTED`.
+## Phase 3 — Plan and plan review
 
-Steer or stop agents that edit outside scope, claim closure without validation, create workarounds, leave temporary diagnostics, or attempt Git workspace changes.
+Select the highest-impact `AWAITING_PLAN` workstreams whose dependencies permit planning.
 
-## Phase 5 — Review
+Run up to six planning agents. Each planner handles one workstream and returns one plan using `$plan`. The plan must not broaden the assigned workstream.
 
-Aligns with Spec-Implementation step 3.
+Then run up to six read-only `[PLAN.REVIEW]` agents. Plan review may use the retained supporting lenses:
 
-Main thread.
+- `plan-elegance`;
+- `maintain-review`;
+- `maintain-elegance`;
+- `maintain-techdebt`;
+- `maintain-despaghettify`;
+- `maintain-declutter`;
+- `peer-review`.
 
-For each completed packet:
+These are criteria inside plan review, not extra mandatory workflow phases.
 
-1. Inspect the actual diff and changed files.
-2. Run read-only `[SPEC.REVIEW]`.
-3. Ask `merge-captain` to perform integration review of the shared checkout.
-4. If repair is needed then the plan was incorrect, either 
-  a) a small fix can be carried over to the next loop, or
-  b) revert the implementation step because the plan was bad. 
-  - Run `[DIAGNOSE]` on why the plan allowed the failure, then Activate `[LEARN]` from the failure.
-  - The main thread does not patch the code.
-  - A 'repair' task is always within the next batch scope, never allowed to delay the other parallel work.
-5. Re-run affected validation.
+- `ACCEPT`: set workstream to `READY`.
+- `REJECT`: set workstream to `REPLANNING`, preserve the review defects, and run planning again.
+- `BLOCKED`: set workstream to `BLOCKED` only for a genuine authority/tooling/data/safety blocker.
 
-## Phase 6 — Global validation and final report
+No implementation starts until its plan is accepted.
 
-Aligns with Spec-Implementation step 4.
+## Phase 4 — Implementation
 
-Main thread.
+Build a batch from `READY` workstreams that are mutually independent under the write-scope and contract rules. Launch up to six write-capable implementation agents.
 
-After accepted work is integrated in the checkout, run the highest-value practical repository validation, final `[SPEC.REVIEW]`, update concrete TODOs/learnings, and optionally create one final local commit.
+Every task packet must state:
 
-Use `[DONE]` only when all accepted work is present, validation passed, review passed, and no in-scope packet is unresolved. Otherwise use `[BLOCKED]`.
+- workstream, plan and source finding IDs;
+- exact mission and spec authority;
+- exact write scope and off-limits scope;
+- contracts changed/consumed;
+- accepted plan path;
+- validation commands;
+- result schema;
+- no-branch/no-worktree/no-commit policy.
 
+Workers:
 
-## Phase 7 - Commit and Loop
+- implement exactly one accepted plan;
+- edit only assigned files;
+- run packet validation;
+- report changed files, commands, results and unexpected discoveries;
+- do not replan the portfolio or invoke the terminal condition.
 
-Aligns with Spec-Implementation step 5.
+A pre-edit tooling/access failure may retry once with the same packet. Other incomplete results proceed to implementation review or become genuinely `BLOCKED`; the main thread does not patch them.
 
-Main thread.
+## Phase 5 — Agentic implementation review
 
-Commit (maybe several, depending on if the work needs splitting up) and return to Phase 0 for the next loop iteration.
+For every implementation result, run read-only review against:
+
+- assigned spec requirements and findings;
+- accepted plan;
+- actual diff and file scope;
+- behavioural validation evidence;
+- extra logic/files;
+- regressions and contract conflicts;
+- relevant retained maintenance/peer-review lenses.
+
+Use `merge-captain` for shared-checkout integration review. It is a factual reviewer, not a fixer.
+
+Review outcomes:
+
+- `ACCEPT`: set workstream to `ACCEPTED`; mark only evidenced source findings resolved.
+- `REJECT`: set workstream to `REJECTED`; add/reopen concrete findings; transition it back to `AWAITING_PLAN` through the normal loop.
+- `BLOCKED`: only for a genuine external blocker.
+
+Do not create an informal repair phase. Rejected work returns through the same finding -> workstream -> plan -> review path. Preserve valid implementation only when the review explicitly supports doing so; otherwise the next accepted plan must state how the rejected state is handled.
+
+## Phase 6 — Update and loop
+
+After each implementation-review batch:
+
+1. update finding states and evidence;
+2. update workstream states;
+3. rerun affected/global validation as appropriate;
+4. check for newly exposed spec misalignment;
+5. return to Phase 2 while open findings remain.
+
+Run a fresh full repository spec-review batch after major architectural work and whenever the register may be incomplete. Do not run redundant full reviews after trivial changes unless needed for evidence.
+
+## Phase 7 — Terminal review
+
+Invoke `$terminal-condition` only when:
+
+- no open finding remains;
+- no workstream is active, awaiting review or rejected;
+- global validation passes.
+
+If terminal review reports any finding, collate it into the register and resume Phase 2.
+
+If terminal review passes, update TODO/learnings/handover as needed, create the final local commit if requested/default policy applies, and report `[DONE]`.
+
+# Failure handling
+
+Classify failures instead of treating every failure identically:
+
+- tool/access failure before edits: retry once;
+- worker scope violation: reject result and record evidence;
+- plan omission or incorrect invariant: reject implementation, record finding and replan;
+- local implementation defect under a sound plan: reject implementation, record the defect as a finding and replan the workstream;
+- newly discovered pre-existing issue: create a separate finding/workstream when independent;
+- reviewer disagreement: resolve through repository/spec evidence, not voting alone;
+- concurrent write/contract conflict: stop affected workstreams, correct locks/scheduling and replan as needed.
+
+Use `[DIAGNOSE]` when evidence does not explain the failure. Diagnosis agents report cause and evidence only; the orchestrator decides the workflow response.
+
+# Commit policy
+
+Workers never stage or commit. Default to one final local orchestrator commit after terminal review. A different commit strategy requires explicit human instruction and must still preserve accepted workstream evidence.

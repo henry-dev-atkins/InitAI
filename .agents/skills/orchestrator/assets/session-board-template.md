@@ -2,38 +2,40 @@
 
 ## Mission
 
-{one-paragraph mission}
+{one-paragraph spec implementation mission}
 
-## Active constraints
+## Authority and frozen state
 
-- Spec/prompt source:
+- Spec source: `AI_SPACE/SPEC.md`
 - Current checkout:
-- Parent permission mode:
-- Repository trusted: yes/no
-- Available GPU:
-- Commit policy: one optional final orchestrator commit
+- Starting revision/tree hash:
+- Current workflow phase: SPEC_REVIEW | COLLATE | PLAN | PLAN_REVIEW | IMPLEMENT | IMPLEMENTATION_REVIEW | TERMINAL_REVIEW | DONE | BLOCKED
+- Commit policy: one final orchestrator commit unless explicitly overridden
 
-## Work packages
+## Capacity
 
-| Plan ID | Primary Work Type | Owner Agent | Files in Scope | Depends On | Integration Order | Status |
-|---|---|---|---|---|---|---|
-| P001 | {WORK_TYPE} | {agent} | {paths} | none | 1 | PLANNED |
+- Maximum concurrent agents: 6
+- Active agents:
+- GPU-heavy slots: 1
 
-## File ownership rule
+## Register summary
 
-Parallel write packages must have disjoint file scopes. Any overlap is serialised in Integration Order.
+- Open findings:
+- Resolved findings:
+- Active workstreams:
+- Accepted workstreams:
+- Blocked workstreams:
 
-## Global done gate
+## Current phase batch
 
-- All accepted packages validated.
-- Accumulated checkout reviewed.
-- Final `[SPEC.REVIEW]` complete.
-- No write agent is permission-blocked.
-- No unhandled temporary artefacts remain.
+| Agent | Role | Workstream/Review | Write Scope | State |
+|---|---|---|---|---|
+| {agent} | {role} | {WS/R ID} | {paths-or-read-only} | {state} |
 
-## Stop conditions
+## Global gate
 
-- Parent turn is read-only.
-- Project config/rules are not loaded because the repository is untrusted.
-- Required authority/tooling/data is unavailable.
-- Validation repeatedly fails without new diagnostic evidence.
+- Finding register has no open findings.
+- No workstream is active, awaiting review, rejected or blocked.
+- Global validation passes.
+- Six terminal reviewers pass the same frozen revision.
+- Repository tree is unchanged during terminal review.

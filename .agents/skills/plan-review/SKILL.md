@@ -1,95 +1,74 @@
 ---
 name: plan-review
-description: Use when the prompt contains [PLAN.REVIEW] or [PLAN_REVIEW], or when a plan needs review for minimalism, work type correctness, spec alignment, orchestration safety, technical debt and implementation risk.
+description: Use when the prompt contains [PLAN.REVIEW] or [PLAN_REVIEW], or when one workstream plan needs an accept/reject gate before implementation.
 ---
 
 # [PLAN.REVIEW] / [PLAN_REVIEW]
 
-Review a plan before implementation or agent spawning.
+Review one submitted workstream plan. Return evidence for `ACCEPT`, `REJECT` or genuine `BLOCKED`; do not manage sequencing or implement changes.
 
-## Required review dimensions
+## Required dimensions
 
-- Work Type classification correctness
-- Spec alignment and authority
-- Source finding traceability and convergence-impact priority
-- Minimalism: smallest coherent repo change
-- Overengineering
-- Technical debt
-- Solution elegance: use `plan-elegance` when the plan may miss a simpler, cleaner, more repo-fitting implementation
-- Repo maintainability: use `maintain-review` when the plan may drift away from core spec capabilities through avoidable surrounding software or repo complexity
-- Repo structure: use `maintain-despaghettify` when the plan changes code/module boundaries, introduces broad abstractions, or risks tangled responsibilities
-- Technical debt: use `maintain-techdebt` when the plan introduces durable code, dependency, data-flow, or maintenance cost
-- Missing consequences
-- Implementation order: the plan explains why its first steps are the right starting point
-- File ownership and orchestration safety
-- Validation strength
-- Cleanup before `[DONE]`
-- Commit policy
-- Risks and blockers
-- Target the largest step we can take towards the spec implementation, only find small issues when there are only small issues left.
+- source finding and spec traceability;
+- one coherent workstream outcome;
+- correct Primary Work Type;
+- top-down convergence impact;
+- minimal complete implementation;
+- exact write/off-limits scope;
+- dependencies and parallel-safety;
+- contracts changed/consumed;
+- protected invariants and prohibited behaviour;
+- implementation-order logic;
+- behavioural validation strength;
+- result-packet completeness;
+- overengineering, technical debt and repository fit.
 
-## Work Type rejection rules
+Use retained supporting lenses when relevant:
 
-Reject the plan if:
+- `plan-elegance`;
+- `maintain-review`;
+- `maintain-elegance`;
+- `maintain-techdebt`;
+- `maintain-despaghettify`;
+- `maintain-declutter`;
+- `peer-review`.
 
-- no Primary Work Type is declared
-- more than one Primary Work Type is declared
-- it cites no stable spec-review finding ID and evidence
-- it does not remove or materially reduce the cited misalignment
-- it drops the cited finding's behavioural context to implement an isolated ingredient
-- it is a bottom up implementation - we want top down implementation
-- it will need a repair pass after being implemented
-- a capability plan is mostly dependency/docs/cleanup/temp/agent-workflow work
-- capability progress is claimed for code that no working spec path consumes
-- a plan starts with support work while a core capability or alignment target is still missing, and the ordering rationale does not show that the support work directly enables the next behaviour step
-- `plan-elegance` finds a clearly simpler repo-fitting solution and the plan does not adopt it or justify rejecting it
-- temporary diagnostics are allowed to survive into commit
-- one-off plots are being treated as validation evidence without reproducibility
-- local environment adaptation changes core behaviour
-- workaround work is used to claim capability progress
-- `DEPENDENCY.LOCAL` work adds a dependency without justification
-- `SPEC.EDIT` appears without `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]`
-- the commit policy does not match the work type
+They inform this single plan-review verdict; they do not create additional workflow phases.
 
-## Orchestration rejection rules
+## Reject when
 
-Plan reviews provide evidence. The orchestrator decides whether and how that evidence affects implementation.
-Reject the plan if:
+- the workstream/finding/spec traceability is absent or incorrect;
+- the plan does not fully remove the assigned misalignment;
+- it broadens into unrelated work or fragments one coherent result unnecessarily;
+- it starts with support software without showing that it is the shortest route to required behaviour;
+- exact file scope, dependencies, contract effects or owner are missing;
+- it conflicts with another active workstream;
+- validation is vague, toy-only or does not prove the assigned behaviour;
+- temporary/workaround/fluff output may survive;
+- capability progress is claimed for support-only work;
+- a simpler repository-fitting solution is clearly available and unaddressed;
+- it relies on an assumed later repair pass.
 
-- write ownership overlaps another active plan without serialisation
-- exact file ownership or integration order is missing for durable parallel work
-- validation gate is missing or vague
-- the owner agent is not named for orchestrated work
-- task packet return schema is missing for worker agents
-- merge order is unclear
-- GPU-heavy validation is scheduled concurrently without explicit human approval
+`BLOCKED` is only for missing authority, tooling, data or a safe execution path—not ordinary plan defects.
 
+## Role boundary
 
-Plan-review agents are factual reviewers, not process managers.
-
-  - Report whether the submitted plan passes or fails the review criteria.
-  - Name concrete plan defects and the evidence needed for the plan to pass.
-  - Do not suggest next steps, propose a follow-up plan, choose the next packet, or tell the orchestrator what to do after the review.
-  - Do not include fields such as `next_step`, `recommended_next_action`, `recommended_plan`, or similar process-direction text.
-  - `implementation_permission` is only a gate on the reviewed plan. It is not an instruction to spawn a worker.
-  - The orchestrator owns sequencing, portfolio decisions, commits, deferrals, splits and stop/pivot decisions
-
+- Do not choose the next workstream, propose a replacement plan, schedule agents or recommend process actions.
+- Name concrete defects and evidence required for acceptance.
+- The orchestrator owns replanning and state transitions.
 
 ## Output
 
-Return:
-
 ```yaml
-review_status: PASS | NEEDS_REVISION | BLOCKED
-blocking_findings:
-  - {finding-or-none}
-non_blocking_findings:
-  - {finding-or-none}
-required_plan_changes:
-  - {change-or-none}
-implementation_permission: yes | no
+plan_review_id: RXXX
+workstream_id: WSXXX
+plan_id: PXXX
+verdict: ACCEPT | REJECT | BLOCKED
+blocking_issues:
+  - criterion: {dimension}
+    evidence: {specific defect or missing evidence}
+non_blocking_observations:
+  - {observation-or-none}
+acceptance_evidence:
+  - {why the plan is sufficient, or what evidence is missing}
 ```
-
-Return `NEEDS_REVISION` with `implementation_permission: no` when the implementation order rationale is missing or weak. Do not block useful compromises: early support work is acceptable when the plan shows it is the shortest practical route to the next spec-backed behaviour. 
-
-Plan reviews must feed back into implementation. Do not stop at "plan reviewed".

@@ -1,19 +1,28 @@
 # Result Packet
 
+```yaml
+workstream_id: WSXXX
 plan_id: PXXX
 agent: {agent-name}
-checkout: shared-parent-session-checkout
-status: DONE | BLOCKED | PERMISSION_BLOCKED
+status: DONE | INCOMPLETE | BLOCKED | PERMISSION_BLOCKED
 changed_files:
   - {path-or-none}
+scope_deviations:
+  - {path-and-reason-or-none}
 commands_run:
-  - {command-or-none}
+  - command: {command}
+    exit_code: {code}
+    result: {concise result}
 validation:
   status: PASS | FAIL | NOT_RUN
-  evidence: {summary-or-path}
+  evidence:
+    - {requirement -> command/result/path}
+unexpected_discoveries:
+  - {fact-or-none}
 permission_failure: {exact failed operation or none}
-unresolved_issues:
-  - {issue-or-none}
 temporary_files:
-  - {created-and-archived-or-none}
-summary: {concise result}
+  - {created-and-removed/archived-or-none}
+summary: {concise factual result}
+```
+
+Packet status is not a workflow decision. The orchestrator sends every implementation result to read-only implementation review.

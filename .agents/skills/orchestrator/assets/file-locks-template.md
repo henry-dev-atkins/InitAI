@@ -1,13 +1,14 @@
-# File Ownership Locks
+# File and Contract Locks
 
-| File/Path | Owner Plan | Owner Agent | Mode | Status |
-|---|---|---|---|---|
-| `AI_SPACE/SPEC.md` | none | none | locked | spec-edit-only |
-| `{path}` | PXXX | `{agent-name}` | write | active |
+| Workstream | Owner Agent | Write Scope | Stable Read Scope | Contracts Changed | Contracts Consumed | Status |
+|---|---|---|---|---|---|---|
+| WSXXX | `{agent-name}` | `{paths}` | `{paths}` | `{interfaces/schemas/configs}` | `{interfaces/schemas/configs}` | reserved |
 
 Rules:
 
 - Read-only agents may inspect any file.
-- Write agents may edit only paths explicitly assigned to them.
-- Two write agents may not own the same file/path unless work is serialised by the orchestrator.
-- Lock changes must be recorded before agents act on them.
+- Write agents may edit only paths assigned to their workstream.
+- Active workstreams must have disjoint write scopes.
+- A changed contract must not be consumed as stable by another active workstream.
+- Shared generated files, manifests, lockfiles, registries and migrations require explicit single ownership.
+- Lock changes are recorded before agents act.

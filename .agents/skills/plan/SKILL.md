@@ -1,50 +1,60 @@
 ---
 name: plan
-description: Use when the prompt contains [PLAN], or when work needs a written, classified plan before editing, testing, validation, orchestration or implementation.
+description: Use when the prompt contains [PLAN], or when one assigned workstream needs an implementation plan before editing.
 ---
 
 # [PLAN]
 
-Planning should be done considering all layers of the project. Get as much relevant documentation and code into context as possible to minimise errors.
+Create one implementation plan for one assigned workstream. Do not broaden the workstream, create portfolio priorities or absorb unrelated findings.
 
-Every plan must start with a `[WORK_TYPE]` classification block.
+Apply `$workflow-ontology` and declare one Primary Work Type. Required tests, configuration and behaviour documentation may be supporting changes inside the same coherent workstream.
 
+## Required inputs
 
-## Other skills you may call on
+- workstream ID;
+- source finding IDs;
+- exact spec authority;
+- dependencies;
+- allowed write scope;
+- contracts changed and consumed;
+- acceptance evidence.
 
-Use `maintain-review` when implementation or worker results may be claiming progress through repo complexity, dependency work, cleanup, documentation, wrapper code, or support software instead of spec-backed behaviour. Use `maintain-elegance` when repo-wide implementation shape affects capability clarity or merge readiness. Use `maintain-techdebt` for repo technical debt that affects merge permission. If `AI_SPACE/SPEC.md` is absent, do not infer project intent; report the missing spec and limit review to explicit prompt/task authority.
-
+If these are materially missing, return a factual planning blocker to the orchestrator rather than inventing scope.
 
 ## Required plan sections
 
-1. `Work Classification`
-2. `Mission`
-3. `Authority`
-4. `Scope`
-5. `Assumptions`
-6. `Implementation Order Rationale`
-7. `Implementation Steps`
-8. `Validation Gate`
-9. `Cleanup Before [DONE]`
-10. `Risks / Tradeoffs`
+1. `Identity and Traceability`
+2. `Work Classification`
+3. `Mission`
+4. `Scope and Contracts`
+5. `Protected Invariants / Must Not`
+
+6. `Implementation Steps`
+7. `Validation and Resolution Evidence`
+8. `Risks and Assumptions`
+9. `Result Packet Contract`
+10. `Executive Summary`
 11. `Am I going in Circles?`
-12. `Review Requirements`
-13. `Executive Summary`
+12. `Is there a more elegant way of doing this?`
 
-## Work Classification block
+## Planning rules
 
-Use `$work-type` and include:
+- Resolve the assigned findings completely and minimally.
+- Start with the highest-level behaviour required by the workstream; support software must directly enable or validate it.
+- Name exact files to create/modify and all off-limits files.
+- Name public interfaces, schemas, configs or generated outputs changed/consumed.
+- Include consequence analysis for changed types, interfaces, config ownership and downstream consumers.
+- Include exact behavioural validation commands and what each proves.
+- Do not plan temporary diagnostics as durable outputs.
+- Do not assume a later repair phase. The plan must be complete enough for one controlled implementation attempt, while implementation rejection still returns through the normal finding/workstream loop.
+- Do not create legacy compatibility, special cases, wrapper layers or speculative abstractions unless the spec requires them.
 
-- Primary Work Type
-- Authority
-- Counts as capability progress
-- Commit policy
-- Expected commit prefix
-- Allowed durable outputs
-- Forbidden durable outputs
-- Supporting work allowed
-- Cleanup before `[DONE]`
-- Done gate
+## Supporting review lenses
+
+`[PLAN.REVIEW]` may invoke `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review`. These are review criteria, not extra planning stages.
+
+Plans guide implementation; they are not completion deliverables unless plan-only output was explicitly requested.
+
 
 ## Consequence review
 
@@ -58,16 +68,8 @@ Every plan must consider consequences, for example:
 - Does this need a subplan?
 - Does this create an orchestration or merge conflict?
 
-## Implementation order rationale
-
-Explain why the first implementation steps are the right starting point.
-
-Use the Work Type classification as the main signal. When a core `CAPABILITY.*` or `FIX.ALIGNMENT` target is still missing, plans should normally bias towards that target before surrounding support work. Support work can come first only when the plan explains how it directly enables the next behaviour step.
-
-Examples of support work that needs an ordering rationale when it appears early include runners, config frameworks, logging, reporting, orchestration, cleanup, dependency setup, and validation scaffolding. These examples are warning signs, not fixed bans; the spec and local implementation context decide what is genuinely required. The goal is to avoid spaghettification, tech debt, and code explosions while keeping work focused on core spec capabilities.
 
 ## Agentic plan review
-
 All plans require explicit review for:
 
 - overengineering
@@ -80,5 +82,3 @@ All plans require explicit review for:
 - gaps, ambiguity or contradictions
 - work type correctness
 - file ownership/parallelisation safety
-
-Plans guide execution; plans are not deliverables unless the human explicitly requested plan-only output.

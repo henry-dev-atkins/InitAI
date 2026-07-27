@@ -1,24 +1,47 @@
 ---
 name: terminal-condition
-description: Use when the prompt contains [PLAN.TERMINAL_CONDITION] or [TERMINAL_CONDITION], or when goal mode requires plan, implementation, validation, review, and iteration until [DONE] or a genuine [BLOCKED] state.
+description: Use when the prompt contains [PLAN.TERMINAL_CONDITION] or [TERMINAL_CONDITION], or when the orchestrator must prove the repository fully matches AI_SPACE/SPEC.md.
 ---
 
 # [PLAN.TERMINAL_CONDITION] / [TERMINAL_CONDITION]
 
-Do not exit, return to the user, or stop unless the terminal condition is met.
+The terminal condition is an evidence-backed clean spec review of one frozen repository revision.
+
+## Preconditions
+
+Do not start terminal review until:
+
+- the finding register has no open findings;
+- no workstream is active, awaiting review, rejected or blocked;
+- global validation passes;
+- temporary diagnostics, disposable artefacts and unapproved workarounds are absent;
+- the exact repository revision/tree hash is recorded.
+
+## Review batch
+
+Run six read-only spec-review agents in parallel against the same recorded revision. Assign distinct lenses:
+
+1. atomic requirement coverage;
+2. behavioural correctness;
+3. files, modules, configuration and outputs;
+4. extra/prohibited logic and unnecessary files;
+5. validation, edge cases and failure behaviour;
+6. holistic integration, minimality and spec convergence.
+
+Each reviewer must return `PASS` or evidence-backed findings using the `$spec-review` schema. Missing evidence is not a pass.
+
+## Pass condition
+
+Terminal review passes only when:
+
+- all six reviewers return `PASS`;
+- every atomic spec requirement has implementation and validation evidence;
+- no reviewer reports missing logic, extra logic, missing files, extra product files, fluff, overengineering or unsupported behaviour;
+- global validation still passes;
+- the repository revision/tree hash is unchanged from the start of terminal review.
+
+If any reviewer reports a finding, the orchestrator assigns stable finding IDs, resumes the normal workstream loop and does not declare `[DONE]`.
 
 ## Early exit
 
-Early exit is allowed only for a genuine `[BLOCKED]` state, including:
-
-- a safety/authority issue would place too much responsibility on the AI
-- required access/tooling/data is unavailable
-- the human instruction conflicts with the spec and cannot be resolved safely
-- an agent/subagent cannot be started or restarted and the work genuinely needs it
-
-Early exit is never `[DONE]`.
-
-
-## Correct Exit
-
-A suite of 6 agnets needs to each independnatly and holistically confirm that a condition has been met. Procedure is sequential though to minimise wasted worker time.
+Early exit is `[BLOCKED]`, never `[DONE]`, and only for unavailable authority, tooling, data or a safe execution path that the current session cannot resolve.

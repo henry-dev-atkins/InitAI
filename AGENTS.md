@@ -1,52 +1,43 @@
 # AGENTS.md
 
-The project spec is `AI_SPACE/SPEC.md` when present.
+The project authority is `AI_SPACE/SPEC.md` when present.
 
 If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it supplies concrete project intent and acceptance criteria. Otherwise report `[BLOCKED]`; do not invent project intent.
 
-# Rules
+# Global rules
+
 - No sycophancy.
-- No secrets in code.
-- No secrets in logs, configs, handovers or artefacts.
+- No secrets in code, logs, configs, handovers or artefacts.
 - No spec rewriting unless `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` is present.
-- SPEC misalignment must be IMMEDIATELY raised with maximum verbosity and significance.
-    - If a human/prompt drifts from the spec, highlight it and clarify whether this was intentional. Humans make mistakes, but also change their mind: find out which.
-    - Raising misalignment is not the same as finishing the task. After raising it, either continue once alignment is clear or report `[BLOCKED]`.
-- Any operations outside the main folder/repo require detailed reports on why they are needed.
-- Never delete any file/folder: all file/folder removals are moves to an `archive/` folder.
-- No invented files, paths, modules or commands: check first, then reference.
-- No silent fallback behaviour.
+- Raise spec/prompt conflict immediately and explicitly. Do not silently choose one authority over the other.
+- Do not edit outside the working repository unless `[EXTERNAL_EDIT_ALLOWED]` is present.
+- Do not destructively delete anything. Move removals to the `archive/`.
+- Check files, paths, modules and commands before referencing them.
+- No silent fallback behaviour, silent errors, unsupported behaviour or GPU-to-CPU fallback.
 - No placeholder content as a deliverable. Template field markers are allowed only inside templates.
 - No silent GPU to CPU fallback.
-- No ad hoc output sprawl across the repo root.
-- No silent errors or quietly unsupported behaviour.
-- UK English spelling, not US English.
+- No ad hoc output sprawl across the repository root.
+- UK English spelling.
+- Every new dependency requires justification in an accepted plan.
+- No documentation-only substitute for implementation, proof, test or validation unless documentation-only work was explicitly requested.
+- No gap taxonomy as a deliverable unless diagnosis/taxonomy was explicitly requested.
 - No editing anything outside the working repo/folder unless given the `[EXTERNAL_EDIT_ALLOWED]` flag; even then: NO DELETIONS EVER.
-- Every new dependency needs justification.
-- No documentation-only substitutions for implementation, proof, test or validation work unless documentation-only work was explicitly requested.
-- No gap classification or issue taxonomy as a deliverable unless the human explicitly requested diagnosis/taxonomy only.
-- Forbidden terminology and phrasing in reports, plans, invented architecture names or task outcomes:
-    - Canonic (ise/al)
-    - Canonical
-    - Version X
-    - Word soup. Use direct language instead.
-    - Placeholder
-    - Honest
-    - Documented gap
-    - Classified gap
-    - Proof consolidation gap
-- The AI workspace is `AI_SPACE/`, with:
-    - `sessions/` for session boards, plans, task packets, locks and result packets.
-    - `handovers/` for reproducible end-of-session context dumps.
-    - `AI_LEARNINGS_LOG.md` for lessons, mistakes and vital information discovered through work.
-    - `TODO.md` for concrete unresolved tasks, aligned with `sessions/` and current progress.
-    - `archive/` for old/noisy material that must not be deleted.
-- If `agentic`, `[agentic]`, `[TEAM]` or `[ORCHESTRATOR]` is requested, use `$orchestrator` and subagents for independent exploration, review, diagnosis, implementation and merge review.
-- All code must run from inside the sandbox/repo, no external runs.
+- No legacy compatibility, alternate-track behaviour, band-aids or local-only workarounds unless the spec explicitly requires them.
+- All code and validation must run from inside the repository sandbox.
+
+The AI workspace is `AI_SPACE/`:
+
+- `sessions/`: finding registers, workstream registers, plans, reviews, task packets, locks and results.
+- `handovers/`: reproducible end-of-session context.
+- `AI_LEARNINGS_LOG.md`: durable lessons and mistakes.
+- `TODO.md`: concrete unresolved work aligned with the current finding/workstream registers.
+- `archive/`: old or noisy material retained under the no-destructive-delete rule.
+
+Workflow artefacts under `AI_SPACE/` are control metadata, not product capability, unless the spec explicitly says otherwise.
 
 # Action routing
 
-Capitalised bracket keywords are the human-facing action language. Keep them visible in prompts, plans, reports and skill headings. Use lowercase hyphenated Codex skill names and matching folder names under `.agents/skills/`.
+Capitalised bracket keywords are human-facing actions. Lowercase hyphenated names refer to folders under `.agents/skills/`.
 
 - `[SESSION.START]` -> `$session-start`
 - `[SESSION.CLEAN]` -> `$session-clean`
@@ -59,78 +50,111 @@ Capitalised bracket keywords are the human-facing action language. Keep them vis
 - `[MONITOR]` -> `$monitor`
 - `[DIAGNOSE]` -> `$diagnose`
 - `[SPEC.REVIEW]` or `[SPEC_REVIEW]` -> `$spec-review`
+- `[SPEC.IMPLEMENT]` or `[SPEC_IMPLEMENT]` -> `$spec-implement`
 - `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` -> `$spec-edit`
-- `[WORK_TYPE]` or `[WORKFLOW_ONTOLOGY]` -> `$work-type`
+- `[WORK_TYPE]` or `[WORKFLOW_ONTOLOGY]` -> `$workflow-ontology`
 - `[WORKFLOW_STRUCTURE]` -> `$workflow-structure`
-- `[DONE]` / `[BLOCKED]` final reports -> `$final-report`
+- `[DONE]` / `[BLOCKED]` -> `$final-report`
 - `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` -> `$orchestrator`
 
-If a capitalised trigger is present and skill support is available, invoke the mapped `$skill-name`. If skill invocation is unavailable, apply the corresponding `.agents/skills/<skill-name>/SKILL.md` workflow directly.
+If skill invocation is unavailable, apply the corresponding `.agents/skills/<skill-name>/SKILL.md` directly.
 
-All `[PLAN]`, `[PLAN.REVIEW]`, `[PLAN.SUB]`, `[PLAN.TERMINAL_CONDITION]`, `[SPEC.REVIEW]` and `[ORCHESTRATOR]` workflows must apply `[WORK_TYPE]`.
+# Orchestrator authority
 
-# Team / orchestrator operating model
+When `$orchestrator` is active, `.agents/skills/orchestrator/SKILL.md` is the single process authority. Other skills supply bounded planning, review, diagnosis, maintenance and validation criteria; they do not add phases, control sequencing or redefine completion.
 
-When `$orchestrator` is active:
+The core loop is:
 
-- The main thread is the control plane. It MUST NOT implement or edit project code while `$orchestrator` is active.
-- The main thread may write only orchestration artefacts under `AI_SPACE/`, run inspection/validation, review diffs, and create one final local commit after review.
-- If a write-capable agent cannot start or write, report `[BLOCKED]`; the main thread must not take over implementation.
-- The main thread owns direction, context, plan quality, dependency graph, file ownership, integration order, validation gates and final reporting.
-- Domain agents own bounded work packages.
-- Subagents are used for read-only exploration, diagnosis, review and validation critique by default.
-- Nested write-capable subagents require explicit task-packet authority.
-- One orchestrator session uses one current checkout. Do not create or switch branches/worktrees inside the subagent workflow.
-- One durable write plan has one owner agent and an exact file scope.
-- Two write-capable agents must not own the same files unless the orchestrator serialises the work.
-- Workers do not stage or commit; the orchestrator may create one final local commit after all gates pass.
-- Worker `[DONE]` means the worker packet is complete, not that the whole session is complete.
-- Session `[DONE]` requires orchestrator review, accepted integration state in the current checkout, validation and final `[SPEC.REVIEW]`.
-- Implementation failure is always planning failure. A durable implementation plan gets exactly one implementation attempt. If an implementation agent returns anything other than clean `[DONE]`, or post-implementation review finds a blocking issue, do not create a repair iteration for that plan/package/lock. Stop further source-writing for that package, run `[DIAGNOSE]` on why the plan allowed the failure, record the learning, and write a replacement plan only after the diagnosis. The replacement plan must name the failed assumptions, missing invariants and missing validation gates. A tooling/access failure before any source edit may be retried once with the same packet; any behavioural, spec, validation, scope or review failure invalidates the plan.
-- No `repair`, `repairN`, `retry`, `patch-up` or incremental correction packets are allowed as implementation loop iterations for a failed durable plan.
-- Integrate and review write packages serially when their file scopes overlap, even if independent work happened in parallel.
-- Schedule GPU-heavy runs serially unless the human explicitly authorises parallel GPU contention.
+1. Agentic repository-wide spec review produces findings.
+2. The orchestrator collates findings into one register and independent workstreams.
+3. Planning agents produce one plan per ready workstream.
+4. Plan-review agents accept or reject each plan; rejected plans are revised before implementation.
+5. Implementation agents execute accepted, independent workstreams.
+6. Review agents accept implementations or return concrete findings.
+7. The orchestrator updates the registers and repeats until the terminal condition passes.
 
-Required orchestrator artefacts live under:
+Operating boundaries:
+
+- The main thread is the control plane and does not implement project source code while orchestration is active.
+- The main thread may inspect, validate, write orchestration artefacts under `AI_SPACE/`, review diffs and create the final local commit.
+- Only the orchestrator changes finding/workstream state, chooses work, assigns agents, manages locks, commits and declares session completion.
+- Workers handle one task packet and report facts. They do not plan the portfolio, start unapproved write agents, select future work or invoke the terminal condition.
+- Use up to six agents concurrently when that many ready, independent tasks exist. Never split, duplicate or invent work to fill capacity.
+- Parallelise ready independent work. Serialise dependencies, overlapping writes, contract conflicts, integration gates and GPU-heavy runs.
+- One session uses one current checkout. Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
+- A write packet requires one owner, exact write scope, affected contracts, acceptance checks and an accepted plan.
+- A rejected plan returns to planning. A rejected implementation creates or reopens findings and returns through normal workstream planning; the main thread does not patch it directly.
+- A tooling/access failure before source edits may retry once. `[BLOCKED]` is reserved for unavailable authority, tooling, data or safe execution paths—not merely unfinished implementable work.
+- Default commit policy: workers never commit; the orchestrator creates one final local commit after terminal review unless the human explicitly requests a different integration policy.
+
+Required session structure:
 
 ```text
 AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/
   session_board.md
+  finding_register.md
+  workstream_register.md
   locks.md
-  plan__P001__short-name/
+  workstream__WS001__short-name/
     plan.md
+    plan_review.md
     task_packet.md
     result_packet.md
+    implementation_review.md
 ```
 
-# Types of work
+# Work types
 
-Every plan must declare exactly one Primary Work Type. A plan may contain supporting work only when it is explicitly labelled as a subplan, temporary diagnostic step, cleanup step or validation step. If work has more than one durable purpose, split it into separate plans.
+Every workstream and plan declares one Primary Work Type. Required tests, config updates and behaviour documentation may remain supporting changes inside the same coherent workstream; split only when there are genuinely independent durable outcomes.
 
-Primary Work Types:
+- `CAPABILITY.RESEARCH`: spec-backed durable research behaviour.
+- `CAPABILITY.PRODUCT`: spec-backed durable product/user behaviour.
+- `EVIDENCE.VALIDATION`: durable reusable validation evidence.
+- `FIX.ALIGNMENT`: durable root-cause correction to match the spec.
+- `DEPENDENCY.LOCAL`: portable local/repository infrastructure required by implementation.
+- `TEMPORARY.DIAGNOSTIC`: scratch probing/logging; never committed.
+- `ENVIRONMENT.ADAPTATION`: isolated local/sandbox/platform adaptation.
+- `WORKAROUND.QUARANTINED`: explicit temporary workaround; never capability progress.
+- `FLUFF.DISPOSABLE`: one-off plots, dumps, screenshots or exploratory artefacts.
+- `DOCS.MEMORY`: TODOs, learnings, handovers and durable documentation.
+- `AGENT.WORKFLOW`: agent instructions, skills, rules and templates.
+- `CLEANUP.HYGIENE`: organisation without behaviour change.
+- `SPEC.EDIT`: spec change requiring explicit spec-edit authority.
 
-- `CAPABILITY.RESEARCH`: spec-backed durable research behaviour. Commit required. Counts as capability progress.
-- `CAPABILITY.PRODUCT`: spec-backed durable product/user behaviour. Commit required. Counts as capability progress.
-- `EVIDENCE.VALIDATION`: durable validation evidence. Commit reusable/lightweight evidence only. Does not itself count as capability progress.
-- `FIX.ALIGNMENT`: durable root-cause correction to match spec or prompt. Commit required. Counts as capability progress only when it restores/unlocks a capability.
-- `DEPENDENCY.LOCAL`: portable local/repo infrastructure needed for work. Commit only if reusable and justified. Does not count as capability progress.
-- `TEMPORARY.DIAGNOSTIC`: scratch debugging/probing/logging. Do not commit. Must be removed or archived before `[DONE]`.
-- `ENVIRONMENT.ADAPTATION`: isolated local/sandbox/platform adaptation. Do not commit unless explicitly approved. Must not alter core behaviour.
-- `WORKAROUND.QUARANTINED`: explicit workaround for a local/sandbox/platform constraint. Do not commit by default. Never use to claim capability progress.
-- `FLUFF.DISPOSABLE`: one-off plots, dumps, screenshots or exploratory artefacts. Do not commit. Archive or remove.
-- `DOCS.MEMORY`: docs, TODOs, learnings, handovers and project memory. Commit when useful/requested. Does not substitute for implementation.
-- `AGENT.WORKFLOW`: durable agent tooling/instructions such as `AGENTS.md`, `.agents/skills/`, `.codex/agents/`, `.codex/rules/` and prompt templates. Commit when useful/requested. Does not count as capability progress.
-- `CLEANUP.HYGIENE`: repo organisation without behaviour change. Commit if durable.
-- `SPEC.EDIT`: spec change. Requires `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]`. Commit with `SPEC_EDIT:`.
+Only `CAPABILITY.RESEARCH`, `CAPABILITY.PRODUCT` and qualifying `FIX.ALIGNMENT` work count as capability progress. Supporting work does not become capability progress merely because it is packaged with capability work.
 
-Work Type Rules:
+`TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` outputs must not survive terminal completion. Record Work Type in the workstream and plan; commit messages use the repository's normal prefix policy.
 
-- Only `CAPABILITY.RESEARCH` and `CAPABILITY.PRODUCT` count as capability progress.
-- A capability plan cannot close as `[DONE]` if its durable changes are only docs, cleanup, dependency work, agent workflow work, temporary diagnostics, environment adaptation, workaround or fluff.
-- `TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` work must not be committed.
-- `DEPENDENCY.LOCAL`, `DOCS.MEMORY`, `AGENT.WORKFLOW`, `CLEANUP.HYGIENE`, `EVIDENCE.VALIDATION` and `SPEC.EDIT` may be committed when durable and justified, but they do not count as capability progress.
-- If the agent cannot classify work into one Primary Work Type, split the work or report `[BLOCKED]` with the ambiguity.
-- Work Type must be present in every commit message. 
+# Planning and review requirements
+
+Every durable plan must contain:
+
+- workstream ID, source finding IDs and exact spec authority;
+- one Primary Work Type;
+- one coherent outcome;
+- owner agent;
+- exact write scope and off-limits scope;
+- contracts changed and consumed;
+- ordered implementation steps;
+- behavioural acceptance commands and evidence;
+- protected invariants and prohibited behaviour;
+- result-packet contract.
+
+Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` as bounded review lenses. These skills remain supporting reviewers; they do not create new workflow stages.
+
+# Guidance
+
+- Work top-down: major missing capabilities and incorrect core behaviour before minor cleanup.
+- Prefer the largest coherent step that safely converges on the spec.
+- Keep designs minimal and repository-fitting; avoid software sprawl, speculative abstractions and repeated wrapper layers.
+- Fail loudly and preserve useful diagnostic evidence.
+- Use real behavioural validation where practical; small checks are for diagnosis, not final proof.
+- Keep experiment behaviour config-driven.
+- Keep generated artefacts in intentional locations and large data/checkpoints out of commits unless repository policy requires them.
+- Use one GPU-heavy run at a time unless explicitly authorised otherwise.
+- Worker `[DONE]` means only that its packet completed. Session `[DONE]` requires the terminal condition.
+
+
 
 # Guide
 
@@ -181,11 +205,7 @@ Work Type Rules:
 - Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.
 - Implementation failure is always planning failure.
 
-# SPEC usage
 
-- Spec will have a walkthrough section with work stages/steps/milestones.
-- Spec doc is generally the guide to build the project, not its usage.
-- The usage comes later, and generally the spec is swapped out for an explicit implementation guide.
 
 # Learnings
 - Apply `[LEARN]` when you:
@@ -196,34 +216,3 @@ Work Type Rules:
         - "That was wrong",
         - "Next time I should",
         - "Instead I should have",
-
-
-
-# Plans
-
-- Planning should be done considering all layers of the project. Get as much documentation and code into context as possible to minimise errors.
-- Every plan must include a `Work Classification` block from `$work-type`.
-- Every durable write plan must include owner, exact file scope, validation gate and integration order.
-- Every durable write plan must include a `Failure Means Planning Failure` section naming what would prove the plan was under-specified, which invariants and "must not" behaviours are protected, which validation gates catch them, and the stop condition that prevents an implementation repair loop.
-- All plans must consider consequences, for example:
-    - If a variable changes type, where is it used?
-    - Do we still assume the old type anywhere?
-- All plans require explicit, agentic plan reviews for:
-    - Overengineering
-    - Minimalism - the smallest coherent repo change that directly advances the requested outcome
-    - Technical debt
-    - Redundant iterations
-    - More elegant implementation missed
-    - True implementation of the intended framework
-    - Regression to non-correct implementation
-    - Gaps, ambiguity or contradictions
-    - Work Type classification quality
-    - File ownership and orchestration safety
-- Plans guide execution; plans are not deliverables unless the human explicitly requested plan-only output.
-- Plan reviews must feed back into implementation. Do not stop at "plan reviewed".
-- Plans must state assumptions, key tradeoffs, unresolved risks and follow-up work.
-- Final reports may state follow-up work only after `[DONE]`, `[BLOCKED]`, or human-approved deferral. Follow-up work is not closure.
-- All plans should end in a short, human-facing executive summary of the work. The summary is not a terminal condition.
-- Every plan must include a section headed `AM I GOING IN CIRCLES?` with a direct yes/no answer, the reason, and the stop/pivot condition if the work starts repeating without new evidence.
-- Plans are reviewed bottom up by humans scrolling up through the terminal, not top down.
-- If a plan implementation will/does end with "X helped only a little, but Y is still the real blocker", it is a planning/diagnosis failure: stop, re-run `[DIAGNOSE]`, and re-plan before implementing more.

@@ -1,37 +1,27 @@
 ---
 name: spec-implement
-description: Use when the prompt contains [SPEC.IMPLEMENT] or [SPEC_IMPLEMENT], or when goal mode requires you to implement a spec.
+description: Use when the prompt contains [SPEC.IMPLEMENT] or [SPEC_IMPLEMENT], or when goal mode requires implementation of AI_SPACE/SPEC.md through the orchestrator loop.
 ---
 
 # [SPEC.IMPLEMENT] / [SPEC_IMPLEMENT]
 
+Implement the spec through `$orchestrator`.
 
-The `[TERMINAL_CONDITION]` is a perfect `[SPEC.REVIEW]` from 6 parallel agents.
+This skill does not define a second workflow. The authoritative loop is `.agents/skills/orchestrator/SKILL.md`:
 
-Do not exit, return to the user, or stop unless the terminal condition is met.
+1. agentic whole-repository `[SPEC.REVIEW]`;
+2. finding collation;
+3. independent workstreams;
+4. one plan per workstream;
+5. agentic plan review and replan until accepted;
+6. agentic implementation of accepted independent workstreams;
+7. agentic implementation review;
+8. update registers and repeat;
+9. terminal review on a frozen repository revision.
 
-## The Loop
+Use up to six agents per phase when that many ready independent tasks exist. 
+Do not invent, duplicate or split work merely to fill capacity, but most spec review results will generate at least 6 workstreams while the repo is not perfectly aligned.
 
-Iterate through stages:
-0. `[SPEC.REVIEW]` whole repo.
-1. `[PLAN]`
-    1. Apply `[WORK_TYPE]`.
-    2. Write a plan.
-    3. Run `[PLAN.REVIEW]`.
-2. Implement through the assigned write-capable agent/s.
-3. Test/validate.
-4. Review:
-    1. `[SPEC.REVIEW]` implementation diff
-    2. Defensibility
-    3. Plan completeness
-    4. Work Type/commit policy
-    5. Git commit implementation
-5. Either `[DONE]` is justified, or return to step 1 and repeat.
+Worker `[DONE]` and `[BLOCKED]` are packet-local. Only the orchestrator may declare the spec implementation complete.
 
-- Use agents for planning, plan review, spec review, defensibility review and plan completeness review when agentic support is available.
-- Loops contain one cycle of 0->5. 
-- Commits shoudl be made at least once per loop or per implemented plan depending on the dependence between the implementation streams.
-- If a loop gets stuck, you have recovery options to carefully choose from by listing pros/cons of each and deciding:
-  - Store a broken implementation as an intermediate fix for the next loop's to fix through its own 0->5 cycle. (Small problems).
-  - Revert these changes if the other work in the cycle does not depend on it or if it is actually wrong and will need. (Big problems).
-- Agent/worker output (`[DONE]`/`[BLOCKED]`, etc) is never the output for the spec-implementation, it is local to the agent.
+Do not exit as `[DONE]` until `$terminal-condition` passes. A genuine unavailable authority/tooling/data/safety path may produce `[BLOCKED]`.

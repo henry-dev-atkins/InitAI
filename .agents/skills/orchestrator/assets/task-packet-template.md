@@ -2,46 +2,54 @@
 
 ## Identity
 
+- Workstream ID: WSXXX
 - Plan ID: PXXX
 - Agent: {agent-name}
 - Parent session: session__YYYYMMDD_HHMMSS
 - Primary Work Type: `{WORK_TYPE}`
-- Checkout: current parent-session checkout
+- Source findings: FXXX
+- Accepted plan: `AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/plan.md`
 
-## Mission
+## Mission and authority
 
-{smallest coherent spec-aligned change}
+{one coherent spec-aligned outcome}
 
-## Authority
-
-- Spec/prompt authority: {exact source}
-- Parent plan: `AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/plan__PXXX__short-name/plan.md`
+- Spec authority: {exact section/requirement}
+- Required resolution evidence: {evidence}
 
 ## Scope
 
-Files allowed:
+Write scope:
 - `{path}`
 
-Files off-limits:
-- `AI_SPACE/SPEC.md` unless a spec-edit flag is present
-- every file not listed above
+Stable read assumptions:
+- `{path-or-none}`
+
+Contracts changed:
+- `{interface/schema/config/output-or-none}`
+
+Contracts consumed:
+- `{interface/schema/config/output-or-none}`
+
+Off-limits:
+- `AI_SPACE/SPEC.md` unless explicit spec-edit authority is present
+- every file not listed in write scope
 
 ## Execution policy
 
 - Work in the current checkout.
-- Edit only files in scope.
-- Do not create/switch branches or worktrees.
-- Do not merge, rebase, stage or commit.
-- Do not ask for repeated per-command permissions. If the workspace is not writable, stop and return `PERMISSION_BLOCKED` with the failed operation.
-- No broad rewrites, legacy support, workarounds or temporary diagnostics left behind.
-- You are not a process manager. Report facts for this packet only. Do not suggest next steps, choose future work, or include `next_step` / `recommended_next_action` fields.
+- Implement the accepted plan only.
+- Do not broaden the workstream or choose future work.
+- Do not create/switch branches or worktrees, merge, rebase, stage or commit.
+- Do not ask for repeated command permissions. Use allowed repo-local tools.
+- On pre-edit write/tool failure, report `PERMISSION_BLOCKED` with the exact failed operation.
+- Leave no temporary diagnostics, fluff, workarounds or unrelated changes.
+- Do not include `next_step` or recommendation fields.
 
 ## Validation gate
 
-Run:
-- `{repo-standard-check}`
-- `{real-run-command-if-applicable}`
+- `{command}` proves `{requirement/behaviour}`
 
 ## Return contract
 
-Return changed files, commands run, results, unresolved issues, temporary files created/archived and a concise `[DONE]` or `[BLOCKED]` result for this packet. Do not include process-direction text.
+Return the result-packet schema with changed files, commands, exact results, validation evidence, scope deviations, unexpected discoveries and packet-local status.

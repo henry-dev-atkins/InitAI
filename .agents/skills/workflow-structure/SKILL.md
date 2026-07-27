@@ -1,28 +1,20 @@
 ---
 name: workflow-structure
-description: Use when the prompt contains [WORKFLOW_STRUCTURE], or when enforcing the AI_SPACE session, plan, subplan, handover, learning, TODO, task packet, result packet and lock structure.
+description: Use when the prompt contains [WORKFLOW_STRUCTURE], or when enforcing AI_SPACE session, finding, workstream, plan, review, task packet, result, lock and handover structure.
 ---
 
 # [WORKFLOW_STRUCTURE]
 
-Work in sessions. Each session contains plans. Plans may contain subplans. Sessions are joined together by handovers.
+The orchestrator owns one session with durable finding and workstream registers. Workstreams contain plans, task packets, results and reviews. Sessions are joined by handovers.
 
-All plans, subplans and handovers must follow `[WORK_TYPE]`.
+All workstreams and plans apply `[WORK_TYPE]` through `$workflow-ontology`.
 
 ## Naming
 
-Use timestamps in this form:
-
 ```text
 YYYYMMDD_HHMMSS
-```
-
-Use folder names:
-
-```text
 session__YYYYMMDD_HHMMSS
-plan__P001__short-name
-subplan__P001A__short-name
+workstream__WS001__short-name
 handover__YYYYMMDD_HHMMSS.md
 ```
 
@@ -36,37 +28,33 @@ AI_SPACE/
   sessions/
     session__YYYYMMDD_HHMMSS/
       session_board.md
+      finding_register.md
+      workstream_register.md
       locks.md
-      plan__P001__short-name/
+      workstream__WS001__short-name/
         plan.md
+        plan_review.md
         task_packet.md
         result_packet.md
-        subplan__P001A__short-name/
-          plan.md
-          task_packet.md
-          result_packet.md
+        implementation_review.md
   handovers/
     handover__YYYYMMDD_HHMMSS.md
   archive/
 ```
 
-## Orchestrated sessions
+## Ownership
 
-`$orchestrator` owns:
+The orchestrator owns:
 
-- `session_board.md`
-- `locks.md`
-- plan packet creation
-- merge order
-- session-level final report
+- session board;
+- finding/workstream registers and state transitions;
+- locks;
+- plan/task packet recording;
+- agent assignment and integration order;
+- final report and commit.
 
-Worker/domain agents own:
+Review/planning agents return bounded reports. Implementation agents own only assigned source edits and their result packet. Workers do not commit.
 
-- assigned plan implementation
-- assigned `result_packet.md`
-- validation evidence inside approved output locations
-- edits only their assigned files in the current checkout; workers do not commit
+## Locks
 
-## File locks
-
-Use `locks.md` to state write ownership before agents start. Read-only agents may inspect any file. Write-capable agents may edit only their assigned scope.
+`locks.md` records write scope, stable read assumptions, changed contracts and consumed contracts before implementation starts. Read-only agents may inspect any file. Write agents may edit only assigned scope.

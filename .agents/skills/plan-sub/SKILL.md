@@ -1,18 +1,19 @@
 ---
 name: plan-sub
-description: Use when the prompt contains [PLAN.SUB] or [SUBPLAN], or when a plan needs a temporary aside/subplan that returns to the parent plan after completion.
+description: Use when the prompt contains [PLAN.SUB] or [SUBPLAN], or when an accepted workstream plan needs a bounded supporting subplan.
 ---
 
 # [PLAN.SUB] / [SUBPLAN]
 
-A subplan is a bounded temporary aside from a parent plan. Name the parent `[PLAN_A]` and the subplan `[PLAN_B]`.
+A subplan is a bounded supporting component of one parent workstream. It does not create a separate workflow or bypass plan review.
 
 Rules:
 
-- The agent must return to `[PLAN_A]` after `[PLAN_B]` completion.
-- Every subplan still needs exactly one Primary Work Type.
-- If the subplan has a different durable purpose, record it as a separate plan package.
-- If the subplan is temporary diagnostic work, it must not be committed and must be removed/archived before parent `[DONE]`.
-- In orchestrated work, a subplan may get its own owner agent only if the orchestrator updates locks and the session board.
+- Name the parent workstream and plan.
+- Keep the parent's Primary Work Type unless the subplan is temporary diagnostic/support work explicitly labelled as such.
+- If the work has an independent durable outcome, the orchestrator must create a separate workstream instead.
+- Temporary diagnostics must not be committed and must be removed/archived before terminal completion.
+- A separate owner requires orchestrator-approved locks, dependencies and contract scope.
+- Completion returns to the parent workstream; only the orchestrator changes workstream state.
 
-Store subplans inside the parent plan folder according to `$workflow-structure`.
+Store subplan artefacts inside the parent `workstream__WSXXX__short-name/` folder according to `$workflow-structure`.

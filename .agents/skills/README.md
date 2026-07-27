@@ -1,6 +1,8 @@
 # Active Skills
 
-These active skills are discoverable under `.agents/skills/`.
+These skills are discoverable under `.agents/skills/`.
+
+The workflow controller is `orchestrator`. Other skills are bounded actions or review lenses and do not redefine orchestration sequence.
 
 - `diagnose`
 - `done`
@@ -18,6 +20,7 @@ These active skills are discoverable under `.agents/skills/`.
 - `session-end`
 - `session-start`
 - `spec-edit`
+- `spec-implement`
 - `spec-review`
 - `terminal-condition`
 - `maintain-declutter`
@@ -25,5 +28,6 @@ These active skills are discoverable under `.agents/skills/`.
 - `maintain-elegance`
 - `maintain-review`
 - `maintain-techdebt`
+- `maintain-terminology`
 - `workflow-ontology`
 - `workflow-structure`

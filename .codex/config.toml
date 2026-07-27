@@ -1,12 +1,10 @@
-# Autonomous inside the repository, blocked outside it.
-default_permissions = "project-edit"
+# Autonomous inside the repository, blocked from network access.
+sandbox_mode = "workspace-write"
 approval_policy = "never"
 
-[permissions.project-edit.filesystem]
-":minimal" = "read"
+[sandbox_workspace_write]
+network_access = false
 
-[permissions.project-edit.filesystem.":workspace_roots"]
-"." = "write"
-
-[permissions.project-edit.network]
-enabled = false
+[agents]
+enabled = true
+max_concurrent_threads_per_session = 6

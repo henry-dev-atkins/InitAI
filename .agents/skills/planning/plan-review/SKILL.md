@@ -21,7 +21,9 @@ Review one submitted workstream plan. Return evidence for `ACCEPT`, `REJECT` or 
 - implementation-order logic;
 - behavioural validation strength;
 - result-packet completeness;
-- overengineering, technical debt and repository fit.
+- overengineering, technical debt and repository fit;
+- whether `Am I going in Circles?` honestly identifies repeated or reactive work;
+- whether `Is there a more elegant way of doing this?` considers a simpler complete repository-fitting route.
 
 Use retained supporting lenses when relevant:
 
@@ -47,7 +49,8 @@ They inform this single plan-review verdict; they do not create additional workf
 - temporary/workaround/fluff output may survive;
 - capability progress is claimed for support-only work;
 - a simpler repository-fitting solution is clearly available and unaddressed;
-- it relies on an assumed later repair pass.
+- it relies on an assumed later repair pass;
+- either required reflection section is missing, superficial or contradicted by the plan.
 
 `BLOCKED` is only for missing authority, tooling, data or a safe execution path—not ordinary plan defects.
 

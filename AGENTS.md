@@ -11,7 +11,7 @@ If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it sup
 - No spec rewriting unless `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` is present.
 - Raise spec/prompt conflict immediately and explicitly. Do not silently choose one authority over the other.
 - Do not edit outside the working repository unless `[EXTERNAL_EDIT_ALLOWED]` is present.
-- Do not destructively delete anything. Move removals to the `archive/`.
+- Do not destructively delete anything. Move removals to `archive/` so they leave the active tree but remain recoverable.
 - Check files, paths, modules and commands before referencing them.
 - No silent fallback behaviour, silent errors, unsupported behaviour or GPU-to-CPU fallback.
 - No placeholder content as a deliverable. Template field markers are allowed only inside templates.
@@ -21,7 +21,7 @@ If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it sup
 - Every new dependency requires justification in an accepted plan.
 - No documentation-only substitute for implementation, proof, test or validation unless documentation-only work was explicitly requested.
 - No gap taxonomy as a deliverable unless diagnosis/taxonomy was explicitly requested.
-- No editing anything outside the working repo/folder unless given the `[EXTERNAL_EDIT_ALLOWED]` flag; even then: NO DELETIONS EVER.
+- No editing anything outside the working repo/folder unless given the `[EXTERNAL_EDIT_ALLOWED]` flag; even then: NO DESTRUCTIVE DELETIONS EVER.
 - No legacy compatibility, alternate-track behaviour, band-aids or local-only workarounds unless the spec explicitly requires them.
 - All code and validation must run from inside the repository sandbox.
 
@@ -31,9 +31,9 @@ The AI workspace is `AI_SPACE/`:
 - `handovers/`: reproducible end-of-session context.
 - `AI_LEARNINGS_LOG.md`: durable lessons and mistakes.
 - `TODO.md`: concrete unresolved work aligned with the current finding/workstream registers.
-- `archive/`: old or noisy material retained under the no-destructive-delete rule.
+- `archive/`: old, superseded or noisy material moved out of active project paths but retained for manual recovery.
 
-Workflow artefacts under `AI_SPACE/` are control metadata, not product capability, unless the spec explicitly says otherwise.
+Workflow artefacts under `AI_SPACE/` are control metadata, not product capability, unless the spec explicitly says otherwise. `archive/` is historical recovery storage: archived material is outside the active product tree and must not be imported, executed, configured or counted as current implementation.
 
 # Action routing
 
@@ -57,7 +57,7 @@ Capitalised bracket keywords are human-facing actions. Lowercase hyphenated name
 - `[DONE]` / `[BLOCKED]` -> `$final-report`
 - `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` -> `$orchestrator`
 
-If skill invocation is unavailable, apply the corresponding `.agents/skills/<skill-name>/SKILL.md` directly.
+If skill invocation is unavailable, locate the matching `SKILL.md` recursively under `.agents/skills/` using its frontmatter `name`, then apply it directly.
 
 # Orchestrator authority
 
@@ -123,7 +123,7 @@ Every workstream and plan declares one Primary Work Type. Required tests, config
 
 Only `CAPABILITY.RESEARCH`, `CAPABILITY.PRODUCT` and qualifying `FIX.ALIGNMENT` work count as capability progress. Supporting work does not become capability progress merely because it is packaged with capability work.
 
-`TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` outputs must not survive terminal completion. Record Work Type in the workstream and plan; commit messages use the repository's normal prefix policy.
+`TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` outputs must not remain in active project paths at terminal completion. Move anything retained for recovery to `archive/`. Record Work Type in the workstream and plan; commit messages use the repository's normal prefix policy.
 
 # Planning and review requirements
 
@@ -138,7 +138,9 @@ Every durable plan must contain:
 - ordered implementation steps;
 - behavioural acceptance commands and evidence;
 - protected invariants and prohibited behaviour;
-- result-packet contract.
+- result-packet contract;
+- an explicit `Am I going in Circles?` self-check;
+- an explicit `Is there a more elegant way of doing this?` self-check.
 
 Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` as bounded review lenses. These skills remain supporting reviewers; they do not create new workflow stages.
 
@@ -195,11 +197,11 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
     - No named shortfalls as deliverables.
     - No laziness.
     - No cosmetic completion.
-    - A failing command/check after implementation proves the plan failed; it is not a source repair target.
+    - A failed post-implementation check invalidates acceptance. It is not permission for an ad hoc patch; return the evidence through implementation review and replanning.
 - When inside goal mode, a worker `[DONE]` means a small subtask is done, not the whole goal, so keep iterating.
 - If an agent cannot be started or cannot write in the current checkout, terminate/restart it if possible; otherwise report `[BLOCKED]`. The orchestrator must not implement as a fallback.
 - Do not let work loops become too reactive to small failures. Challenge the direction when iterating through many small changes.
-- All plans, prompts, heuristics, rules of thumb and things of note must be documented/logged/tracked in `AI_SPACE/` or the repo itself.
+- Record durable decisions, accepted plans, findings, validation evidence, unresolved work and reusable lessons. Do not log every prompt, transient thought or routine action.
 - Do not create small helper methods that are referenced only once.
 - Avoid spaghettification, tech debt and code explosions. Keep repo changes focused on core spec capabilities; surrounding software must earn its place by directly enabling, simplifying or validating those capabilities.
 - Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.

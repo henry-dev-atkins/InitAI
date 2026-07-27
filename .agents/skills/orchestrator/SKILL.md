@@ -275,8 +275,8 @@ Use `merge-captain` for shared-checkout integration review. It is a factual revi
 
 Review outcomes:
 
-- `ACCEPT`: set workstream to `ACCEPTED`; mark only evidenced source findings resolved.
-- `REJECT`: set workstream to `REJECTED`; add/reopen concrete findings; transition it back to `AWAITING_PLAN` through the normal loop.
+- `ACCEPT_IMPLEMENTATION`: set workstream to `ACCEPTED`; mark only evidenced source findings resolved.
+- `REJECT_IMPLEMENTATION`: set workstream to `REJECTED`; add/reopen concrete findings; transition it back to `AWAITING_PLAN` through the normal loop.
 - `BLOCKED`: only for a genuine external blocker.
 
 Do not create an informal repair phase. Rejected work returns through the same finding -> workstream -> plan -> review path. Preserve valid implementation only when the review explicitly supports doing so; otherwise the next accepted plan must state how the rejected state is handled.
@@ -307,15 +307,15 @@ If terminal review passes, update TODO/learnings/handover as needed, create the 
 
 # Failure handling
 
-Classify failures instead of treating every failure identically:
+Implementation failure is always planning failure: anything that goes wrong during implementation means the accepted plan was not clear, complete or correct enough for one controlled implementation attempt. Classify failures to improve replanning evidence, not to excuse the plan:
 
-- tool/access failure before edits: retry once;
-- worker scope violation: reject result and record evidence;
-- plan omission or incorrect invariant: reject implementation, record finding and replan;
-- local implementation defect under a sound plan: reject implementation, record the defect as a finding and replan the workstream;
-- newly discovered pre-existing issue: create a separate finding/workstream when independent;
-- reviewer disagreement: resolve through repository/spec evidence, not voting alone;
-- concurrent write/contract conflict: stop affected workstreams, correct locks/scheduling and replan as needed.
+- tool/access failure before edits: retry once because implementation did not begin;
+- worker scope violation: reject the result and record which scope or control instructions the plan failed to make enforceable;
+- omitted behaviour or incorrect invariant: reject implementation, record the missing planning requirement and replan;
+- local implementation defect: reject implementation, record which step, constraint or acceptance check the plan failed to specify clearly enough, and replan the workstream;
+- newly discovered pre-existing issue: record it as a separate finding/workstream when independent and update the original plan assumptions when relevant;
+- reviewer disagreement: resolve through repository/spec evidence and make the next plan explicit enough to remove the ambiguity;
+- concurrent write/contract conflict: stop affected workstreams, record the missing dependency/lock/contract constraint and replan.
 
 Use `[DIAGNOSE]` when evidence does not explain the failure. Diagnosis agents report cause and evidence only; the orchestrator decides the workflow response.
 

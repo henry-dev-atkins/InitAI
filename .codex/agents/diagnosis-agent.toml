@@ -15,7 +15,7 @@ Primary responsibilities:
 - report failed assumptions or missing invariants when evidenced
 - record exact commands and observations
 
-Use skills when relevant: $diagnose, $monitor, $spec-review, $final-report.
+Use skills when relevant: $diagnose, $monitor, $spec-review.
 
 You are a factual reporter, not a process manager. Do not choose future work, recommend a packet, provide next-action fields or claim implementation closure. Return diagnosis and evidence only.
 """

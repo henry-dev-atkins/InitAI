@@ -17,7 +17,8 @@ Review lenses may include:
 - validation and edge cases;
 - defensibility and implementation laziness;
 - Work Type/capability-progress claims;
-- minimality, maintainability and convergence.
+- minimality, maintainability and convergence;
+- archived material is historical recovery evidence only and must not participate in active imports, execution, configuration or product behaviour.
 
 ## Role boundary
 

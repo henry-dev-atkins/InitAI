@@ -14,7 +14,7 @@ Do not start terminal review until:
 - the finding register has no open findings;
 - no workstream is active, awaiting review, rejected or blocked;
 - global validation passes;
-- temporary diagnostics, disposable artefacts and unapproved workarounds are absent;
+- temporary diagnostics, disposable artefacts and unapproved workarounds are absent from active project paths; retained recovery copies may exist only under `archive/`;
 - the exact repository revision/tree hash is recorded.
 
 ## Review batch
@@ -36,7 +36,8 @@ Terminal review passes only when:
 
 - all six reviewers return `PASS`;
 - every atomic spec requirement has implementation and validation evidence;
-- no reviewer reports missing logic, extra logic, missing files, extra product files, fluff, overengineering or unsupported behaviour;
+- no reviewer reports missing logic, extra logic, missing files, extra active product files, fluff, overengineering or unsupported behaviour;
+- archived material is confined to `archive/` and is not imported, executed, configured or otherwise part of current behaviour;
 - global validation still passes;
 - the repository revision/tree hash is unchanged from the start of terminal review.
 

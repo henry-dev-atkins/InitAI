@@ -9,6 +9,15 @@ Perform a non-mutating repo declutter audit. Inspect tracked and untracked files
 
 Do not move, delete, stage, commit, format, rewrite, or generate cleanup artefacts unless the user separately asks for that action after the report.
 
+## Orchestrator Review-Lens Mode
+
+When invoked inside `$orchestrator` plan review or implementation review:
+
+- return findings, repository evidence, materiality/severity and acceptance evidence only;
+- do not return commands, required-change instructions, repair guidance, follow-up actions, scheduling advice or next-step fields;
+- do not change finding/workstream state or issue the parent review verdict;
+- the parent `plan-review` or implementation reviewer owns the final verdict and the orchestrator owns all subsequent action.
+
 ## Scope
 
 - Work from inside the current repo.
@@ -25,7 +34,7 @@ Use exactly these labels for file decisions:
 
 - `COMMIT`: Durable repo change that appears intentional, scoped, and worth staging.
 - `KEEP_UNCOMMITTED`: Valid local or active work that should remain outside a commit for now.
-- `ARCHIVE_RECOMMENDED`: Old, noisy, superseded, or completed material that should be moved under `AI_SPACE/archive/` or an existing repo archive location if present.
+- `ARCHIVE_RECOMMENDED`: Old, noisy, superseded, or completed material that should be moved under `archive/` or an existing repo archive location if present.
 - `MOVE_RECOMMENDED`: Useful file in the wrong repo location; propose a specific repo location.
 - `IGNORE_OR_TEMP`: Cache, generated output, local-only state, or temporary diagnostic material that should not be committed.
 - `NEEDS_HUMAN_DECISION`: Ambiguous, risky, secret-adjacent, large, ownership-sensitive, or intent-unclear material.
@@ -53,8 +62,8 @@ Needs Human Decision
 Risks
 - item
 
-Next Commands
-- non-mutating inspection commands only, unless the user separately asks to execute moves
+Evidence Gaps
+- missing-evidence-or-none
 ```
 
 Use `Declutter Verdict: CLEAN` only when no commit, archive, move, or human-decision action is recommended. Use `ACTIONS_RECOMMENDED` when the repo is workable but has proposed actions. Use `BLOCKED` when evidence is insufficient or safety rules prevent a useful report.
@@ -67,4 +76,4 @@ Use `Declutter Verdict: CLEAN` only when no commit, archive, move, or human-deci
 - Do not silently ignore untracked files. Either classify them or explain why they are out of scope.
 - Do not use archive recommendations as a substitute for preserving useful project memory; recommend consolidation first when a file contains active TODOs, lessons, or handover value.
 - Do not classify files by filename alone when nearby context is cheap to inspect.
-- Do not run mutating commands. In `Next Commands`, include only non-mutating inspection commands unless the user separately requests execution of moves.
+- Do not run mutating commands. Report missing evidence rather than prescribing commands unless the user separately requests an execution plan.

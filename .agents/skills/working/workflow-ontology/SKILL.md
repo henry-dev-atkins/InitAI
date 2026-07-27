@@ -24,7 +24,7 @@ Every plan must declare:
 
 A plan has exactly one Primary Work Type.
 
-If a task mixes durable purposes, split it into separate plans or create `[SUBPLAN]` work.
+Split only genuinely independent durable outcomes. Required tests, config changes and behaviour documentation may remain supporting changes within the capability workstream.
 
 Do not let temporary diagnostics, local environment adaptations, docs, cleanup, or validation evidence masquerade as capability progress.
 

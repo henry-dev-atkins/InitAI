@@ -9,6 +9,15 @@ Review the repo change against the project goal: avoid spaghettification, tech d
 
 This is a repo/codebase review output. Do not edit files, move files, stage files, commit, or implement fixes unless a separate workflow explicitly asks for implementation.
 
+## Orchestrator Review-Lens Mode
+
+When invoked inside `$orchestrator` plan review or implementation review:
+
+- return findings, repository evidence, materiality/severity and acceptance evidence only;
+- do not return commands, required-change instructions, repair guidance, follow-up actions, scheduling advice or next-step fields;
+- do not change finding/workstream state or issue the parent review verdict;
+- the parent `plan-review` or implementation reviewer owns the final verdict and the orchestrator owns all subsequent action.
+
 ## Review Focus
 
 - Goal focus: does the change advance the spec-backed capability or explicit repo goal?
@@ -38,16 +47,10 @@ Use this short report structure:
 Verdict: PASS | NEEDS_REVISION | BLOCKED
 
 Findings
-- finding-or-none
+- severity: finding; repository evidence; capability impact; acceptance evidence
 
 Core Capability Impact
 - impact-or-none
-
-Required Changes
-- change-or-none
-
-Follow-up
-- follow-up-or-none
 ```
 
-Use `PASS` only when the repo change stays focused, preserves maintainability, and supports the claimed capability progress. Use `NEEDS_REVISION` when the work can continue after tightening. Use `BLOCKED` when the change cannot be accepted without re-targeting the core repo goal.
+Use `PASS` only when the repo change stays focused, preserves maintainability, and supports the claimed capability progress. Use `NEEDS_REVISION` for material review findings. Use `BLOCKED` only when authority, evidence or a safe inspection path is unavailable.

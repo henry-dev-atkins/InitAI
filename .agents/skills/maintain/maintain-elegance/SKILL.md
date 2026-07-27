@@ -9,6 +9,15 @@ Review whole-codebase elegance: whether the repo expresses its core spec capabil
 
 This is a repo/codebase review output. Do not edit files, move files, stage files, commit, or implement fixes unless a separate workflow explicitly asks for implementation.
 
+## Orchestrator Review-Lens Mode
+
+When invoked inside `$orchestrator` plan review or implementation review:
+
+- return findings, repository evidence, materiality/severity and acceptance evidence only;
+- do not return commands, required-change instructions, repair guidance, follow-up actions, scheduling advice or next-step fields;
+- do not change finding/workstream state or issue the parent review verdict;
+- the parent `plan-review` or implementation reviewer owns the final verdict and the orchestrator owns all subsequent action.
+
 ## Review Focus
 
 - Capability expression: does the repo make the core behaviour easy to find, run, validate, and change?
@@ -35,16 +44,10 @@ Use this short report structure:
 Verdict: ELEGANT | NEEDS_TIGHTENING | INELEGANT
 
 Findings
-- finding-or-none
+- severity: finding; repository evidence; capability impact; acceptance evidence
 
 Core Capability Impact
 - impact-or-none
-
-Required Changes
-- change-or-none
-
-Follow-up
-- follow-up-or-none
 ```
 
 Use `ELEGANT` only when the repo is already clear and no meaningful simplification is visible. Use `NEEDS_TIGHTENING` when local simplification would improve repo fit. Use `INELEGANT` when the repo-wide shape obscures or slows core capability progress.

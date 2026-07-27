@@ -59,3 +59,11 @@ Return `.agents/skills/orchestrator/assets/result-packet-template.md` fields.
 ## Executive Summary
 
 {short human-facing summary}
+
+## Am I going in Circles?
+
+{state whether the plan repeats prior failed work, adds reactive iterations, or can converge more directly}
+
+## Is there a more elegant way of doing this?
+
+{compare the chosen approach with simpler repository-fitting alternatives and explain why this is the minimal complete route}

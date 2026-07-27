@@ -11,6 +11,15 @@ Review the codebase, commands, configs, data paths, validation, outputs, and imp
 
 Do not use a required structured output. Write a direct reviewer-style critique with concrete repo-grounded findings.
 
+## Orchestrator Review-Lens Mode
+
+When invoked inside `$orchestrator` plan review or implementation review:
+
+- return findings, repository evidence, materiality/severity and acceptance evidence only;
+- do not return commands, required-change instructions, repair guidance, follow-up actions, scheduling advice or next-step fields;
+- do not change finding/workstream state or issue the parent review verdict;
+- the parent `plan-review` or implementation reviewer owns the final verdict and the orchestrator owns all subsequent action.
+
 ## Review Stance
 
 - Be sceptical, specific, and repo-grounded.
@@ -60,19 +69,18 @@ Do not use a required structured output. Write a direct reviewer-style critique 
 - The code supports multiple modes, but only the easiest mode is tested while the claimed mode has no exercised path.
 - The repo has two implementations of the same logic and the documented command calls the older or weaker one.
 
-## Repair Guidance
+## Acceptance Evidence
 
-For each material objection, say what would make the repo defensible:
+For each material objection, state the evidence that would be required for the repo to be defensible. Describe the required observable state or proof, not repair commands, implementation instructions or next actions. Examples include:
 
-- rename misleading functions, metrics, commands, configs, or artefacts;
-- make unsupported behaviour fail loudly;
-- remove silent fallbacks or make them explicit opt-in modes;
-- link outputs to exact commands, configs, commits, seeds, data splits, and checkpoints;
-- align baselines and comparisons through fair shared paths;
-- replace toy validation with a real repo run or targeted behavioural test;
-- document material hardware, runtime, VRAM/RAM, dependency, and data requirements;
-- remove stale cache dependence or verify cache provenance;
-- narrow claims when the repo cannot support the broader behaviour.
+- names that accurately match implemented behaviour;
+- loud failure evidence for unsupported states;
+- traceability from outputs to exact code, config, command, seed, data split and checkpoint;
+- fair shared execution paths for baselines and comparisons;
+- real behavioural validation rather than toy-only evidence;
+- explicit hardware, runtime, memory, dependency and data requirements;
+- verified cache provenance or evidence that results do not depend on stale cache state;
+- claims narrowed to the behaviour the repository actually proves.
 
 
 

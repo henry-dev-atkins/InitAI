@@ -9,6 +9,15 @@ Review whether the repo/codebase structure is becoming tangled and identify the 
 
 This is a repo/codebase review output. Do not rewrite files, move files, stage files, commit, or implement restructuring unless a separate workflow explicitly asks for implementation.
 
+## Orchestrator Review-Lens Mode
+
+When invoked inside `$orchestrator` plan review or implementation review:
+
+- return findings, repository evidence, materiality/severity and acceptance evidence only;
+- do not return commands, required-change instructions, repair guidance, follow-up actions, scheduling advice or next-step fields;
+- do not change finding/workstream state or issue the parent review verdict;
+- the parent `plan-review` or implementation reviewer owns the final verdict and the orchestrator owns all subsequent action.
+
 ## Review Focus
 
 - Module boundaries: each module, file, script, and config area should have a clear repo responsibility.
@@ -22,7 +31,7 @@ This is a repo/codebase review output. Do not rewrite files, move files, stage f
 ## Untangling Rules
 
 - Prefer the smallest repo change that restores clear ownership.
-- Prefer deleting duplication by replacing it with one direct implementation path; do not preserve legacy alternatives.
+- Prefer removing duplication from the active implementation by replacing it with one direct path; archive superseded files when file removal is required, and do not preserve legacy alternatives in active behaviour.
 - Prefer simple module boundaries over broad frameworks.
 - Do not recommend a large restructure when a narrow move, rename, or simplification would solve the problem.
 - Raise a blocker if the current structure makes the core capability difficult to implement, validate, or review.
@@ -35,16 +44,10 @@ Use this short report structure:
 Verdict: PASS | NEEDS_REVISION | BLOCKED
 
 Findings
-- finding-or-none
+- severity: finding; repository evidence; capability impact; acceptance evidence
 
 Core Capability Impact
 - impact-or-none
-
-Required Changes
-- change-or-none
-
-Follow-up
-- follow-up-or-none
 ```
 
-Use `PASS` only when repo responsibilities are clear and no smaller simplification is needed. Use `NEEDS_REVISION` when local untangling or contract tightening is enough. Use `BLOCKED` when the repo structure prevents credible capability progress.
+Use `PASS` only when repo responsibilities are clear and no smaller simplification is needed. Use `NEEDS_REVISION` for material structural findings. Use `BLOCKED` only when authority, evidence or a safe inspection path is unavailable.

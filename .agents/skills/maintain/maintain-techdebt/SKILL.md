@@ -9,6 +9,15 @@ Review technical debt in the repo/codebase and decide whether it should block, s
 
 This is a repo/codebase review output. Do not edit files, move files, stage files, commit, or implement fixes unless a separate workflow explicitly asks for implementation.
 
+## Orchestrator Review-Lens Mode
+
+When invoked inside `$orchestrator` plan review or implementation review:
+
+- return findings, repository evidence, materiality/severity and acceptance evidence only;
+- do not return commands, required-change instructions, repair guidance, follow-up actions, scheduling advice or next-step fields;
+- do not change finding/workstream state or issue the parent review verdict;
+- the parent `plan-review` or implementation reviewer owns the final verdict and the orchestrator owns all subsequent action.
+
 ## Review Focus
 
 - Future cost: will this code be hard to change, test, extend, or remove?
@@ -35,16 +44,10 @@ Use this short report structure:
 Verdict: PASS | NON_BLOCKING_DEBT | BLOCKING_DEBT
 
 Findings
-- severity: finding; impact
+- severity: finding; repository evidence; capability impact; acceptance evidence
 
 Core Capability Impact
 - impact-or-none
-
-Required Changes
-- change-or-none
-
-Follow-up
-- follow-up-or-none
 ```
 
 Use `PASS` only when no meaningful repo technical debt affects the work. Use `NON_BLOCKING_DEBT` when the work can proceed with explicit tracking or small changes. Use `BLOCKING_DEBT` when accepting the work would preserve or introduce serious repo debt.

@@ -39,7 +39,7 @@ Inspect the narrowest relevant time window first, then widen if needed:
 - `AI_SPACE/TODO.md` for live unresolved work, stale carry-over, cleanup records, and whether retro findings already have tracked actions.
 - `AI_SPACE/AI_LEARNINGS_LOG.md` for repeated mistakes, durable lessons, and whether prior lessons influenced later work.
 - `AI_SPACE/handovers/` for resumability, exact commands, current state, and deferred work.
-- `AI_SPACE/archive/` for moved historical records when live files reference them.
+- `archive/` for moved historical records when live files reference them.
 - Output roots and run metadata only when they are needed to understand validation effort, GPU usage, or repair loops.
 
 ## Work Classification

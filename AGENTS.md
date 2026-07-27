@@ -86,6 +86,8 @@ When `$orchestrator` is active:
 - Workers do not stage or commit; the orchestrator may create one final local commit after all gates pass.
 - Worker `[DONE]` means the worker packet is complete, not that the whole session is complete.
 - Session `[DONE]` requires orchestrator review, accepted integration state in the current checkout, validation and final `[SPEC.REVIEW]`.
+- Implementation failure is always planning failure. A durable implementation plan gets exactly one implementation attempt. If an implementation agent returns anything other than clean `[DONE]`, or post-implementation review finds a blocking issue, do not create a repair iteration for that plan/package/lock. Stop further source-writing for that package, run `[DIAGNOSE]` on why the plan allowed the failure, record the learning, and write a replacement plan only after the diagnosis. The replacement plan must name the failed assumptions, missing invariants and missing validation gates. A tooling/access failure before any source edit may be retried once with the same packet; any behavioural, spec, validation, scope or review failure invalidates the plan.
+- No `repair`, `repairN`, `retry`, `patch-up` or incremental correction packets are allowed as implementation loop iterations for a failed durable plan.
 - Integrate and review write packages serially when their file scopes overlap, even if independent work happened in parallel.
 - Schedule GPU-heavy runs serially unless the human explicitly authorises parallel GPU contention.
 
@@ -169,7 +171,7 @@ Work Type Rules:
     - No named shortfalls as deliverables.
     - No laziness.
     - No cosmetic completion.
-    - A failing command/check is the next repair target, not an endpoint.
+    - A failing command/check after implementation proves the plan failed; it is not a source repair target.
 - When inside goal mode, a worker `[DONE]` means a small subtask is done, not the whole goal, so keep iterating.
 - If an agent cannot be started or cannot write in the current checkout, terminate/restart it if possible; otherwise report `[BLOCKED]`. The orchestrator must not implement as a fallback.
 - Do not let work loops become too reactive to small failures. Challenge the direction when iterating through many small changes.
@@ -177,6 +179,7 @@ Work Type Rules:
 - Do not create small helper methods that are referenced only once.
 - Avoid spaghettification, tech debt and code explosions. Keep repo changes focused on core spec capabilities; surrounding software must earn its place by directly enabling, simplifying or validating those capabilities.
 - Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.
+- Implementation failure is always planning failure.
 
 # SPEC usage
 
@@ -201,6 +204,7 @@ Work Type Rules:
 - Planning should be done considering all layers of the project. Get as much documentation and code into context as possible to minimise errors.
 - Every plan must include a `Work Classification` block from `$work-type`.
 - Every durable write plan must include owner, exact file scope, validation gate and integration order.
+- Every durable write plan must include a `Failure Means Planning Failure` section naming what would prove the plan was under-specified, which invariants and "must not" behaviours are protected, which validation gates catch them, and the stop condition that prevents an implementation repair loop.
 - All plans must consider consequences, for example:
     - If a variable changes type, where is it used?
     - Do we still assume the old type anywhere?

@@ -10,8 +10,3 @@ approval_policy = "never"
 
 [permissions.project-edit.network]
 enabled = false
-
-[agents]
-enabled = true
-max_concurrent_threads_per_session = 8
-interrupt_message = true

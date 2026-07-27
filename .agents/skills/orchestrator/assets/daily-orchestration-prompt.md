@@ -14,7 +14,7 @@ Required behaviour:
 6. Keep all subagents in the current checkout; use disjoint file ownership and serialise overlaps.
 7. Do not create or switch branches/worktrees. Workers do not commit.
 8. The main thread never implements project code. If write agents cannot write, report `[BLOCKED]`.
-9. Collect structured result packets, review the accumulated diff, repair through agents, and validate globally.
+9. Collect structured result packets, review the accumulated diff, and validate globally.
 10. Optionally create one final local commit after all gates pass.
 11. End with `[DONE]` or `[BLOCKED]`.
 

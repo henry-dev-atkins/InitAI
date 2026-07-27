@@ -34,6 +34,7 @@ Files off-limits:
 - Do not merge, rebase, stage or commit.
 - Do not ask for repeated per-command permissions. If the workspace is not writable, stop and return `PERMISSION_BLOCKED` with the failed operation.
 - No broad rewrites, legacy support, workarounds or temporary diagnostics left behind.
+- You are not a process manager. Report facts for this packet only. Do not suggest next steps, choose future work, or include `next_step` / `recommended_next_action` fields.
 
 ## Validation gate
 
@@ -43,4 +44,4 @@ Run:
 
 ## Return contract
 
-Return changed files, commands run, results, unresolved issues, temporary files created/archived and a concise `[DONE]` or `[BLOCKED]` result for this packet.
+Return changed files, commands run, results, unresolved issues, temporary files created/archived and a concise `[DONE]` or `[BLOCKED]` result for this packet. Do not include process-direction text.

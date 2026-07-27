@@ -22,9 +22,6 @@ Review categories:
 
 Use `maintain-review` when implementation or worker results may be claiming progress through repo complexity, dependency work, cleanup, documentation, wrapper code, or support software instead of spec-backed behaviour. Use `maintain-elegance` when repo-wide implementation shape affects capability clarity or merge readiness. Use `maintain-techdebt` for repo technical debt that affects merge permission. If `AI_SPACE/SPEC.md` is absent, do not infer project intent; report the missing spec and limit review to explicit prompt/task authority.
 
-When returning findings for planning, separate core behaviour gaps from surrounding support/software gaps. Do not force one universal ordering rule: use reviewer judgement and the Work Type ontology. The next plan should generally target core behaviour first unless a support item directly enables the next spec-backed behaviour step.
-
-Spec review's shoudl highlight large misalignments over smaller ones. This means that successive `spec-review`->impleentation loops progressivly handle lower level work after high llevel alignment. This minimises code bloat. 
 
 ## Orchestrated review
 
@@ -40,6 +37,17 @@ For worker result packets and the accumulated checkout, check:
 
 Write each blocking misalignment into `AI_SPACE/TODO.md` only if it is concrete unresolved follow-up work. Do not use TODO updates as closure.
 
+## Role boundary
+
+  Spec-review agents are factual reviewers, not process managers.
+
+  - Compare the named scope against the spec and report pass/fail evidence.
+  - Rank findings only by stated review criteria and cited evidence.
+  - Do not suggest next steps, propose repair packets, choose future work, or tell the orchestrator what to do after the review.
+  - Do not include fields such as `next_step`, `recommended_next_action`, `recommended_plan`, or similar process-direction text.
+  - `merge_permission` and `capability_progress_supported` are review gates only. They are not instructions to merge, commit, spawn, defer, split or continue.
+  - The orchestrator owns sequencing, portfolio decisions, commits, deferrals, splits and stop/pivot decisions.
+
 ## Output
 
 ```yaml
@@ -54,7 +62,9 @@ core_behaviour_gaps:
   - {finding-or-none}
 support_software_gaps:
   - {finding-or-none}
-planning_priority: core_behaviour | direct_support_enabler | reviewer_judgement | not_applicable
+priority_evidence: core_behaviour | direct_support_enabler | evidence_insufficient | not_applicable
 capability_progress_supported: yes | no | not_applicable
 merge_permission: yes | no | not_applicable
 ```
+
+For planning reviews, order `blocking_findings` and `core_behaviour_gaps` by convergence impact and include the required finding fields. The order is part of the review result and must be preserved by orchestration unless a permitted dependency exception is evidenced. The order is evidence for the orchestrator; it is not an instruction.

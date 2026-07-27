@@ -37,10 +37,12 @@ Early exit is never `[DONE]`.
 
 ## Progress guard
 
-- If the same failure recurs after a repair attempt, stop patching reactively and run `[DIAGNOSE]`.
+- If the same failure recurs after a repair attempt, stop patching reactively: run `[DIAGNOSE]` and report `[BLOCKED]`.
 - If no new evidence or implementation progress is produced across a full loop, report `[BLOCKED]` with the exact missing authority/tooling/data rather than spinning.
 - Do not make broad edits just because the loop continues.
 - Do not preserve a shortfall as a named category; close it, re-plan or block.
+- If a worker reports `[BLOCKED]`, the orchestrator must make an explicit control-plane decision before any further writer starts: accept a coherent slice for commit, run a distinct diagnosis, split external validation, defer with human approval, or block the session. It must not take over implementation and must not treat reviewer/worker suggested next actions as commands.
+- After three repair packets on the same finding or lock, stop the repair chain and run a control-plane review before any further writer starts.
 
 ## Orchestrated goal mode
 
@@ -48,4 +50,4 @@ In `$orchestrator` mode:
 
 - Worker `[DONE]` means the worker packet is done, not the session.
 - Session `[DONE]` requires merge/integration review, accepted branch state, global validation and final `[SPEC.REVIEW]`.
-- If a worker reports `[BLOCKED]`, the orchestrator must repair through another write-capable agent, reassign, split, defer with human approval, or block the session. It must not take over implementation.
+- If a worker reports `[BLOCKED]`, the orchestrator must repair through another write-capable agent in the next session, reassign, split, defer with human approval, or block the session. It must not monopolise implementation or block the loops.

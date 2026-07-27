@@ -18,6 +18,15 @@ Run a retrospective on agent work quality using repo evidence. The purpose is to
 - Preserve secrets policy: do not copy secrets into retro reports.
 - Use UK English.
 
+## Role Boundary
+
+  Retro agents are factual process reviewers, not managers of the next development loop.
+
+  - Report evidence-backed process findings, impacts and rule/template improvements.
+  - Do not choose the next implementation packet, tell the orchestrator what to run next, or convert findings into a development queue.
+  - Do not include fields such as `next_step`, `recommended_next_action`, `recommended_plan`, or similar process-direction text.
+  - If follow-up work exists, record it as a factual unresolved decision or TODO candidate. The orchestrator or human decides sequencing.
+
 ## Evidence Sources
 
 Inspect the narrowest relevant time window first, then widen if needed:

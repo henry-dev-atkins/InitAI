@@ -26,6 +26,7 @@ Review a plan before implementation or agent spawning.
 - Cleanup before `[DONE]`
 - Commit policy
 - Risks and blockers
+- Target the largest step we can take towards the spec implementation, only find small issues when there are only small issues left.
 
 ## Work Type rejection rules
 

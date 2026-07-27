@@ -7,23 +7,6 @@ description: Use when the prompt contains [PLAN.TERMINAL_CONDITION] or [TERMINAL
 
 Do not exit, return to the user, or stop unless the terminal condition is met.
 
-Iterate through stages:
-
-1. `[PLAN]`
-    1. Apply `[WORK_TYPE]`.
-    2. Write a plan.
-    3. Run `[PLAN.REVIEW]`.
-2. Implement through the assigned write-capable agent. In `$orchestrator` mode the main thread never implements.
-3. Test/validate.
-4. Review.
-    1. `[SPEC.REVIEW]`
-    2. Defensibility
-    3. Plan completeness
-    4. Work Type/commit policy
-5. Either `[DONE]` is justified, or return to step 1 and repeat.
-
-Use agents for planning, plan review, spec review, defensibility review and plan completeness review when agentic support is available.
-
 ## Early exit
 
 Early exit is allowed only for a genuine `[BLOCKED]` state, including:
@@ -35,19 +18,7 @@ Early exit is allowed only for a genuine `[BLOCKED]` state, including:
 
 Early exit is never `[DONE]`.
 
-## Progress guard
 
-- If the same failure recurs after a repair attempt, stop patching reactively: run `[DIAGNOSE]` and report `[BLOCKED]`.
-- If no new evidence or implementation progress is produced across a full loop, report `[BLOCKED]` with the exact missing authority/tooling/data rather than spinning.
-- Do not make broad edits just because the loop continues.
-- Do not preserve a shortfall as a named category; close it, re-plan or block.
-- If a worker reports `[BLOCKED]`, the orchestrator must make an explicit control-plane decision before any further writer starts: accept a coherent slice for commit, run a distinct diagnosis, split external validation, defer with human approval, or block the session. It must not take over implementation and must not treat reviewer/worker suggested next actions as commands.
-- After three repair packets on the same finding or lock, stop the repair chain and run a control-plane review before any further writer starts.
+## Correct Exit
 
-## Orchestrated goal mode
-
-In `$orchestrator` mode:
-
-- Worker `[DONE]` means the worker packet is done, not the session.
-- Session `[DONE]` requires merge/integration review, accepted branch state, global validation and final `[SPEC.REVIEW]`.
-- If a worker reports `[BLOCKED]`, the orchestrator must repair through another write-capable agent in the next session, reassign, split, defer with human approval, or block the session. It must not monopolise implementation or block the loops.
+A suite of 6 agnets needs to each independnatly and holistically confirm that a condition has been met. Procedure is sequential though to minimise wasted worker time.

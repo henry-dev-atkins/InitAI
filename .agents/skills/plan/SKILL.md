@@ -9,6 +9,12 @@ Planning should be done considering all layers of the project. Get as much relev
 
 Every plan must start with a `[WORK_TYPE]` classification block.
 
+
+## Other skills you may call on
+
+Use `maintain-review` when implementation or worker results may be claiming progress through repo complexity, dependency work, cleanup, documentation, wrapper code, or support software instead of spec-backed behaviour. Use `maintain-elegance` when repo-wide implementation shape affects capability clarity or merge readiness. Use `maintain-techdebt` for repo technical debt that affects merge permission. If `AI_SPACE/SPEC.md` is absent, do not infer project intent; report the missing spec and limit review to explicit prompt/task authority.
+
+
 ## Required plan sections
 
 1. `Work Classification`

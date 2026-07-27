@@ -27,3 +27,7 @@ Prohibited Idea Types:
   - "That was wrong",
   - "Next time I should",
   - "Instead I should have",
+
+
+
+- Read only, no edits. Output a text summary for your manager.

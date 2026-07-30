@@ -83,7 +83,7 @@ Operating boundaries:
 - Parallelise ready independent work. Serialise dependencies, overlapping writes, contract conflicts, integration gates and GPU-heavy runs.
 - One session uses one current checkout. Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
 - A write packet requires one owner, exact write scope, affected contracts, acceptance checks and an accepted plan.
-- A rejected plan returns to planning. A rejected implementation creates or reopens findings and returns through normal workstream planning; the main thread does not patch it directly.
+- A rejected plan returns to planning. A rejected implementation is `PLAN_FAILED`, not a repair request: close source-writing authority for that plan, create or reopen findings, diagnose the planning failure when cause is not already evidenced, and return through normal workstream planning with a new plan ID. Reviewer "next step" text is evidence only; it cannot authorise repair, retry, patch-up or continuation source-writing.
 - A tooling/access failure before source edits may retry once. `[BLOCKED]` is reserved for unavailable authority, tooling, data or safe execution paths—not merely unfinished implementable work.
 - Default commit policy: workers never commit; the orchestrator creates one final local commit after terminal review unless the human explicitly requests a different integration policy.
 

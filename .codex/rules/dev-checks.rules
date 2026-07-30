@@ -107,14 +107,4 @@ prefix_rule(
     ],
 )
 
-prefix_rule(
-    pattern = ["uv", "lock"],
-    decision = "allow",
-    justification = "Update the repository lockfile after an accepted, justified dependency change; network policy remains unchanged.",
-    match = [
-        "uv lock",
-    ],
-    not_match = [
-        "uv lock --upgrade",
-    ],
-)
+

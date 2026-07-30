@@ -11,7 +11,6 @@ Put the spec in `AI_SPACE/SPEC.md`.
 
 Then, write a prompt like:
 
-
 ```
 \goal Your [TERMINAL_CONDITION] is: "a 6 agent [SPEC_REVIEW] result which finds no difference between the spec and the repo". 
 ```

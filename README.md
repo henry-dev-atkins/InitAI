@@ -12,7 +12,7 @@ Put the spec in `AI_SPACE/SPEC.md`.
 Then, write a prompt like:
 
 ```
-\goal Your [TERMINAL_CONDITION] is: "a 6 agent [SPEC_REVIEW] result which finds no difference between the spec and the repo". Please [ORCHESTRATE] until met. 
+\goal Your [TERMINAL_CONDITION] is: "a 6 agent [SPEC_REVIEW] result which finds no difference between the spec and the repo". Please [ORCHESTRATE] until the [TERMINAL_CONDITION] is met. 
 ```
 
 Then, come back in 10-20 days and you will have your spec.

@@ -28,14 +28,30 @@ If these are materially missing, return a factual planning blocker to the orches
 3. `Mission`
 4. `Scope and Contracts`
 5. `Protected Invariants / Must Not`
+6. `Command Manifest`
+7. `Implementation Steps`
+8. `Validation and Resolution Evidence`
+9. `Risks and Assumptions`
+10. `Result Packet Contract`
+11. `Executive Summary`
+12. `Am I going in Circles?`
+13. `Is there a more elegant way of doing this?`
 
-6. `Implementation Steps`
-7. `Validation and Resolution Evidence`
-8. `Risks and Assumptions`
-9. `Result Packet Contract`
-10. `Executive Summary`
-11. `Am I going in Circles?`
-12. `Is there a more elegant way of doing this?`
+## Command Manifest
+
+Every plan must include a structured command manifest. Each command entry must declare:
+
+- stable command ID;
+- command `argv` or exact shell command;
+- working directory;
+- purpose;
+- expected status;
+- evidence target;
+- whether it is pre-edit, implementation validation, final validation or diagnostic;
+- output artefact paths, if any;
+- temp/cache root, if the command writes temporary files.
+
+Pytest commands must use a repo-local `temp/` basetemp. Inline Python snippets must be syntactically valid. Commands must fail loudly and must not rely on silent fallback behaviour.
 
 ## Planning rules
 
@@ -55,7 +71,6 @@ If these are materially missing, return a factual planning blocker to the orches
 
 Plans guide implementation; they are not completion deliverables unless plan-only output was explicitly requested.
 
-
 ## Consequence review
 
 Every plan must consider consequences, for example:
@@ -68,17 +83,17 @@ Every plan must consider consequences, for example:
 - Does this need a subplan?
 - Does this create an orchestration or merge conflict?
 
-
 ## Agentic plan review
+
 All plans require explicit review for:
 
-- overengineering
-- minimalism
-- technical debt
-- redundant iterations
-- more elegant implementation missed
-- true implementation of the intended framework
-- regression to non-correct implementation
-- gaps, ambiguity or contradictions
-- work type correctness
-- file ownership/parallelisation safety
+- overengineering;
+- minimalism;
+- technical debt;
+- redundant iterations;
+- more elegant implementation missed;
+- true implementation of the intended framework;
+- regression to non-correct implementation;
+- gaps, ambiguity or contradictions;
+- work type correctness;
+- file ownership/parallelisation safety.

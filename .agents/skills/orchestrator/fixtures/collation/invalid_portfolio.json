@@ -1,0 +1,22 @@
+{
+  "plans": [
+    {
+      "plan_id": "P001",
+      "workstream_id": "WS001",
+      "findings": ["F001"],
+      "write_scope": ["agents/skills/planning"],
+      "contracts_changed": ["command-manifest"],
+      "contracts_consumed": [],
+      "dependencies": []
+    },
+    {
+      "plan_id": "P001",
+      "workstream_id": "WS002",
+      "findings": ["F002"],
+      "write_scope": ["agents/skills/planning/plan-review"],
+      "contracts_changed": [],
+      "contracts_consumed": ["command-manifest"],
+      "dependencies": ["WS001"]
+    }
+  ]
+}

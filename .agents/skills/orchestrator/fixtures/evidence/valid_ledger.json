@@ -1,0 +1,18 @@
+{
+  "schema": "evidence-ledger.v1",
+  "workstream_id": "WS001",
+  "plan_id": "P001",
+  "status": "PASS",
+  "first_failed_gate": null,
+  "commands": [
+    {
+      "id": "CMD001",
+      "argv": ["python", "--version"],
+      "cwd": ".",
+      "exit_code": 0,
+      "status": "PASS",
+      "summary": "Python is available.",
+      "artefacts": []
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "schema": "finding-register-current.v1",
+  "findings": [
+    {
+      "id": "F001",
+      "status": "OPEN",
+      "severity": "high",
+      "owner": "orchestrator",
+      "spec_authority": "AGENTS.md workflow rules",
+      "problem": "Plan preflight is missing.",
+      "repo_evidence": "workflow fixture",
+      "resolution_evidence": "validator pass",
+      "resolved_by": null,
+      "closed_at": null
+    },
+    {
+      "id": "F002",
+      "status": "RESOLVED",
+      "severity": "medium",
+      "owner": "orchestrator",
+      "spec_authority": "AGENTS.md workflow rules",
+      "problem": "Evidence ledger is missing.",
+      "repo_evidence": "workflow fixture",
+      "resolution_evidence": "evidence ledger validator pass",
+      "resolved_by": "R002",
+      "closed_at": "2026-08-01"
+    }
+  ]
+}

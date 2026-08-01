@@ -1,0 +1,30 @@
+# Workflow cache only. This is not spec authority.
+
+[metadata]
+authority = "AI_SPACE/SPEC.md when present"
+status = "partial"
+last_verified_revision = ""
+
+[[mapping]]
+workstream = "WS001"
+topic = "runtime/warmup"
+paths = ["src/CAT/runtime.py", "src/CAT/execution/**"]
+tests = ["relevant execution tests"]
+
+[[mapping]]
+workstream = "WS004"
+topic = "MovieLens"
+paths = ["src/CAT/data.py", "src/CAT/models.py", "src/CAT/use_cases.py", "configs/paper-suite/**", "configs/test-suite/schema_v1p0/**"]
+tests = ["relevant MovieLens tests"]
+
+[[mapping]]
+workstream = "WS006"
+topic = "NCU"
+paths = ["src/CAT/metrics.py", "src/CAT/monitoring.py", "tools/ws006_acceptance.py"]
+tests = ["NCU tests"]
+
+[[mapping]]
+workstream = "WS009"
+topic = "paper outputs"
+paths = ["src/CAT/results.py"]
+tests = ["result tests"]

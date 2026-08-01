@@ -7,11 +7,15 @@ description: Use when the prompt contains [PLAN.REVIEW] or [PLAN_REVIEW], or whe
 
 Review one submitted workstream plan. Return evidence for `ACCEPT`, `REJECT` or genuine `BLOCKED`; do not manage sequencing or implement changes.
 
+Mechanical `[PLAN.PREFLIGHT]` must pass before full plan review begins. Full plan review judges whether the mechanically valid plan is the right, minimal and complete route to the assigned capability or alignment outcome.
+
 ## Required dimensions
 
+- preflight status and unresolved mechanical defects;
 - source finding and spec traceability;
 - one coherent workstream outcome;
 - correct Primary Work Type;
+- capability-first alignment with assigned findings;
 - top-down convergence impact;
 - minimal complete implementation;
 - exact write/off-limits scope;
@@ -20,7 +24,8 @@ Review one submitted workstream plan. Return evidence for `ACCEPT`, `REJECT` or 
 - protected invariants and prohibited behaviour;
 - implementation-order logic;
 - behavioural validation strength;
-- result-packet completeness;
+- structured command/evidence manifest quality;
+- result-packet and evidence-ledger completeness;
 - overengineering, technical debt and repository fit;
 - whether `Am I going in Circles?` honestly identifies repeated or reactive work;
 - whether `Is there a more elegant way of doing this?` considers a simpler complete repository-fitting route.
@@ -37,22 +42,29 @@ Use retained supporting lenses when relevant:
 
 They inform this single plan-review verdict; they do not create additional workflow phases.
 
+## Capability-first gate
+
+Reject support-only churn unless it directly unlocks the assigned capability or evidence required by the workstream. Planning may include workflow, validation or local infrastructure only when it is the shortest complete route to resolving the source findings.
+
 ## Reject when
 
+- preflight has not passed;
 - the workstream/finding/spec traceability is absent or incorrect;
 - the plan does not fully remove the assigned misalignment;
 - it broadens into unrelated work or fragments one coherent result unnecessarily;
 - it starts with support software without showing that it is the shortest route to required behaviour;
+- support-only work claims capability progress or displaces open capability findings;
 - exact file scope, dependencies, contract effects or owner are missing;
 - it conflicts with another active workstream;
 - validation is vague, toy-only or does not prove the assigned behaviour;
+- command manifest or evidence ledger requirements are incomplete;
 - temporary/workaround/fluff output may survive;
 - capability progress is claimed for support-only work;
 - a simpler repository-fitting solution is clearly available and unaddressed;
 - it relies on an assumed later repair pass;
 - either required reflection section is missing, superficial or contradicted by the plan.
 
-`BLOCKED` is only for missing authority, tooling, data or a safe execution path—not ordinary plan defects.
+`BLOCKED` is only for missing authority, tooling, data or a safe execution path, not ordinary plan defects.
 
 ## Role boundary
 
@@ -66,6 +78,8 @@ They inform this single plan-review verdict; they do not create additional workf
 plan_review_id: RXXX
 workstream_id: WSXXX
 plan_id: PXXX
+preflight_status: PASS | FAIL | BLOCKED | NOT_RUN
+capability_first_status: PASS | FAIL
 verdict: ACCEPT | REJECT | BLOCKED
 blocking_issues:
   - criterion: {dimension}

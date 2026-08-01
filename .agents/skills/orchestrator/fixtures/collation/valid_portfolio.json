@@ -1,0 +1,22 @@
+{
+  "plans": [
+    {
+      "plan_id": "P001",
+      "workstream_id": "WS001",
+      "findings": ["F001"],
+      "write_scope": ["agents/skills/planning/plan-preflight"],
+      "contracts_changed": ["plan-command-manifest.v1"],
+      "contracts_consumed": [],
+      "dependencies": []
+    },
+    {
+      "plan_id": "P002",
+      "workstream_id": "WS002",
+      "findings": ["F002"],
+      "write_scope": ["agents/skills/session/session-compact"],
+      "contracts_changed": [],
+      "contracts_consumed": ["session-board-template"],
+      "dependencies": []
+    }
+  ]
+}

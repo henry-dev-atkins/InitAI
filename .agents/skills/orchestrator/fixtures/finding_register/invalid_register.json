@@ -1,0 +1,26 @@
+{
+  "schema": "finding-register-current.v1",
+  "findings": [
+    {
+      "id": "F001",
+      "status": "OPEN",
+      "severity": "high",
+      "owner": "orchestrator",
+      "spec_authority": "AGENTS.md workflow rules",
+      "problem": "Open finding has closure.",
+      "repo_evidence": "fixture",
+      "resolution_evidence": "none",
+      "resolved_by": "R001"
+    },
+    {
+      "id": "F001",
+      "status": "DONE",
+      "severity": "severe",
+      "owner": "",
+      "spec_authority": "",
+      "problem": "",
+      "repo_evidence": "",
+      "resolution_evidence": ""
+    }
+  ]
+}

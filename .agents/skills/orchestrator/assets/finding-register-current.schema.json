@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "finding-register-current.v1",
+  "type": "object",
+  "required": ["schema", "findings"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "finding-register-current.v1" },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "status", "severity", "owner", "spec_authority", "problem", "repo_evidence", "resolution_evidence"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^F[0-9]{3}$" },
+          "status": { "type": "string", "enum": ["OPEN", "ASSIGNED", "RESOLVED", "DEFERRED_BY_HUMAN", "BLOCKED"] },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
+          "owner": { "type": "string", "minLength": 1 },
+          "spec_authority": { "type": "string", "minLength": 1 },
+          "problem": { "type": "string", "minLength": 1 },
+          "repo_evidence": { "type": "string", "minLength": 1 },
+          "resolution_evidence": { "type": "string", "minLength": 1 },
+          "resolved_by": { "type": ["string", "null"] },
+          "closed_at": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

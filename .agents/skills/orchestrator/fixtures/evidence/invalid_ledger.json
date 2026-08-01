@@ -1,0 +1,22 @@
+{
+  "schema": "evidence-ledger.v1",
+  "workstream_id": "WS001",
+  "plan_id": "P001",
+  "status": "FAIL",
+  "first_failed_gate": null,
+  "commands": [
+    {
+      "id": "CMD001",
+      "argv": ["python", "${{bad}}"],
+      "cwd": "../outside",
+      "exit_code": 0,
+      "status": "FAIL",
+      "artefacts": [
+        {
+          "path": "{missing}",
+          "sha256": "not-a-hash"
+        }
+      ]
+    }
+  ]
+}

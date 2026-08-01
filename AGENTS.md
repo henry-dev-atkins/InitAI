@@ -41,8 +41,11 @@ Capitalised bracket keywords are human-facing actions. Lowercase hyphenated name
 
 - `[SESSION.START]` -> `$session-start`
 - `[SESSION.CLEAN]` -> `$session-clean`
+- `[SESSION.COMPACT]` -> `$session-compact`
 - `[SESSION.END]` -> `$session-end`
 - `[PLAN]` -> `$plan`
+- `[PLAN.PREFLIGHT]` -> `$plan-preflight`
+- `[PLAN.PARALLEL_COLLATE]` -> `$plan-parallel-collate`
 - `[PLAN.REVIEW]` or `[PLAN_REVIEW]` -> `$plan-review`
 - `[PLAN.SUB]` or `[SUBPLAN]` -> `$plan-sub`
 - `[PLAN.TERMINAL_CONDITION]` or `[TERMINAL_CONDITION]` -> `$terminal-condition`
@@ -54,6 +57,7 @@ Capitalised bracket keywords are human-facing actions. Lowercase hyphenated name
 - `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` -> `$spec-edit`
 - `[WORK_TYPE]` or `[WORKFLOW_ONTOLOGY]` -> `$workflow-ontology`
 - `[WORKFLOW_STRUCTURE]` -> `$workflow-structure`
+- `[CURRENT_STATE]` -> `$current-state-capsule`
 - `[DONE]` / `[BLOCKED]` -> `$final-report`
 - `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` -> `$orchestrator`
 

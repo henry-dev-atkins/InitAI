@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "plan-command-manifest.v1",
+  "type": "object",
+  "required": ["schema", "commands"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "plan-command-manifest.v1" },
+    "commands": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "cwd", "purpose", "phase", "expected_status", "evidence_target"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^CMD[0-9]{3}$" },
+          "argv": {
+            "type": "array",
+            "minItems": 1,
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "shell": { "type": "string", "minLength": 1 },
+          "cwd": { "type": "string", "minLength": 1 },
+          "purpose": { "type": "string", "minLength": 1 },
+          "phase": {
+            "type": "string",
+            "enum": ["pre-edit", "implementation-validation", "final-validation", "diagnostic"]
+          },
+          "expected_status": { "type": "string", "enum": ["pass", "fail"] },
+          "evidence_target": { "type": "string", "minLength": 1 },
+          "artefact_paths": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "temp_root": { "type": "string" },
+          "requires_existing_paths": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        },
+        "oneOf": [
+          { "required": ["argv"], "not": { "required": ["shell"] } },
+          { "required": ["shell"], "not": { "required": ["argv"] } }
+        ]
+      }
+    }
+  }
+}

@@ -40,13 +40,34 @@ Contracts consumed:
 - `{invariant}`
 - Must not `{prohibited behaviour}`
 
+## Command Manifest
+
+```json
+{
+  "schema": "plan-command-manifest.v1",
+  "commands": [
+    {
+      "id": "CMD001",
+      "argv": ["python", "-m", "pytest", "tests/example.py", "--basetemp", "temp/pytest/WSXXX"],
+      "cwd": ".",
+      "purpose": "prove assigned behaviour",
+      "phase": "final-validation",
+      "expected_status": "pass",
+      "evidence_target": "FXXX",
+      "artefact_paths": [],
+      "temp_root": "temp/pytest/WSXXX"
+    }
+  ]
+}
+```
+
 ## Implementation Steps
 
 1. `{step}`
 
 ## Validation and Resolution Evidence
 
-- `{command}` proves `{spec requirement/finding}`
+- `CMD001` proves `{spec requirement/finding}`
 
 ## Risks and Assumptions
 
@@ -54,7 +75,7 @@ Contracts consumed:
 
 ## Result Packet Contract
 
-Return `.agents/skills/orchestrator/assets/result-packet-template.md` fields.
+Return `.agents/skills/orchestrator/assets/result-packet-template.md` fields and write an evidence ledger matching `evidence-ledger.schema.json`.
 
 ## Executive Summary
 

@@ -9,6 +9,8 @@
 - Primary Work Type: `{WORK_TYPE}`
 - Source findings: FXXX
 - Accepted plan: `AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/plan.md`
+- Command manifest: `AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/plan_command_manifest.json`
+- Evidence ledger: `AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/evidence_ledger.json`
 
 ## Mission and authority
 
@@ -39,6 +41,8 @@ Off-limits:
 
 - Work in the current checkout.
 - Implement the accepted plan only.
+- Follow the command manifest.
+- Write the evidence ledger before reporting completion.
 - Do not broaden the workstream or choose future work.
 - Do not create/switch branches or worktrees, merge, rebase, stage or commit.
 - Do not ask for repeated command permissions. Use allowed repo-local tools.
@@ -48,8 +52,8 @@ Off-limits:
 
 ## Validation gate
 
-- `{command}` proves `{requirement/behaviour}`
+- `{command_id}` proves `{requirement/behaviour}`
 
 ## Return contract
 
-Return the result-packet schema with changed files, commands, exact results, validation evidence, scope deviations, unexpected discoveries and packet-local status.
+Return the result-packet schema with changed files, commands, exact results, validation evidence, scope deviations, unexpected discoveries, evidence ledger path and packet-local status.

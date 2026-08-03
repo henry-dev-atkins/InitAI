@@ -2,7 +2,7 @@
 
 These skills are discoverable under `.agents/skills/`.
 
-The workflow controller is `orchestrator`. Other skills are bounded actions or review lenses and do not redefine orchestration sequence.
+The project-scoped `.codex/agents/orchestrator.toml` agent is the workflow controller. The `orchestrator` skill is its reusable operating procedure. Other skills are bounded actions or review lenses and do not redefine orchestration sequence.
 
 - `diagnose`
 - `done`
@@ -29,5 +29,16 @@ The workflow controller is `orchestrator`. Other skills are bounded actions or r
 - `maintain-review`
 - `maintain-techdebt`
 - `maintain-terminology`
+- `campain-review`
+- `current-state-capsule`
+- `plan-blastradius`
+- `plan-parallel-collate`
+- `plan-portfolio`
+- `plan-preflight`
+- `portfolio-next`
+- `prototype`
+- `session-compact`
+- `spec-explore`
+- `verify-finding`
 - `workflow-ontology`
 - `workflow-structure`

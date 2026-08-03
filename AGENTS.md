@@ -44,6 +44,9 @@ Capitalised bracket keywords are human-facing actions. Lowercase hyphenated name
 - `[SESSION.COMPACT]` -> `$session-compact`
 - `[SESSION.END]` -> `$session-end`
 - `[PLAN]` -> `$plan`
+- `[PLAN.PORTFOLIO]` -> `$plan-portfolio`
+- `[PORTFOLIO.NEXT]` -> `$portfolio-next`
+- `[PLAN.BLASTRADIUS]` -> `$plan-blastradius`
 - `[PLAN.PREFLIGHT]` -> `$plan-preflight`
 - `[PLAN.PARALLEL_COLLATE]` -> `$plan-parallel-collate`
 - `[PLAN.REVIEW]` or `[PLAN_REVIEW]` -> `$plan-review`
@@ -52,6 +55,9 @@ Capitalised bracket keywords are human-facing actions. Lowercase hyphenated name
 - `[LEARN]` -> `$learn`
 - `[MONITOR]` -> `$monitor`
 - `[DIAGNOSE]` -> `$diagnose`
+- `[PROTOTYPE]` -> `$prototype`
+- `[SPEC.EXPLORE]` -> `$spec-explore`
+- `[VERIFY.FINDING]` -> `$verify-finding`
 - `[SPEC.REVIEW]` or `[SPEC_REVIEW]` -> `$spec-review`
 - `[SPEC.IMPLEMENT]` or `[SPEC_IMPLEMENT]` -> `$spec-implement`
 - `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` -> `$spec-edit`
@@ -59,23 +65,26 @@ Capitalised bracket keywords are human-facing actions. Lowercase hyphenated name
 - `[WORKFLOW_STRUCTURE]` -> `$workflow-structure`
 - `[CURRENT_STATE]` -> `$current-state-capsule`
 - `[DONE]` / `[BLOCKED]` -> `$final-report`
-- `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` -> `$orchestrator`
+- `[CAMPAIN.REVIEW]` -> `$campain-review`
+- `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` -> use the project-scoped `orchestrator` custom agent from `.codex/agents/orchestrator.toml`; that agent loads `$orchestrator`
 
 If skill invocation is unavailable, locate the matching `SKILL.md` recursively under `.agents/skills/` using its frontmatter `name`, then apply it directly.
 
 # Orchestrator authority
 
-When `$orchestrator` is active, `.agents/skills/orchestrator/SKILL.md` is the single process authority. Other skills supply bounded planning, review, diagnosis, maintenance and validation criteria; they do not add phases, control sequencing or redefine completion.
+The project-scoped `orchestrator` custom agent owns the durable manager identity, runtime posture and control-plane boundaries. When it loads `$orchestrator`, `.agents/skills/orchestrator/SKILL.md` is the single procedural authority for orchestration sequence, artefacts, gates and state transitions. Other skills supply bounded planning, review, diagnosis, maintenance and validation criteria; they do not add phases, control sequencing or redefine completion.
 
-The core loop is:
+The orchestrator manages a rolling convergence campaign rather than one globally synchronised loop:
 
-1. Agentic repository-wide spec review produces findings.
-2. The orchestrator collates findings into one register and independent workstreams.
-3. Planning agents produce one plan per ready workstream.
-4. Plan-review agents accept or reject each plan; rejected plans are revised before implementation.
-5. Implementation agents execute accepted, independent workstreams.
-6. Review agents accept implementations or return concrete findings.
-7. The orchestrator updates the registers and repeats until the terminal condition passes.
+1. `$spec-explore` maps uncertain territory when the destination or route is not yet decision-complete.
+2. Agentic spec review produces findings; `$verify-finding` verifies disputed or insufficiently evidenced claims before promotion.
+3. `$plan-portfolio` groups verified findings and committed outcomes into several independent durable workstreams.
+4. Different workstreams may concurrently occupy planning, review, implementation and validation stages when their own prerequisites pass.
+5. `$portfolio-next` ranks currently ready safe transitions whenever capacity becomes free; the orchestrator authorises assignments and state changes.
+6. `$plan-blastradius` checks semantic impact and stale-plan risk for contract-changing plans or accepted diffs.
+7. Review agents accept implementations or return concrete findings; accepted outcomes immediately release newly unblocked work.
+8. `$campain-review` remaps the route only at meaningful milestones, stalls or evidence changes.
+9. The frozen terminal condition remains a global barrier.
 
 Operating boundaries:
 
@@ -83,7 +92,7 @@ Operating boundaries:
 - The main thread may inspect, validate, write orchestration artefacts under `AI_SPACE/`, review diffs and create the final local commit.
 - Only the orchestrator changes finding/workstream state, chooses work, assigns agents, manages locks, commits and declares session completion.
 - Workers handle one task packet and report facts. They do not plan the portfolio, start unapproved write agents, select future work or invoke the terminal condition.
-- Use up to six agents concurrently when that many ready, independent tasks exist. Never split, duplicate or invent work to fill capacity.
+- Use up to six agents concurrently when that many ready, independent tasks exist. Never split, duplicate or invent work to fill capacity. Refill freed capacity from any eligible readiness queue without waiting for unrelated slow workstreams.
 - Parallelise ready independent work. Serialise dependencies, overlapping writes, contract conflicts, integration gates and GPU-heavy runs.
 - One session uses one current checkout. Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
 - A write packet requires one owner, exact write scope, affected contracts, acceptance checks and an accepted plan.
@@ -98,6 +107,8 @@ AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/
   session_board.md
   finding_register.md
   workstream_register.md
+  campaign_map.md
+  readiness_queues.md
   locks.md
   workstream__WS001__short-name/
     plan.md

@@ -1,12 +1,12 @@
 # Codex Team Model
 
-Use `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` to activate `$orchestrator`.
+Use `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` to select the project-scoped `orchestrator` custom agent. The agent must load `$orchestrator` before campaign work.
 
-`.agents/skills/orchestrator/SKILL.md` is the sole workflow authority. Team profiles provide bounded capabilities; they do not add phases or control the portfolio.
+`.codex/agents/orchestrator.toml` defines the manager identity and control-plane posture. `.agents/skills/orchestrator/SKILL.md` is the sole procedural workflow authority. Team profiles provide bounded capabilities; they do not add phases or control the portfolio.
 
 ## Roles
 
-- `orchestrator`: control plane; owns findings, workstreams, state, assignment, locks, commits and completion; never implements project code.
+- `orchestrator`: project-scoped control-plane agent; owns findings, workstreams, state, assignment, locks, commits and completion; loads `$orchestrator`; never implements project code.
 - `research-architect`: read-only planning/research analysis for an assigned workstream.
 - `ml-researcher`: write-capable ML/research implementation for one accepted task packet.
 - `product-engineer`: write-capable product/user-flow implementation for one accepted task packet.
@@ -19,14 +19,14 @@ Use `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` to activate `$orchestrator`.
 
 ## Core execution pattern
 
-1. Run an agentic whole-repository spec-review batch.
-2. Orchestrator collates findings into one register and independent workstreams.
-3. Planning agents produce one plan per ready workstream.
-4. Plan-review agents accept or reject; rejected plans are revised before implementation.
-5. Launch up to six accepted, mutually independent implementation workstreams.
-6. Run read-only implementation/integration review for every result.
-7. Accepted work resolves evidenced findings; rejected work creates/reopens findings and returns to planning.
-8. Repeat until no open finding remains, global validation passes and terminal review succeeds.
+1. Maintain a campaign map of destination, durable outcomes, dependencies, planning horizons and fog; use `$spec-explore` when the route is not decision-complete.
+2. Run evidence-backed spec review and use `$verify-finding` before promoting disputed or weakly evidenced claims.
+3. Use `$plan-portfolio` to preserve several independent large outcomes rather than fragmenting one local issue across workers.
+4. Maintain readiness queues for planning, review, implementation, validation and fog clearing.
+5. Use `$portfolio-next` whenever capacity becomes free; phase order applies per workstream rather than globally.
+6. Use `$plan-blastradius` for contract-changing plans and accepted diffs that may invalidate prepared work.
+7. Run read-only implementation/integration review for every result and immediately release newly unblocked outcomes.
+8. Use `$campain-review` at milestones, stalls or material evidence changes; repeat until terminal review succeeds on one frozen revision.
 
 ## Concurrency and checkout
 
@@ -44,3 +44,18 @@ Use `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` to activate `$orchestrator`.
 - Implementation rejection creates/reopens findings and returns through the normal workstream loop.
 - Agents report evidence only; the orchestrator decides state transitions and future work.
 - `[BLOCKED]` is for genuinely unavailable authority, tooling, data or safe execution—not unfinished implementable work.
+
+## Agent versus skill boundary
+
+Use a custom agent when the repository needs a durable worker identity with a distinct context, sandbox or sceptical/implementation posture. Use a skill when the same current agent should follow a reusable procedure.
+
+Keep these as custom agents backed by skills where relevant:
+
+- `orchestrator` + `$orchestrator`: durable control plane plus orchestration procedure.
+- `research-architect` + planning/spec skills: isolated read-only planning identity.
+- `spec-reviewer` + `$spec-review`: independent sceptical spec-alignment identity.
+- `diagnosis-agent` + `$diagnose`: isolated root-cause investigation identity.
+- `merge-captain` + review/maintenance skills: independent implementation acceptance identity.
+- implementation and validation agents + bounded execution skills: separate write scopes and runtime postures.
+
+Keep portfolio, planning, review-lens, maintenance, session, prototype, monitoring and workflow-ontology items as skills. They are procedures or criteria that several agent identities may need; converting them into agents would duplicate authority and increase routing overhead.

@@ -1,27 +1,30 @@
 ---
 name: orchestrator
-description: Use when the prompt contains [ORCHESTRATOR], [TEAM], [agentic], asks to orchestrate agents, or asks for multi-agent spec review, planning, implementation and review.
+description: Procedural workflow for the project-scoped orchestrator custom agent. Use for rolling campaign management, portfolio scheduling, delegated planning/implementation/review, state transitions and terminal convergence.
 ---
 
-# [ORCHESTRATOR] / [TEAM] / [agentic]
+# Orchestrator Procedure
 
-You are the manager and control plane for a team of agents. Your purpose is to converge the repository on `AI_SPACE/SPEC.md` through one focused loop:
+This skill defines the operating procedure for `.codex/agents/orchestrator.toml`. The custom agent defines who the manager is, its runtime posture and its durable authority boundaries; this skill defines how the campaign is run. The default agent may also load this skill when custom-agent selection is unavailable, but it must adopt the same control-plane boundaries.
+
+Converge the repository on `AI_SPACE/SPEC.md` through a rolling convergence campaign. Workstreams advance independently through local control gates while the orchestrator manages the destination, portfolio, readiness queues, dependencies and capacity:
 
 ```text
-SPEC REVIEW
-  -> FINDING COLLATION
-  -> INDEPENDENT WORKSTREAMS
-  -> WORKSTREAM PLANS
-  -> PARALLEL PLAN COLLATION
-  -> PLAN PREFLIGHT
-  -> PLAN REVIEW / REPLAN
-  -> IMPLEMENTATION
-  -> IMPLEMENTATION REVIEW
-  -> UPDATE REGISTERS
-  -> LOOP OR TERMINAL REVIEW
+SPEC EXPLORE WHEN NEEDED
+  -> SPEC REVIEW / FINDING VERIFICATION
+  -> CAMPAIGN MAP
+  -> PLAN PORTFOLIO
+  -> ROLLING READINESS QUEUES
+       planning / plan review / implementation / implementation review / validation / fog clearing
+  -> PORTFOLIO NEXT WHEN CAPACITY FREES
+  -> PER-WORKSTREAM GATES
+       plan -> collate -> preflight -> review -> implement -> review
+  -> UPDATE CONTRACTS, QUEUES AND DEPENDENCIES
+  -> CAMPAIN REVIEW AT MILESTONES OR STALLS
+  -> FROZEN TERMINAL REVIEW
 ```
 
-This skill is the single authority for orchestration sequence, state transitions, agent assignment, locks, commits and completion. Supporting skills provide evidence or criteria only.
+This skill is the single procedural authority for orchestration sequence, artefacts, gates and state transitions. The `orchestrator` custom agent retains the durable manager identity, assignment authority, locks, commit policy and completion ownership. Supporting skills provide evidence or criteria only.
 
 ## Hard boundary
 
@@ -71,7 +74,9 @@ Subagents are told what to inspect, review, validate or implement. They do not g
 - Workers do not stage or commit.
 - Use up to six concurrent agents when that many ready, independent tasks exist.
 - Never split, duplicate or invent work to fill agent capacity.
-- A phase batch completes before the next control phase begins, except read-only monitoring/diagnosis that cannot mutate workstream state.
+- Phase ordering applies per workstream, not globally. Different workstreams may concurrently be planned, reviewed, implemented and validated when their individual prerequisites pass and their operations cannot invalidate one another.
+- Refill freed capacity from any eligible readiness queue without waiting for the slowest sibling.
+- Preserve global barriers only for frozen terminal review, repository-wide remapping, shared generated-output cutovers, global schema migrations, exclusive resources and final commit.
 - Parallel write work requires disjoint write scopes and no contract conflict.
 - Serialise dependencies, overlapping writes, shared generated outputs, integration gates and GPU-heavy runs.
 
@@ -94,6 +99,8 @@ AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/
   session_board.md
   finding_register.md
   workstream_register.md
+  campaign_map.md
+  readiness_queues.md
   locks.md
   parallel_plan_collation.md
   current_state_capsule.md
@@ -117,10 +124,14 @@ Stable IDs:
 - workstreams: `WS001`, `WS002`, ...
 - plans: `P001`, `P002`, ...
 - preflight reports: `PF001`, `PF002`, ...
+- portfolio plans: `PP001`, `PP002`, ...
+- portfolio-next reports: `PN001`, `PN002`, ...
+- blast-radius reports: `BR001`, `BR002`, ...
+- campaign reviews: `CR001`, `CR002`, ...
 - portfolio collation reports: `PPC001`, `PPC002`, ...
 - review reports: `R001`, `R002`, ...
 
-The finding register and workstream register are the durable control state. Chat summaries do not replace them. Current-state capsules are caches, not authority.
+The finding register, workstream register and campaign map are the durable control state. The readiness queues are a scheduling cache derived from those records. Chat summaries do not replace them. Current-state capsules are caches, not authority.
 
 ## Workstream state machine
 
@@ -173,7 +184,9 @@ Read:
 
 If no decision-complete authority exists, report `[BLOCKED]`. Do not invent product intent.
 
-Create the session board, empty finding/workstream registers and locks before write agents start.
+Create the session board, empty finding/workstream registers, campaign map, readiness queues and locks before write agents start. Use the templates under the orchestrator assets folder.
+
+If the destination, blocking decisions or outcome boundaries are not decision-complete, run `$spec-explore`. Record committed outcomes, prepared outcomes and fog in `campaign_map.md`. Use `$prototype` only for one explicit bounded decision experiment and archive it after recording the decision evidence.
 
 ## Phase 1 - Agentic spec review
 
@@ -186,11 +199,11 @@ Run a repository-wide `[SPEC.REVIEW]` batch with up to six read-only spec-review
 5. tests, validation and edge cases;
 6. holistic integration and minimality.
 
-Reviewers return evidence-backed findings only. They do not plan fixes.
+Reviewers return evidence-backed findings only. They do not plan fixes. A disputed, weakly evidenced or non-reproducible claim must pass `$verify-finding` before the orchestrator promotes it into an implementation workstream.
 
 The reviewed repository revision must be recorded. For terminal review, all six agents must inspect the same frozen revision.
 
-## Phase 2 - Collate findings and workstreams
+## Phase 2 - Collate findings and construct the portfolio
 
 The orchestrator:
 
@@ -198,7 +211,9 @@ The orchestrator:
 2. assigns stable finding IDs;
 3. records spec authority, actual repo evidence, expected behaviour, severity and acceptance evidence;
 4. ranks findings top-down by convergence impact;
-5. groups open findings into coherent independent workstreams.
+5. updates the campaign map with newly evidenced outcomes, dependencies and fog;
+6. invokes `$plan-portfolio` to group verified findings and committed outcomes into coherent independent workstreams;
+7. assigns stable workstream IDs only after the portfolio passes its anti-collapse review.
 
 Priority order:
 
@@ -210,7 +225,7 @@ Priority order:
 6. minor behaviour;
 7. cleanup.
 
-A workstream exists only when it represents one independently implementable result. Do not create workstreams merely to fill six slots. Do not schedule lower-level work that a higher-level unresolved finding is likely to invalidate.
+A workstream exists only when it represents one independently implementable durable result. Findings explain why work exists; outcomes define what the work is. Split only genuinely independent durable outcomes. Required tests, configuration changes and behaviour documentation may remain supporting changes within the capability workstream. Do not create workstreams merely to fill six slots. Do not schedule lower-level work that a higher-level unresolved finding is likely to invalidate. Preserve several independent large outcomes when they can advance safely; do not collapse the portfolio into fragments of one local issue while other major outcomes remain available.
 
 Every workstream records:
 
@@ -227,13 +242,15 @@ Every workstream records:
 
 ## Phase 3 - Plan, collate, preflight and plan review
 
-Select the highest-impact `AWAITING_PLAN` workstreams whose dependencies permit planning.
+Maintain explicit readiness queues. Whenever capacity becomes free, run `$portfolio-next` over all eligible queues. The orchestrator validates its evidence, performs the authorised state transition and assigns the bounded agent. Keep a small planning buffer when contract stability permits, but do not plan so far ahead that likely upstream changes make plans fictional.
+
+For planning capacity, select the highest-convergence-value `AWAITING_PLAN` workstreams whose dependencies permit planning.
 
 Run up to six planning agents. Each planner handles one workstream and returns one plan using `$plan`. The plan must not broaden the assigned workstream and must include a structured Command Manifest.
 
 Run `[PLAN.PARALLEL_COLLATE]` across the returned portfolio before individual reviews. Collation checks that planning preserved the large-step spec-review signal, covers required findings, detects overlapping write scopes, detects changed/consumed contract conflicts, detects duplicate plan IDs and reports safe parallel batches.
 
-Run `[PLAN.PREFLIGHT]` for each plan in a safe batch. Mechanical preflight must pass before full review. Preflight validates required sections, command manifest shape, command IDs, path references, repo-local temp roots, pytest basetemp use, inline Python syntax where detectable and unresolved placeholders outside templates.
+For plans that change or consume material contracts, run `$plan-blastradius` in `PROSPECTIVE` mode before acceptance. Then run `[PLAN.PREFLIGHT]` for each plan in a safe batch. Mechanical preflight must pass before full review. Preflight validates required sections, command manifest shape, command IDs, path references, repo-local temp roots, pytest basetemp use, inline Python syntax where detectable and unresolved placeholders outside templates.
 
 Then run read-only `[PLAN.REVIEW]` agents. Plan review may use the retained supporting lenses:
 
@@ -257,7 +274,7 @@ No implementation starts until its plan is accepted.
 
 ## Phase 4 - Implementation
 
-Build a batch from `READY` workstreams that are mutually independent under the write-scope and contract rules. Launch up to six write-capable implementation agents.
+Select `READY` workstreams that are mutually independent under the write-scope and contract rules. Launch write-capable implementation agents up to available capacity. This is a rolling wavefront rather than a fixed batch: when one result reaches review, review it and refill its freed slot without waiting for unrelated implementation siblings.
 
 Every task packet must state:
 
@@ -285,7 +302,7 @@ A pre-edit tooling/access failure may retry once with the same packet. Other inc
 
 ## Phase 5 - Agentic implementation review
 
-For every implementation result, run read-only review against:
+For every implementation result, run read-only review promptly against:
 
 - assigned spec requirements and findings;
 - accepted plan;
@@ -300,7 +317,7 @@ Use `merge-captain` for shared-checkout integration review. It is a factual revi
 
 Review outcomes:
 
-- `ACCEPT_IMPLEMENTATION`: set workstream to `ACCEPTED`; mark only evidenced source findings resolved.
+- `ACCEPT_IMPLEMENTATION`: set workstream to `ACCEPTED`; mark only evidenced source findings resolved. If contracts changed, run `$plan-blastradius` in `RETROSPECTIVE` mode, update contract versions, recheck only affected prepared/accepted-but-unstarted plans, and release newly unblocked work immediately.
 - `REJECT_IMPLEMENTATION`: increment rejected-implementation count, set workstream to `REJECTED`, add/reopen concrete findings and transition it back to `AWAITING_PLAN` through the normal loop.
 - `BLOCKED`: only for a genuine external blocker.
 
@@ -308,9 +325,9 @@ After 2 rejected implementations in one workstream family, require `[DIAGNOSE]` 
 
 Do not create an informal repair phase. Rejected work returns through the same finding -> workstream -> plan -> review path. Preserve valid implementation only when the review explicitly supports doing so; otherwise the next accepted plan must state how the rejected state is handled.
 
-## Phase 6 - Update, compact and loop
+## Phase 6 - Update, refill and remap when needed
 
-After each implementation-review batch:
+After each accepted or rejected implementation review:
 
 1. update finding states and evidence;
 2. update workstream states and replan counters;
@@ -318,11 +335,13 @@ After each implementation-review batch:
 4. check for newly exposed spec misalignment;
 5. create or refresh a current-state capsule when needed;
 6. check session compaction thresholds;
-7. return to Phase 2 while open findings remain.
+7. refresh readiness queues;
+8. invoke `$portfolio-next` to refill available capacity from any eligible stage;
+9. continue while open findings or active campaign outcomes remain.
 
 Run `[SESSION.COMPACT]` after 100 plan directories, 10 MB active session size or a major checkpoint after full spec review. Compaction preserves source artefacts, records a manifest and treats current-state summaries as non-authoritative workflow caches.
 
-Run a fresh full repository spec-review batch after major architectural work and whenever the register may be incomplete. Do not run redundant full reviews after trivial changes unless needed for evidence.
+Run `$campain-review` after major milestones, repeated rejection, critical-path blockage, persistent queue starvation, material new fog or suspected route staleness. It may call for no remap, an impact-cone review or a fresh full repository spec-review batch. Do not run redundant full reviews after trivial changes unless needed for evidence.
 
 ## Phase 7 - Terminal review
 

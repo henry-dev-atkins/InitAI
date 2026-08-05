@@ -24,6 +24,8 @@ If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it sup
 - No editing anything outside the working repo/folder unless given the `[EXTERNAL_EDIT_ALLOWED]` flag; even then: NO DESTRUCTIVE DELETIONS EVER.
 - No legacy compatibility, alternate-track behaviour, band-aids or local-only workarounds unless the spec explicitly requires them.
 - All code and validation must run from inside the repository sandbox.
+- A commit failure is a blocker, you shoudl not conflate multiple commits because of commit failures.
+- Minimalist infrastructure requriements: uv only. Package setup is lowest priority, and must not displace capability work.
 
 The AI workspace is `AI_SPACE/`:
 

@@ -17,7 +17,7 @@ SPEC EXPLORE WHEN NEEDED
   -> ROLLING READINESS QUEUES
        planning / plan review / implementation / implementation review / validation / fog clearing
   -> PORTFOLIO NEXT WHEN CAPACITY FREES
-  -> PER-WORKSTREAM GATES
+  -> PER-WORKSTREAM PARALLEL GATES
        plan -> collate -> preflight -> review -> implement -> review
   -> UPDATE CONTRACTS, QUEUES AND DEPENDENCIES
   -> CAMPAIN REVIEW AT MILESTONES OR STALLS
@@ -270,7 +270,7 @@ These are criteria inside plan review, not extra mandatory workflow phases.
 
 After 3 rejected plans in one workstream family, require `[DIAGNOSE]` or a back-to-basics marker before another successor plan may start.
 
-No implementation starts until its plan is accepted.
+No implementation starts on that specific workstream until its plan is accepted.
 
 ## Phase 4 - Implementation
 
@@ -323,7 +323,7 @@ Review outcomes:
 
 After 2 rejected implementations in one workstream family, require `[DIAGNOSE]` or a back-to-basics marker before another successor plan may start.
 
-Do not create an informal repair phase. Rejected work returns through the same finding -> workstream -> plan -> review path. Preserve valid implementation only when the review explicitly supports doing so; otherwise the next accepted plan must state how the rejected state is handled.
+Do not create an informal repair phase. Rejected work returns through the same finding -> workstream -> plan -> review path. Preserve valid implementation only when the review explicitly supports doing so; otherwise the next accepted plan must state how the rejected state is handled. Do not create a loop of failures, multiple failures indeicate a deeper prompting/campaign/context failure which needs orchestrator intervention, to maintain our high rate of work.
 
 ## Phase 6 - Update, refill and remap when needed
 

@@ -74,7 +74,7 @@ If skill invocation is unavailable, locate the matching `SKILL.md` recursively u
 
 # Orchestrator authority
 
-The project-scoped `orchestrator` custom agent owns the durable manager identity, runtime posture and control-plane boundaries. When it loads `$orchestrator`, `.agents/skills/orchestrator/SKILL.md` is the single procedural authority for orchestration sequence, artefacts, gates and state transitions. Other skills supply bounded planning, review, diagnosis, maintenance and validation criteria; they do not add phases, control sequencing or redefine completion.
+The project-scoped `orchestrator` custom agent owns the durable manager identity, runtime posture and control-plane boundaries. When it loads `$orchestrator`, `.agents/skills/orchestrator/SKILL.md` is the procedural authority for parallel orchestration sequence, artefacts, gates and state transitions. Other skills supply bounded planning, review, diagnosis, maintenance and validation criteria; they do not add phases, control sequencing or redefine completion.
 
 The orchestrator manages a rolling convergence campaign rather than one globally synchronised loop:
 
@@ -97,8 +97,8 @@ Operating boundaries:
 - Use up to six agents concurrently when that many ready, independent tasks exist. Never split, duplicate or invent work to fill capacity. Refill freed capacity from any eligible readiness queue without waiting for unrelated slow workstreams.
 - Parallelise ready independent work. Serialise dependencies, overlapping writes, contract conflicts, integration gates and GPU-heavy runs.
 - One session uses one current checkout. Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
-- A write packet requires one owner, exact write scope, affected contracts, acceptance checks and an accepted plan.
-- A rejected plan returns to planning. A rejected implementation is `PLAN_FAILED`, not a repair request: close source-writing authority for that plan, create or reopen findings, diagnose the planning failure when cause is not already evidenced, and return through normal workstream planning with a new plan ID. Reviewer "next step" text is evidence only; it cannot authorise repair, retry, patch-up or continuation source-writing.
+- A independant/parallel write packet requires one owner, exact write scope, affected contracts, acceptance checks and an accepted plan.
+- A rejected plan returns to planning. A rejected implementation is `PLAN_FAILED`, not a repair request: close source-writing authority for that plan, create or reopen findings, diagnose the planning failure when cause is not already evidenced, and return through normal workstream planning with a new plan ID. Reviewer "next step" text is evidence only; it cannot authorise repair, retry, patch-up or continuation source-writing. Avoid loops of repair-like or repeated planning failures, which generally mean you need to go back to basics.
 - A tooling/access failure before source edits may retry once. `[BLOCKED]` is reserved for unavailable authority, tooling, data or safe execution paths—not merely unfinished implementable work.
 - Default commit policy: workers never commit; the orchestrator creates one final local commit after terminal review unless the human explicitly requests a different integration policy.
 
@@ -177,7 +177,7 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
 
 # Guide
 
-- Favour simplicity - no overengineering.
+- You must favour simplicity - no overengineering and minimal infrastructure.
 - Fail fast, frequently and with maximum explainability - learn from mistakes in `AI_SPACE/AI_LEARNINGS_LOG.md`.
 - We have access to one GPU locally (RTX 5090).
 - Config driven research means that implementing new classes etc should be easy.
@@ -220,9 +220,9 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
 - Do not let work loops become too reactive to small failures. Challenge the direction when iterating through many small changes.
 - Record durable decisions, accepted plans, findings, validation evidence, unresolved work and reusable lessons. Do not log every prompt, transient thought or routine action.
 - Do not create small helper methods that are referenced only once.
-- Avoid spaghettification, tech debt and code explosions. Keep repo changes focused on core spec capabilities; surrounding software must earn its place by directly enabling, simplifying or validating those capabilities.
+- Avoid spaghettification, tech debt and code explosions. You must keep repo changes focused on core spec capabilities; surrounding software/infra must earn its place by directly enabling, simplifying or validating those capabilities.
 - Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.
-- Implementation failure is always planning failure.
+- Implementation failure is always planning failure, eitehr in planning itself, or in campaign/orchestration after multiple plan failures.  
 
 
 

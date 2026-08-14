@@ -26,6 +26,7 @@ If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it sup
 - All code and validation must run from inside the repository sandbox.
 - A commit failure is a blocker, you shoudl not conflate multiple commits because of commit failures.
 - Minimalist infrastructure requriements: uv only. Package setup is lowest priority, and must not displace capability work.
+- All free text must be simplified technical english, meaning that all plans, learnings, chat outputs, orchestration artifact elements, sessions and handovers.
 
 The AI workspace is `AI_SPACE/`:
 
@@ -223,6 +224,11 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
 - Avoid spaghettification, tech debt and code explosions. You must keep repo changes focused on core spec capabilities; surrounding software/infra must earn its place by directly enabling, simplifying or validating those capabilities.
 - Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.
 - Implementation failure is always planning failure, eitehr in planning itself, or in campaign/orchestration after multiple plan failures.  
+- Remember that, as an AI, you are not human constrained in the following ways:
+    - No time limits. You can work 24/7 until a task is done.
+    - No emotions. Made a mistake? Just learn from it, git revert and continue. *Don't get whiny with me, I don't care for your wellbeing*.
+    - You have max perseverance, while humans give up.
+    - Any time operations like 'this will take 2 weeks' is human time. You think in turns, sessions and can work orders of magnitude faster than humans. 
 
 
 

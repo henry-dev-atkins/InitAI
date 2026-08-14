@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ask First"
+  short_description: "Clarify before acting"
+  default_prompt: "Use $ask-first to clarify the request before planning or implementation."

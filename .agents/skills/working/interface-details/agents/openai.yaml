@@ -1,0 +1,4 @@
+interface:
+  display_name: "Interface Details"
+  short_description: "Polish UI interaction details"
+  default_prompt: "Use $interface-details to improve interface details and interaction quality."

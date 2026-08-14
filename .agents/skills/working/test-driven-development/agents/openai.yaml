@@ -1,0 +1,4 @@
+interface:
+  display_name: "Test Driven Development"
+  short_description: "Use tests to drive code changes"
+  default_prompt: "Use $test-driven-development to write failing tests before changing behaviour."

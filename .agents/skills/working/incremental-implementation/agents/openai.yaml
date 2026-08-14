@@ -1,0 +1,4 @@
+interface:
+  display_name: "Incremental Implementation"
+  short_description: "Build in validated slices"
+  default_prompt: "Use $incremental-implementation to implement a change in small validated slices."

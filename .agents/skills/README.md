@@ -42,3 +42,12 @@ The project-scoped `.codex/agents/orchestrator.toml` agent is the workflow contr
 - `verify-finding`
 - `workflow-ontology`
 - `workflow-structure`
+- `api-and-interface-design`
+- `ask-first`
+- `comprehensive-testing`
+- `doubt-driven-development`
+- `flowguard`
+- `incremental-implementation`
+- `interface-details`
+- `planning-and-task-breakdown`
+- `test-driven-development`

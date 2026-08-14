@@ -1,0 +1,4 @@
+interface:
+  display_name: "Comprehensive Testing"
+  short_description: "Plan and review testing depth"
+  default_prompt: "Use $comprehensive-testing to design or review a practical test strategy."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Planning And Task Breakdown"
+  short_description: "Break work into verifiable tasks"
+  default_prompt: "Use $planning-and-task-breakdown to decompose clear requirements into ordered work."

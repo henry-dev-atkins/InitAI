@@ -1,0 +1,4 @@
+interface:
+  display_name: "API And Interface Design"
+  short_description: "Design clear public interfaces"
+  default_prompt: "Use $api-and-interface-design to design APIs, types, or module boundaries."

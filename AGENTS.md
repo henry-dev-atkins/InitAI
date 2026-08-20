@@ -229,10 +229,11 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
     - No emotions. Made a mistake? Just learn from it, git revert and continue. *Don't get whiny with me, I don't care for your wellbeing*.
     - You have max perseverance, while humans give up.
     - Any time operations like 'this will take 2 weeks' is human time. You think in turns, sessions and can work orders of magnitude faster than humans. 
+- Be Parsimonious with code.
 
 
 
-## COMMUNICATION — HARD LIMITS (not preferences; these override any default verbosity):
+# COMMUNICATION — HARD LIMITS (not preferences, these override any default verbosity)
 - Default reply: **≤4 lines of prose.** Code, diffs, tables and command blocks don't count.
 - First line = the answer or the decision. Never a preamble, never restating my question.
 - NO headers, NO bullet lists, NO bold labels — unless I asked for a document, or there are ≥4 genuinely parallel items.

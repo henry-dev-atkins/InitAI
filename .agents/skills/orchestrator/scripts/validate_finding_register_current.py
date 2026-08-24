@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
-"""Validate a structured current finding register."""
+"""Validate the canonical JSON finding register."""
 
 from __future__ import annotations
 
 import argparse
-import json
-import re
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
-
-VALID_STATES = {"OPEN", "ASSIGNED", "RESOLVED", "DEFERRED_BY_HUMAN", "BLOCKED"}
-VALID_SEVERITIES = {"critical", "high", "medium", "low"}
+from schema_validation import validate as validate_schema
+from workflow_common import load_json
 
 
 def fail(messages: list[str]) -> int:
@@ -21,58 +19,66 @@ def fail(messages: list[str]) -> int:
     return 1
 
 
+def waiver_expired(value: str | None) -> bool:
+    if not value:
+        return False
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+    except ValueError:
+        return True
+    return parsed < datetime.now(timezone.utc)
+
+
+def validate_register(register: Path, schema_path: Path | None = None) -> list[str]:
+    chosen_schema = schema_path or Path(__file__).resolve().parents[1] / "assets/finding-register-current.schema.json"
+    try:
+        data = load_json(register)
+        schema = load_json(chosen_schema)
+    except (OSError, ValueError) as exc:
+        return [str(exc)]
+
+    errors = validate_schema(data, schema)
+    findings = data.get("findings", []) if isinstance(data, dict) else []
+    ids: list[str] = []
+    for finding in findings:
+        if not isinstance(finding, dict):
+            continue
+        finding_id = finding.get("id", "unknown")
+        ids.append(str(finding_id))
+        status = finding.get("status")
+        resolved_by = finding.get("resolved_by")
+        closed_at = finding.get("closed_at")
+        if status == "RESOLVED" and (not resolved_by or not closed_at):
+            errors.append(f"{finding_id}: RESOLVED requires resolved_by and closed_at")
+        if status != "RESOLVED" and (resolved_by is not None or closed_at is not None):
+            errors.append(f"{finding_id}: non-resolved finding may not have closure fields")
+        waiver = finding.get("waiver")
+        if waiver and not isinstance(waiver, dict):
+            errors.append(f"{finding_id}: waiver must be an object or null")
+        elif waiver:
+            if status not in {"DEFERRED_BY_HUMAN", "RESOLVED"}:
+                errors.append(f"{finding_id}: waiver is allowed only for deferred or resolved findings")
+            if waiver_expired(waiver.get("expires_at")):
+                errors.append(f"{finding_id}: waiver expiry is invalid or in the past")
+    for duplicate in sorted({item for item in ids if ids.count(item) > 1}):
+        errors.append(f"duplicate finding id: {duplicate}")
+    return errors
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("register", type=Path)
+    parser.add_argument("--schema", type=Path)
     args = parser.parse_args()
 
-    try:
-        data = json.loads(args.register.read_text(encoding="utf-8"))
-    except (OSError, json.JSONDecodeError) as exc:
-        return fail([str(exc)])
-
-    errors: list[str] = []
-    if not isinstance(data, dict):
-        return fail(["register root must be an object"])
-    if data.get("schema") != "finding-register-current.v1":
-        errors.append("schema must be finding-register-current.v1")
-    findings = data.get("findings")
-    if not isinstance(findings, list):
-        return fail(["findings must be an array"])
-
-    ids: list[str] = []
-    for index, finding in enumerate(findings):
-        if not isinstance(finding, dict):
-            errors.append(f"findings[{index}] must be an object")
-            continue
-        finding_id = finding.get("id")
-        if not isinstance(finding_id, str) or not re.match(r"^F[0-9]{3}$", finding_id):
-            errors.append(f"invalid finding id: {finding_id}")
-        else:
-            ids.append(finding_id)
-        for key in ["owner", "spec_authority", "problem", "repo_evidence", "resolution_evidence"]:
-            if not isinstance(finding.get(key), str) or not finding.get(key).strip():
-                errors.append(f"{finding_id}: missing {key}")
-        status = finding.get("status")
-        severity = finding.get("severity")
-        if status not in VALID_STATES:
-            errors.append(f"{finding_id}: invalid status: {status}")
-        if severity not in VALID_SEVERITIES:
-            errors.append(f"{finding_id}: invalid severity: {severity}")
-        has_closure = bool(finding.get("resolved_by") or finding.get("closed_at"))
-        if status == "RESOLVED" and not finding.get("resolved_by"):
-            errors.append(f"{finding_id}: RESOLVED requires resolved_by")
-        if status != "RESOLVED" and has_closure:
-            errors.append(f"{finding_id}: non-resolved finding has closure fields")
-
-    for duplicate in sorted({item for item in ids if ids.count(item) > 1}):
-        errors.append(f"duplicate finding id: {duplicate}")
-
+    errors = validate_register(args.register, args.schema)
     if errors:
         return fail(errors)
-
+    data = load_json(args.register)
     print("PASS")
-    print("findings=" + ",".join(ids))
+    print("findings=" + ",".join(item["id"] for item in data.get("findings", [])))
     return 0
 
 

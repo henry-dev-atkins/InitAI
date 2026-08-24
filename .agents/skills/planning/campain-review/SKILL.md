@@ -29,12 +29,12 @@ Review whether the current campaign map and portfolio still represent the best e
 
 - Is the destination still exact and authoritative?
 - Are campaign nodes durable outcomes rather than issue fragments?
-- Are dependency and contract assumptions current?
+- Are dependency, stable-read, contract and mutable-resource assumptions current?
 - Which prepared outcomes can now become committed?
 - Which plans became stale or unnecessary?
 - Is capacity moving critical-path outcomes or support-only churn?
 - Is a fresh full review justified, or would an impact-cone review suffice?
-- Are we going in circles?
+- Do successor plans show a material causal delta, or are we going in circles?
 - Is there a more elegant route?
 
 ## Output

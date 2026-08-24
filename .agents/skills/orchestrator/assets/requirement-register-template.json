@@ -1,0 +1,27 @@
+{
+  "schema": "requirement-register.v1",
+  "spec_path": "AI_SPACE/SPEC.md",
+  "spec_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "line_count": 1,
+  "coverage": [
+    {
+      "start_line": 1,
+      "end_line": 1,
+      "classification": "REQUIREMENT",
+      "requirement_ids": ["REQ001"],
+      "reason": "Atomic requirement represented by REQ001."
+    }
+  ],
+  "requirements": [
+    {
+      "id": "REQ001",
+      "summary": "One atomic requirement.",
+      "spec_start_line": 1,
+      "spec_end_line": 1,
+      "text_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "implementation_evidence": [],
+      "validation_evidence": [],
+      "waiver": null
+    }
+  ]
+}

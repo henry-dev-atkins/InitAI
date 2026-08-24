@@ -9,9 +9,12 @@ reviewed_plans:
 safe_batches:
   - batch_id: B001
     plans: [PXXX]
+    write_scopes: []
+    stable_read_scopes: []
+    mutable_resources: []
 blocked_or_conflicting_plans:
   - plan_id: PXXX
-    reason: {overlap/dependency/contract/finding-coverage issue}
+    reason: {scope/read/dependency/contract/resource/finding-coverage issue}
 coverage_gaps:
-  - {finding/workstream not preserved}
+  - {finding/requirement/workstream not preserved}
 ```

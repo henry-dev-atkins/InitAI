@@ -35,15 +35,15 @@ prefix_rule(
 
 prefix_rule(
     pattern = ["git", "add"],
-    decision = "allow",
-    justification = "Local staging is reversible and is performed only after orchestrator review.",
+    decision = "forbidden",
+    justification = "Workers must not stage changes. The orchestrator uses the terminal-gated final-commit wrapper.",
     match = ["git add AGENTS.md", "git add ."],
 )
 
 prefix_rule(
     pattern = ["git", "commit"],
-    decision = "allow",
-    justification = "One final local commit is allowed after validation and integration review.",
+    decision = "forbidden",
+    justification = "Direct commits bypass terminal evidence. Use the terminal-gated orchestrator final-commit wrapper.",
     match = ["git commit -m 'FIX: example'"],
 )
 

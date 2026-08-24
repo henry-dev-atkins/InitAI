@@ -27,7 +27,7 @@ Determine the prospective or actual impact cone of one planned or accepted chang
 - direct and transitive consumers;
 - tests and real-run validation affected;
 - accepted, prepared or active plans that consume changed contracts;
-- concurrent write or resource conflicts;
+- concurrent write, stable-read or mutable-resource conflicts;
 - whether the change unlocks dependent outcomes.
 
 ## Output
@@ -40,7 +40,8 @@ subject:
   plan_id: P001
   repo_revision: {revision}
 contracts_changed:
-  - name: {stable contract name}
+  - contract_id: CON001
+    name: {stable contract name}
     current_version: {version or unknown}
     proposed_or_new_version: {version or unknown}
     evidence: []

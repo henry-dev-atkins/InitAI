@@ -1,0 +1,15 @@
+{
+  "schema": "contract-register.v1",
+  "contracts": [
+    {
+      "id": "CON001",
+      "name": "stable interface, schema, config or output",
+      "version": "1",
+      "state_hash": null,
+      "owner_workstream": null,
+      "consumers": [],
+      "last_changed_by_plan": null,
+      "evidence": []
+    }
+  ]
+}

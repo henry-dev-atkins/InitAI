@@ -1,0 +1,73 @@
+{
+  "schema": "requirement-register.v1",
+  "spec_path": "AI_SPACE/SPEC.md",
+  "spec_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+  "line_count": 1,
+  "coverage": [
+    {
+      "start_line": 1,
+      "end_line": 1,
+      "classification": "REQUIREMENT",
+      "requirement_ids": [
+        "REQ001",
+        "REQ002",
+        "REQ003",
+        "REQ004",
+        "REQ005"
+      ],
+      "reason": "collation authority fixture"
+    }
+  ],
+  "requirements": [
+    {
+      "id": "REQ001",
+      "summary": "Collation fixture requirement 1",
+      "spec_start_line": 1,
+      "spec_end_line": 1,
+      "text_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "implementation_evidence": [],
+      "validation_evidence": [],
+      "waiver": null
+    },
+    {
+      "id": "REQ002",
+      "summary": "Collation fixture requirement 2",
+      "spec_start_line": 1,
+      "spec_end_line": 1,
+      "text_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "implementation_evidence": [],
+      "validation_evidence": [],
+      "waiver": null
+    },
+    {
+      "id": "REQ003",
+      "summary": "Collation fixture requirement 3",
+      "spec_start_line": 1,
+      "spec_end_line": 1,
+      "text_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "implementation_evidence": [],
+      "validation_evidence": [],
+      "waiver": null
+    },
+    {
+      "id": "REQ004",
+      "summary": "Collation fixture requirement 4",
+      "spec_start_line": 1,
+      "spec_end_line": 1,
+      "text_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "implementation_evidence": [],
+      "validation_evidence": [],
+      "waiver": null
+    },
+    {
+      "id": "REQ005",
+      "summary": "Collation fixture requirement 5",
+      "spec_start_line": 1,
+      "spec_end_line": 1,
+      "text_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "implementation_evidence": [],
+      "validation_evidence": [],
+      "waiver": null
+    }
+  ]
+}

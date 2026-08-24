@@ -4,9 +4,14 @@
 
 - Workstream ID: WSXXX
 - Plan ID: PXXX
+- Predecessor plan: none
+- Failed assumption from predecessor: none
+- Material causal delta: none
 - Source findings: FXXX
+- Requirement IDs: REQXXX
 - Spec authority: {section/requirement}
 - Owner agent: {agent}
+- Workflow class: SMALL | STANDARD | CAMPAIGN
 
 ## Work Classification
 
@@ -21,19 +26,25 @@
 ## Scope and Contracts
 
 Write scope:
-- `{path}`
+- `{exact repo-relative file or directory root}`
+
+Stable read assumptions:
+- `{exact repo-relative file or directory root-or-none}`
 
 Off-limits:
-- `{path/pattern}`
+- `{exact repo-relative file or directory root}`
 
 Dependencies:
 - `{WS ID-or-none}`
 
 Contracts changed:
-- `{interface/schema/config/output-or-none}`
+- `{CON ID-or-none}`
 
 Contracts consumed:
-- `{interface/schema/config/output-or-none}`
+- `{CON ID-or-none}`
+
+Mutable resources:
+- `{stable resource ID-or-none}`
 
 ## Protected Invariants / Must Not
 
@@ -42,24 +53,10 @@ Contracts consumed:
 
 ## Command Manifest
 
-```json
-{
-  "schema": "plan-command-manifest.v1",
-  "commands": [
-    {
-      "id": "CMD001",
-      "argv": ["python", "-m", "pytest", "tests/example.py", "--basetemp", "temp/pytest/WSXXX"],
-      "cwd": ".",
-      "purpose": "prove assigned behaviour",
-      "phase": "final-validation",
-      "expected_status": "pass",
-      "evidence_target": "FXXX",
-      "artefact_paths": [],
-      "temp_root": "temp/pytest/WSXXX"
-    }
-  ]
-}
-```
+- Path: `AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/plans/PXXX/plan_command_manifest.json`
+- SHA-256: `{manifest-sha256}`
+
+The manifest is the only command source of truth. It uses `plan-command-manifest.v1`, repeats this workstream and plan ID, and uses argv arrays only.
 
 ## Implementation Steps
 
@@ -67,7 +64,9 @@ Contracts consumed:
 
 ## Validation and Resolution Evidence
 
-- `CMD001` proves `{spec requirement/finding}`
+| Command ID | Requirement IDs | Finding IDs | Proof |
+|---|---|---|---|
+| CMD001 | REQXXX | FXXX | `{behaviour or requirement proved}` |
 
 ## Risks and Assumptions
 
@@ -75,7 +74,7 @@ Contracts consumed:
 
 ## Result Packet Contract
 
-Return `.agents/skills/orchestrator/assets/result-packet-template.md` fields and write an evidence ledger matching `evidence-ledger.schema.json`.
+Return `.agents/skills/orchestrator/assets/result-packet-template.md` fields. Run the reviewed manifest through `run_command_manifest.py`. Do not write execution claims into the evidence ledger manually.
 
 ## Executive Summary
 

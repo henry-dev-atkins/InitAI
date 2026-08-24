@@ -1,0 +1,19 @@
+{
+  "schema": "global-validation-manifest.v1",
+  "manifest_id": "GVM001",
+  "commands": [
+    {
+      "id": "CMD001",
+      "argv": ["python", ".agents/skills/orchestrator/scripts/validate_archive_isolation.py", "--repo-root", "."],
+      "cwd": ".",
+      "purpose": "prove archived material is outside active behaviour",
+      "phase": "final-validation",
+      "expected_status": "pass",
+      "requirement_ids": [],
+      "finding_ids": [],
+      "artefact_paths": [],
+      "temp_root": "temp/global-validation",
+      "requires_existing_paths": [".agents/skills/orchestrator/scripts/validate_archive_isolation.py"]
+    }
+  ]
+}

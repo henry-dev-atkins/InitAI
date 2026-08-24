@@ -1,0 +1,30 @@
+{
+  "schema": "plan-command-manifest.v1",
+  "workstream_id": "WS001",
+  "plan_id": "P001",
+  "commands": [
+    {
+      "id": "CMD001",
+      "argv": [
+        "python",
+        "-c",
+        "print('ok')"
+      ],
+      "cwd": ".",
+      "purpose": "prove the workflow preflight fixture can run",
+      "phase": "final-validation",
+      "expected_status": "pass",
+      "requirement_ids": [
+        "REQ001"
+      ],
+      "finding_ids": [
+        "F001"
+      ],
+      "artefact_paths": [],
+      "temp_root": "temp/python/WS001",
+      "requires_existing_paths": [
+        ".agents/skills/orchestrator/assets/plan-template.md"
+      ]
+    }
+  ]
+}

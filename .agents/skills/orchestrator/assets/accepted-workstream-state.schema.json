@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "accepted-workstream-state.v1",
+  "type": "object",
+  "required": [
+    "schema", "workstream_id", "plan_id", "accepted_at", "baseline_tree_hash",
+    "accepted_tree_hash", "scope_diff_path", "scope_diff_sha256", "workstream_changes",
+    "accepted_path_inventory", "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "accepted-workstream-state.v1" },
+    "workstream_id": { "type": "string", "pattern": "^WS[0-9]{3,}$" },
+    "plan_id": { "type": "string", "pattern": "^P[0-9]{3,}$" },
+    "accepted_at": { "type": "string", "minLength": 1 },
+    "baseline_tree_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "accepted_tree_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "scope_diff_path": { "type": "string", "minLength": 1 },
+    "scope_diff_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "workstream_changes": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "accepted_path_inventory": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "null" },
+          {
+            "type": "object",
+            "required": ["kind", "sha256"],
+            "additionalProperties": false,
+            "properties": {
+              "kind": { "type": "string", "enum": ["file", "symlink"] },
+              "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+            }
+          }
+        ]
+      }
+    },
+    "status": { "const": "ACCEPTED" }
+  }
+}

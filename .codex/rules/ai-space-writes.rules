@@ -1,7 +1,7 @@
 prefix_rule(
     pattern = ["./tools/write_ai_space_artifact.ps1"],
     decision = "allow",
-    justification = "Repo-local AI_SPACE orchestration writer with internal path checks for sessions, handovers, TODO and learnings only.",
+    justification = "Repo-local AI_SPACE orchestration writer with internal path checks for sessions, handovers, archives, current state, TODO and learnings only.",
     match = [
         "./tools/write_ai_space_artifact.ps1 -Path AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/session_board.md -Mode create -ContentBase64 SGVsbG8=",
         "./tools/write_ai_space_artifact.ps1 -Path AI_SPACE/handovers/session__YYYYMMDD_HHMMSS__session_end.md -Mode create -ContentBase64 SGVsbG8=",

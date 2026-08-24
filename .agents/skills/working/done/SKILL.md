@@ -1,5 +1,5 @@
 ---
-name: DONE
+name: done
 description: Indicates when the requested work has been completed and validated.
 --- 
 

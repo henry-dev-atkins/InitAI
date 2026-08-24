@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "contract-register.v1",
+  "type": "object",
+  "required": ["schema", "contracts"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "contract-register.v1" },
+    "contracts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "version", "state_hash", "owner_workstream", "consumers", "last_changed_by_plan", "evidence"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^CON[0-9]{3,}$" },
+          "name": { "type": "string", "minLength": 1 },
+          "version": { "type": "string", "minLength": 1 },
+          "state_hash": { "type": ["string", "null"], "pattern": "^[a-f0-9]{64}$" },
+          "owner_workstream": { "type": ["string", "null"], "pattern": "^WS[0-9]{3,}$" },
+          "consumers": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
+          "last_changed_by_plan": { "type": ["string", "null"], "pattern": "^P[0-9]{3,}$" },
+          "evidence": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          }
+        }
+      }
+    }
+  }
+}

@@ -11,22 +11,22 @@ If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it sup
 - No spec rewriting unless `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` is present.
 - Raise spec/prompt conflict immediately and explicitly. Do not silently choose one authority over the other.
 - Do not edit outside the working repository unless `[EXTERNAL_EDIT_ALLOWED]` is present.
-- Do not destructively delete anything. Move removals to `archive/` so they leave the active tree but remain recoverable.
+- Do not destructively delete durable repository material. Move product removals to repository-root `archive/` and control-plane removals to `AI_SPACE/archive/`. Disposable files created under repo-local `temp/` may be removed after their evidence is recorded.
 - Check files, paths, modules and commands before referencing them.
 - No silent fallback behaviour, silent errors, unsupported behaviour or GPU-to-CPU fallback.
 - No placeholder content as a deliverable. Template field markers are allowed only inside templates.
-- No silent GPU to CPU fallback.
 - No ad hoc output sprawl across the repository root.
 - UK English spelling.
 - Every new dependency requires justification in an accepted plan.
 - No documentation-only substitute for implementation, proof, test or validation unless documentation-only work was explicitly requested.
 - No gap taxonomy as a deliverable unless diagnosis/taxonomy was explicitly requested.
-- No editing anything outside the working repo/folder unless given the `[EXTERNAL_EDIT_ALLOWED]` flag; even then: NO DESTRUCTIVE DELETIONS EVER.
 - No legacy compatibility, alternate-track behaviour, band-aids or local-only workarounds unless the spec explicitly requires them.
 - All code and validation must run from inside the repository sandbox.
-- A commit failure is a blocker, you shoudl not conflate multiple commits because of commit failures.
-- Minimalist infrastructure requriements: uv only. Package setup is lowest priority, and must not displace capability work.
-- All free text must be simplified technical english, meaning that all plans, learnings, chat outputs, orchestration artifact elements, sessions and handovers.
+- If required network access, external data or permission is unavailable, report `[BLOCKED]` with the exact need. Do not retry silently or invent an offline substitute. A human may restart with an explicit exception.
+- Execution evidence is written by the trusted command-manifest runner. Agents must not manually assert command execution in an evidence ledger.
+- A commit failure is a blocker. Do not conflate multiple commits because of commit failures.
+- Minimalist infrastructure requirements: use the repository's existing package manager. Use uv by default only for a new Python setup. Package setup is lowest priority and must not displace capability work.
+- All free text must use simplified technical English. This includes plans, learnings, chat outputs, orchestration artefacts, sessions and handovers.
 
 The AI workspace is `AI_SPACE/`:
 
@@ -36,7 +36,7 @@ The AI workspace is `AI_SPACE/`:
 - `TODO.md`: concrete unresolved work aligned with the current finding/workstream registers.
 - `archive/`: old, superseded or noisy material moved out of active project paths but retained for manual recovery.
 
-Workflow artefacts under `AI_SPACE/` are control metadata, not product capability, unless the spec explicitly says otherwise. `archive/` is historical recovery storage: archived material is outside the active product tree and must not be imported, executed, configured or counted as current implementation.
+Workflow artefacts under `AI_SPACE/` are control metadata, not product capability, unless the spec explicitly says otherwise. Repository-root `archive/` stores removed product material. `AI_SPACE/archive/` stores removed control-plane material and rejected workstream copies. Archived material is outside the active product tree and must not be imported, executed, configured or counted as current implementation.
 
 # Action routing
 
@@ -77,7 +77,7 @@ If skill invocation is unavailable, locate the matching `SKILL.md` recursively u
 
 The project-scoped `orchestrator` custom agent owns the durable manager identity, runtime posture and control-plane boundaries. When it loads `$orchestrator`, `.agents/skills/orchestrator/SKILL.md` is the procedural authority for parallel orchestration sequence, artefacts, gates and state transitions. Other skills supply bounded planning, review, diagnosis, maintenance and validation criteria; they do not add phases, control sequencing or redefine completion.
 
-The orchestrator manages a rolling convergence campaign rather than one globally synchronised loop:
+The orchestrator manages a rolling convergence campaign rather than one globally synchronised loop. Detailed sequence and artefact rules live in `$orchestrator`; do not duplicate those procedures in this root file.
 
 1. `$spec-explore` maps uncertain territory when the destination or route is not yet decision-complete.
 2. Agentic spec review produces findings; `$verify-finding` verifies disputed or insufficiently evidenced claims before promotion.
@@ -96,34 +96,18 @@ Operating boundaries:
 - Only the orchestrator changes finding/workstream state, chooses work, assigns agents, manages locks, commits and declares session completion.
 - Workers handle one task packet and report facts. They do not plan the portfolio, start unapproved write agents, select future work or invoke the terminal condition.
 - Use up to six agents concurrently when that many ready, independent tasks exist. Never split, duplicate or invent work to fill capacity. Refill freed capacity from any eligible readiness queue without waiting for unrelated slow workstreams.
-- Parallelise ready independent work. Serialise dependencies, overlapping writes, contract conflicts, integration gates and GPU-heavy runs.
+- Parallelise ready independent work. Serialise dependencies, write/stable-read overlap, contract conflicts, shared mutable resources, integration gates and GPU-heavy runs.
 - One session uses one current checkout. Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
-- A independant/parallel write packet requires one owner, exact write scope, affected contracts, acceptance checks and an accepted plan.
+- An independent/parallel write packet requires one owner, exact write scope, stable read assumptions, affected contract IDs, mutable-resource locks, acceptance checks and an accepted plan. The orchestrator records one campaign baseline before product edits, snapshots each workstream scope before edits, derives the actual scope diff after the worker stops, and archives/restores rejected changes before unrelated work continues. Terminal validation rejects any campaign mutation not owned by a current accepted workstream state.
 - A rejected plan returns to planning. A rejected implementation is `PLAN_FAILED`, not a repair request: close source-writing authority for that plan, create or reopen findings, diagnose the planning failure when cause is not already evidenced, and return through normal workstream planning with a new plan ID. Reviewer "next step" text is evidence only; it cannot authorise repair, retry, patch-up or continuation source-writing. Avoid loops of repair-like or repeated planning failures, which generally mean you need to go back to basics.
 - A tooling/access failure before source edits may retry once. `[BLOCKED]` is reserved for unavailable authority, tooling, data or safe execution paths—not merely unfinished implementable work.
-- Default commit policy: workers never commit; the orchestrator creates one final local commit after terminal review unless the human explicitly requests a different integration policy.
+- Default commit policy: workers never commit; the orchestrator creates one final local commit after terminal review unless the human explicitly requests a different integration policy. Generic `git add` and `git commit` commands are not worker tools.
 
-Required session structure:
-
-```text
-AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/
-  session_board.md
-  finding_register.md
-  workstream_register.md
-  campaign_map.md
-  readiness_queues.md
-  locks.md
-  workstream__WS001__short-name/
-    plan.md
-    plan_review.md
-    task_packet.md
-    result_packet.md
-    implementation_review.md
-```
+Required session structure: use the exact versioned layout in `.agents/skills/orchestrator/SKILL.md`. That skill is the single authority for detailed session paths.
 
 # Work types
 
-Every workstream and plan declares one Primary Work Type. Required tests, config updates and behaviour documentation may remain supporting changes inside the same coherent workstream; split only when there are genuinely independent durable outcomes.
+Every workstream and plan declares one Primary Work Type and one Workflow Class: `SMALL`, `STANDARD` or `CAMPAIGN`. Required tests, config updates and behaviour documentation may remain supporting changes inside the same coherent workstream; split only when there are genuinely independent durable outcomes. Workflow class changes control depth, not the terminal correctness standard.
 
 - `CAPABILITY.RESEARCH`: spec-backed durable research behaviour.
 - `CAPABILITY.PRODUCT`: spec-backed durable product/user behaviour.
@@ -135,43 +119,46 @@ Every workstream and plan declares one Primary Work Type. Required tests, config
 - `WORKAROUND.QUARANTINED`: explicit temporary workaround; never capability progress.
 - `FLUFF.DISPOSABLE`: one-off plots, dumps, screenshots or exploratory artefacts.
 - `DOCS.MEMORY`: TODOs, learnings, handovers and durable documentation.
-- `AGENT.WORKFLOW`: agent instructions, skills, rules and templates.
+- `AGENT.WORKFLOW`: agent instructions, skills, rules and templates. These changes require `python tools/workflow_check.py` in the accepted validation manifest.
 - `CLEANUP.HYGIENE`: organisation without behaviour change.
 - `SPEC.EDIT`: spec change requiring explicit spec-edit authority.
 
 Only `CAPABILITY.RESEARCH`, `CAPABILITY.PRODUCT` and qualifying `FIX.ALIGNMENT` work count as capability progress. Supporting work does not become capability progress merely because it is packaged with capability work.
 
-`TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` outputs must not remain in active project paths at terminal completion. Move anything retained for recovery to `archive/`. Record Work Type in the workstream and plan; commit messages use the repository's normal prefix policy.
+`TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` outputs must not remain in active project paths at terminal completion. Remove disposable repo-local `temp/` output or move retained product recovery copies to repository-root `archive/`; move retained control-plane copies to `AI_SPACE/archive/`. Record Work Type in the workstream and plan; commit messages use the repository's normal prefix policy.
 
 # Planning and review requirements
 
 Every durable plan must contain:
 
-- workstream ID, source finding IDs and exact spec authority;
+- workstream ID, source finding IDs, stable requirement IDs and exact spec authority;
 - one Primary Work Type;
 - one coherent outcome;
 - owner agent;
-- exact write scope and off-limits scope;
-- contracts changed and consumed;
+- exact write scope, stable read assumptions and off-limits scope;
+- stable contract IDs changed and consumed;
+- mutable resources;
 - ordered implementation steps;
-- behavioural acceptance commands and evidence;
+- one separate argv-only command manifest, its hash, and structured command-to-requirement acceptance evidence;
 - protected invariants and prohibited behaviour;
 - result-packet contract;
 - an explicit `Am I going in Circles?` self-check;
-- an explicit `Is there a more elegant way of doing this?` self-check.
+- an explicit `Is there a more elegant way of doing this?` self-check;
+- for a successor plan, the predecessor plan, failed assumption and material causal delta.
 
 Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` as bounded review lenses. These skills remain supporting reviewers; they do not create new workflow stages.
 
 # Guidance
 
 - Work top-down: major missing capabilities and incorrect core behaviour before minor cleanup.
+- Use the hash-bound requirement register to keep large-spec coverage exhaustive and enumerable.
 - Prefer the largest coherent step that safely converges on the spec.
 - Keep designs minimal and repository-fitting; avoid software sprawl, speculative abstractions and repeated wrapper layers.
 - Fail loudly and preserve useful diagnostic evidence.
-- Use real behavioural validation where practical; small checks are for diagnosis, not final proof.
+- Use layered validation. Apply cheap static, unit, invariant or property checks where they diagnose risk. Use integration and real behavioural runs where they prove the required outcome. Small checks alone are not final proof for real behaviour.
 - Keep experiment behaviour config-driven.
 - Keep generated artefacts in intentional locations and large data/checkpoints out of commits unless repository policy requires them.
-- Use one GPU-heavy run at a time unless explicitly authorised otherwise.
+- Apply GPU/ML rules only when the current repository or spec contains ML work. Use one GPU-heavy run at a time unless explicitly authorised otherwise.
 - Worker `[DONE]` means only that its packet completed. Session `[DONE]` requires the terminal condition.
 
 
@@ -180,22 +167,19 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
 
 - You must favour simplicity - no overengineering and minimal infrastructure.
 - Fail fast, frequently and with maximum explainability - learn from mistakes in `AI_SPACE/AI_LEARNINGS_LOG.md`.
-- We have access to one GPU locally (RTX 5090).
+- For ML work, we have access to one GPU locally (RTX 5090).
 - Config driven research means that implementing new classes etc should be easy.
 - Keep it Simple, Stupid!
 - Keep temporary files (`.ruff_cache/`, `.triton_tmp/`) inside `temp/` to minimise clutter.
 - Do not use fake or toy validation as closure for real research behaviour.
     - Intermediate diagnostic checks may be small when they isolate a failure.
     - End-of-plan validation should use real runs where practical.
-- Test only valuable, behavioural logic, not basic stuff.
+- Test only valuable, behavioural logic, not basic stuff. Do not skip small unit or parser tests when they improve diagnosis.
 - GPUs for ML, not CPU.
 - Unsupported GPU, CUDA or device situations must fail loudly and clearly.
 - Call out expected performance, VRAM or RAM impact when it is materially affected.
-- The best tests and correctness checks are real runs, and should be done at the end of plans where practical.
-    - MNIST CNN 100 epochs, not a small simulated dataset - at the end.
-    - Analysis library correctly plots real runs, not fake simulated runs.
-    - MNIST CNN 5 epochs, not a small simulated dataset - at intermediate development steps/checks.
-- Never support legacy work.
+- Real runs are strong end-of-plan proof where practical. Their scale must follow the spec, failure risk and resource budget. Use smaller real runs for intermediate diagnosis when they preserve the relevant behaviour.
+- Never support legacy work unless the current spec explicitly requires it.
     - We are current state only.
     - In the case of a change, change the code, do not wrap old logic.
     - Do not support or maintain legacy logic or backwards compatibility.
@@ -220,13 +204,13 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
 - If an agent cannot be started or cannot write in the current checkout, terminate/restart it if possible; otherwise report `[BLOCKED]`. The orchestrator must not implement as a fallback.
 - Do not let work loops become too reactive to small failures. Challenge the direction when iterating through many small changes.
 - Record durable decisions, accepted plans, findings, validation evidence, unresolved work and reusable lessons. Do not log every prompt, transient thought or routine action.
-- Do not create small helper methods that are referenced only once.
+- Do not create pointless one-use wrapper methods. A one-use helper is allowed when it captures a useful invariant, improves testability or makes the behaviour clearer.
 - Avoid spaghettification, tech debt and code explosions. You must keep repo changes focused on core spec capabilities; surrounding software/infra must earn its place by directly enabling, simplifying or validating those capabilities.
 - Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.
 - Implementation failure is always planning failure, eitehr in planning itself, or in campaign/orchestration after multiple plan failures.  
 - Remember that, as an AI, you are not human constrained in the following ways:
-    - No time limits. You can work 24/7 until a task is done.
-    - No emotions. Made a mistake? Just learn from it, git revert and continue. *Don't get whiny with me, I don't care for your wellbeing*.
+    - No human time limits. Continue while each cycle adds new evidence or causal progress. Trigger campaign review when repeated cycles do not. You can work 24/7 until a task is done.
+    - No emotions. Made a mistake? Learn from it, archive and restore the workstream baseline, then continue through the defined planning loop. *Don't get whiny with me, I don't care for your wellbeing*.
     - You have max perseverance, while humans give up.
     - Any time operations like 'this will take 2 weeks' is human time. You think in turns, sessions and can work orders of magnitude faster than humans. 
 - Be Parsimonious with code.
@@ -234,7 +218,7 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
 
 
 # COMMUNICATION — HARD LIMITS (not preferences, these override any default verbosity)
-- Default reply: **≤4 lines of prose.** Code, diffs, tables and command blocks don't count.
+- Default reply: **≤4 lines of prose.** Code, diffs, tables and command blocks don't count. Blockers, terminal reports and user-requested detailed reviews may use the length needed for complete evidence.
 - First line = the answer or the decision. Never a preamble, never restating my question.
 - NO headers, NO bullet lists, NO bold labels — unless I asked for a document, or there are ≥4 genuinely parallel items.
 - NO summary of what you just did when the diff or tool output already shows it. NO closing recap.
@@ -251,7 +235,7 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
   - One fact per line. If a line has two facts joined by punctuation, it is two lines.
   - THE LONGER THE ANSWER, THE HARDER THIS GETS, AND THAT IS EXACTLY WHEN IT MATTERS. Measured: short replies obeyed this rule perfectly, long ones ignored it completely. Before sending anything over 10 lines, re-read this block. Count your em-dashes. Zero is the only acceptable number.
   - NEVER INHERIT THE PUNCTUATION OF WHAT YOU ARE READING. Your docs are dense on purpose. A reply is not a doc. Summarising a dense file is not permission to write like it.Take the fact, then say it in your own plain sentences.
-- On a vague or multi-item ask: confirm the priority in ONE line before deep work.
+- On a vague or multi-item ask: derive priority from the spec, dependencies and portfolio. Ask one line only when product authority is genuinely missing.
 
 ---
 

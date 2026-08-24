@@ -20,4 +20,4 @@ Include:
 - validation status
 - open issues and next steps
 
-Open issues are not closure. If open issues are in-scope, mark `[BLOCKED]` unless the human explicitly deferred them.
+Open issues are not closure. A human deferral remains `[BLOCKED]` for terminal completion unless every linked requirement has an explicit recorded waiver with authority.

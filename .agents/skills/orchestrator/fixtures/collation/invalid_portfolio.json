@@ -1,22 +1,74 @@
 {
   "plans": [
     {
-      "plan_id": "P001",
-      "workstream_id": "WS001",
-      "findings": ["F001"],
-      "write_scope": ["agents/skills/planning"],
-      "contracts_changed": ["command-manifest"],
+      "plan_id": "P003",
+      "workstream_id": "WS003",
+      "findings": [
+        "F003"
+      ],
+      "requirement_ids": [
+        "REQ003"
+      ],
+      "write_scope": [
+        "src/../../outside"
+      ],
+      "stable_read_scope": [
+        "src/shared"
+      ],
+      "contracts_changed": [
+        "CON003"
+      ],
       "contracts_consumed": [],
+      "mutable_resources": [
+        "GPU0"
+      ],
+      "dependencies": [
+        "WS004"
+      ]
+    },
+    {
+      "plan_id": "P004",
+      "workstream_id": "WS004",
+      "findings": [
+        "F004"
+      ],
+      "requirement_ids": [
+        "REQ004"
+      ],
+      "write_scope": [
+        "src/shared"
+      ],
+      "stable_read_scope": [],
+      "contracts_changed": [
+        "CON003"
+      ],
+      "contracts_consumed": [],
+      "mutable_resources": [
+        "GPU0"
+      ],
       "dependencies": []
     },
     {
-      "plan_id": "P001",
-      "workstream_id": "WS002",
-      "findings": ["F002"],
-      "write_scope": ["agents/skills/planning/plan-review"],
+      "plan_id": "P003",
+      "workstream_id": "WS005",
+      "findings": [
+        "F005"
+      ],
+      "requirement_ids": [
+        "REQ005"
+      ],
+      "write_scope": [
+        "src/shared/sub"
+      ],
+      "stable_read_scope": [],
       "contracts_changed": [],
-      "contracts_consumed": ["command-manifest"],
-      "dependencies": ["WS001"]
+      "contracts_consumed": [
+        "CON003"
+      ],
+      "mutable_resources": [
+        "GPU0"
+      ],
+      "dependencies": []
     }
   ]
 }

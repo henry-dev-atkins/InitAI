@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "terminal-review.v1",
+  "type": "object",
+  "required": [
+    "schema",
+    "terminal_review_id",
+    "tree_hash",
+    "campaign_baseline_path",
+    "requirement_register_path",
+    "finding_register_path",
+    "workstream_register_path",
+    "global_validation_ledger_path",
+    "reviewers",
+    "status"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema": {
+      "const": "terminal-review.v1"
+    },
+    "terminal_review_id": {
+      "type": "string",
+      "pattern": "^TR[0-9]{3,}$"
+    },
+    "tree_hash": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "campaign_baseline_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requirement_register_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "global_validation_ledger_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "reviewers": {
+      "type": "array",
+      "minItems": 6,
+      "items": {
+        "type": "object",
+        "required": [
+          "review_id",
+          "lens",
+          "tree_hash",
+          "assigned_requirement_ids",
+          "verdict",
+          "findings",
+          "finding_verification_ids"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "review_id": {
+            "type": "string",
+            "pattern": "^TRR[0-9]{3,}$"
+          },
+          "lens": {
+            "type": "string",
+            "enum": [
+              "requirement_coverage",
+              "behavioural_correctness",
+              "files_config_outputs",
+              "extra_prohibited_logic",
+              "validation_edge_cases",
+              "holistic_integration_minimality"
+            ]
+          },
+          "tree_hash": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{64}$"
+          },
+          "assigned_requirement_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^REQ[0-9]{3,}$"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "verdict": {
+            "type": "string",
+            "enum": [
+              "PASS",
+              "FINDINGS"
+            ]
+          },
+          "findings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "finding_verification_ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^FV[0-9]{3,}$"
+            }
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "FINDINGS",
+        "BLOCKED"
+      ]
+    },
+    "finding_register_path": {
+      "type": "string",
+      "minLength": 1
+    },
+    "workstream_register_path": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

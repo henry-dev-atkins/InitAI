@@ -1,0 +1,52 @@
+{
+  "schema": "plan-command-manifest.v1",
+  "workstream_id": "WS001",
+  "plan_id": "P002",
+  "commands": [
+    {
+      "id": "CMD001",
+      "argv": [
+        "python",
+        "-m",
+        "pytest",
+        "tests"
+      ],
+      "cwd": "../outside",
+      "purpose": "invalid pytest command",
+      "phase": "final-validation",
+      "expected_status": "pass",
+      "requirement_ids": [
+        "REQ001"
+      ],
+      "finding_ids": [
+        "F001"
+      ],
+      "artefact_paths": [],
+      "temp_root": ".ruff_cache",
+      "requires_existing_paths": [
+        "{missing}"
+      ]
+    },
+    {
+      "id": "CMD001",
+      "argv": [
+        "python",
+        "-c",
+        "if True print('bad')"
+      ],
+      "cwd": ".",
+      "purpose": "invalid inline Python",
+      "phase": "diagnostic",
+      "expected_status": "pass",
+      "requirement_ids": [
+        "REQ001"
+      ],
+      "finding_ids": [
+        "F001"
+      ],
+      "artefact_paths": [],
+      "temp_root": "temp/python/WS001",
+      "requires_existing_paths": []
+    }
+  ]
+}

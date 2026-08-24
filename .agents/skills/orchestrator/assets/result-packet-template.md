@@ -5,26 +5,22 @@ workstream_id: WSXXX
 plan_id: PXXX
 agent: {agent-name}
 status: DONE | INCOMPLETE | BLOCKED | PERMISSION_BLOCKED
-changed_files:
+requirement_ids:
+  - REQXXX
+changed_files_reported:
   - {path-or-none}
-scope_deviations:
+scope_deviations_reported:
   - {path-and-reason-or-none}
-command_manifest_path: AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/plan_command_manifest.json
-evidence_ledger_path: AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/evidence_ledger.json
-commands_run:
-  - command_id: CMD001
-    argv: [python, -m, pytest, tests/example.py, --basetemp, temp/pytest/WSXXX]
-    exit_code: 0
-    status: PASS | FAIL | NOT_RUN
-    result: {concise result}
+command_manifest_path: AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/plans/PXXX/plan_command_manifest.json
+evidence_ledger_path: AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/plans/PXXX/evidence_ledger.json
+scope_diff_path: AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/plans/PXXX/scope_diff.json
+command_ids_run:
+  - CMD001
 validation:
   status: PASS | FAIL | NOT_RUN
   evidence:
-    - {requirement -> command_id/result/path}
-first_failed_gate: {command_id-or-none}
-artefacts:
-  - path: {path-or-none}
-    sha256: {hash-or-none}
+    - {REQ ID -> command ID/result/path}
+first_failed_gate: {command-id-or-none}
 unexpected_discoveries:
   - {fact-or-none}
 permission_failure: {exact failed operation or none}
@@ -33,4 +29,4 @@ temporary_files:
 summary: {concise factual result}
 ```
 
-Packet status is not a workflow decision. The orchestrator sends every implementation result to read-only implementation review.
+The manifest and evidence ledger are the command/result authorities. Do not duplicate argv, exit codes or artefact hashes here. Packet status is not a workflow decision. The orchestrator sends every implementation result to read-only implementation review.

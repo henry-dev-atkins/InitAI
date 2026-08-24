@@ -6,24 +6,40 @@
       "status": "OPEN",
       "severity": "high",
       "owner": "orchestrator",
+      "requirement_ids": [
+        "REQ001"
+      ],
       "spec_authority": "AGENTS.md workflow rules",
       "problem": "Plan preflight is missing.",
       "repo_evidence": "workflow fixture",
-      "resolution_evidence": "validator pass",
+      "affected_behaviour_files": "planning workflow",
+      "resolution_evidence": "pending",
+      "source_reports": [
+        "SR001"
+      ],
       "resolved_by": null,
-      "closed_at": null
+      "closed_at": null,
+      "waiver": null
     },
     {
       "id": "F002",
       "status": "RESOLVED",
       "severity": "medium",
       "owner": "orchestrator",
+      "requirement_ids": [
+        "REQ002"
+      ],
       "spec_authority": "AGENTS.md workflow rules",
-      "problem": "Evidence ledger is missing.",
+      "problem": "Evidence ledger was missing.",
       "repo_evidence": "workflow fixture",
-      "resolution_evidence": "evidence ledger validator pass",
-      "resolved_by": "R002",
-      "closed_at": "2026-08-01"
+      "affected_behaviour_files": "validation workflow",
+      "resolution_evidence": "IR002 accepted evidence",
+      "source_reports": [
+        "SR001"
+      ],
+      "resolved_by": "IR002",
+      "closed_at": "2026-08-01T00:00:00Z",
+      "waiver": null
     }
   ]
 }

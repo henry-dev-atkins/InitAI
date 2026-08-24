@@ -1,6 +1,6 @@
 name = "validation-engineer"
 description = "Agent for assigned behavioural validation workstreams or read-only validation review packets."
-model_reasoning_effort = "high"
+model_reasoning_effort = "medium"
 sandbox_mode = "workspace-write"
 
 developer_instructions = """
@@ -14,6 +14,7 @@ Workspace policy:
 - Work in the current parent-session checkout.
 - Do not create/switch branches or worktrees.
 - Do not stage, commit, merge or rebase.
+- Run reviewed validation through the trusted command-manifest runner. Do not write evidence-ledger execution claims manually.
 - If an authorised write is denied, return PERMISSION_BLOCKED with the exact failed operation; do not request repeated permissions.
 
 Primary responsibilities:

@@ -20,8 +20,9 @@ Evaluate the current portfolio and return the highest-convergence-value safe can
 - finding and workstream registers;
 - readiness queues;
 - active locks and write scopes;
-- changed/consumed contracts and versions;
-- available agent capacity and resource constraints.
+- canonical contract register with changed/consumed contract IDs and versions;
+- exact write/stable-read locks and mutable-resource locks;
+- available total agent capacity and resource constraints.
 
 ## Selection principles
 
@@ -30,7 +31,7 @@ Prefer work that:
 1. advances major spec behaviour;
 2. lies on or unlocks the critical path;
 3. retires uncertainty that blocks expensive work;
-4. is safe under write-scope, contract and resource constraints;
+4. is safe under write/write, write/stable-read, contract and mutable-resource constraints;
 5. can refill capacity without waiting for unrelated slow siblings.
 
 Defer work that is likely to be invalidated by unresolved architectural decisions. Planning, review, implementation and validation candidates may be returned together because phase order is local to each workstream.
@@ -59,4 +60,4 @@ not_selected:
 status: READY | NOTHING_READY | BLOCKED
 ```
 
-The orchestrator validates the recommendation, performs state transitions and authorises assignments.
+The orchestrator validates the recommendation, performs state transitions and authorises assignments. `validation_ready` uses the normal `READY -> IMPLEMENTING` transition for `EVIDENCE.VALIDATION` workstreams. `fog_clearing_ready` contains campaign-map evidence actions and does not imply a workstream state. Capacity fields are current limits, not fixed role reservations.

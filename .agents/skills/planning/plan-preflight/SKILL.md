@@ -13,10 +13,12 @@ Run a mechanical preflight on one submitted workstream plan before `[PLAN.REVIEW
 - parent session path;
 - source workstream ID;
 - expected plan ID;
-- expected source finding IDs;
-- allowed write scope;
+- expected source finding IDs and requirement IDs;
+- separate command-manifest path and expected hash;
+- allowed write scope and stable read assumptions;
 - off-limits scope;
-- contracts changed and consumed.
+- contracts changed and consumed;
+- mutable resources.
 
 If any required input is unavailable, return `BLOCKED` with the missing authority or file path.
 
@@ -25,15 +27,17 @@ If any required input is unavailable, return `BLOCKED` with the missing authorit
 - The plan contains every required `$plan` section.
 - Identity fields match the assigned workstream and plan IDs.
 - Primary Work Type is present and valid.
-- Write scope, off-limits scope, contracts changed and contracts consumed are explicit.
-- The `Command Manifest` section is present and parseable.
-- Command IDs are unique, stable and referenced by validation evidence.
-- Every command declares purpose, working directory, expected status and evidence target.
+- Source findings, requirement IDs, write scope, stable read assumptions, off-limits scope, contracts and mutable resources exactly match orchestrator authority.
+- The `Command Manifest` section points to one separate manifest file and records its matching SHA-256.
+- The argv-only manifest validates against `plan-command-manifest.schema.json`.
+- Command IDs are unique, stable and mapped through the structured validation-evidence table.
+- Every command declares purpose, working directory, expected status, requirement IDs and finding IDs.
 - Pytest commands use a repo-local `temp/` basetemp.
 - Inline Python snippets compile where detectable.
 - Referenced files or paths exist when the plan marks them as existing prerequisites.
 - No unresolved placeholders appear outside templates.
-- No malformed temp/cache roots or paths outside the repository are accepted.
+- No malformed temp/cache roots, scope globs, repository-root write scope, path traversal or paths outside the repository are accepted.
+- A successor plan names its predecessor, failed assumption and material causal delta.
 
 ## Output
 

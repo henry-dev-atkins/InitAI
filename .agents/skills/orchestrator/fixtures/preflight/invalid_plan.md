@@ -4,92 +4,86 @@
 
 - Workstream ID: WS001
 - Plan ID: P002
+- Predecessor plan: none
+- Failed assumption from predecessor: none
+- Material causal delta: none
 - Source findings: F001
+- Requirement IDs: REQ001
 - Spec authority: AGENTS.md workflow rules
 - Owner agent: planner
+- Workflow class: STANDARD
 
 ## Work Classification
 
 - Primary Work Type: `AGENT.WORKFLOW`
+- Counts as capability progress: no
+- Supporting changes: validation fixtures
 
 ## Mission
 
-Invalid command shape.
+Add a workflow validator fixture.
 
 ## Scope and Contracts
 
 Write scope:
-- `{missing-path}`
+- `src/../../outside`
+
+Stable read assumptions:
+- `.agents/skills/orchestrator/assets`
 
 Off-limits:
-- `src`
+- `AI_SPACE/SPEC.md`
 
 Dependencies:
 - none
 
 Contracts changed:
-- none
+- `CON001`
 
 Contracts consumed:
+- none
+
+Mutable resources:
 - none
 
 ## Protected Invariants / Must Not
 
 - Keep product code untouched.
+- Must not edit AI_SPACE/SPEC.md.
 
 ## Command Manifest
 
-```json
-{
-  "schema": "plan-command-manifest.v1",
-  "commands": [
-    {
-      "id": "CMD001",
-      "argv": ["python", "-m", "pytest", "tests"],
-      "cwd": ".",
-      "purpose": "invalid pytest command",
-      "phase": "final-validation",
-      "expected_status": "pass",
-      "evidence_target": "F001"
-    },
-    {
-      "id": "CMD001",
-      "argv": ["python", "-c", "if True print('bad')"],
-      "cwd": ".",
-      "purpose": "invalid inline Python",
-      "phase": "diagnostic",
-      "expected_status": "pass",
-      "evidence_target": "F001",
-      "temp_root": ".ruff_cache"
-    }
-  ]
-}
-```
+- Path: `.agents/skills/orchestrator/fixtures/preflight/invalid_manifest.json`
+- SHA-256: `5d2718e7d63a0cde32fb1a70dbb2df833ad7f148f5c0e8c80c27189c030b815c`
+
+The manifest is the only command source of truth.
 
 ## Implementation Steps
 
-1. Invalid step.
+1. Create the fixture.
 
 ## Validation and Resolution Evidence
 
-- `CMD001` is intentionally invalid.
+| Command ID | Requirement IDs | Finding IDs | Proof |
+|---|---|---|---|
+| CMD001 | REQ999 | F001 | Invalid evidence binding. |
 
 ## Risks and Assumptions
 
-- This fixture must fail.
+- The fixture is workflow-only.
 
 ## Result Packet Contract
 
-Return failure evidence.
+Return the result packet and trusted evidence ledger.
 
 ## Executive Summary
 
-Invalid fixture.
+Workflow fixture for preflight validation.
 
 ## Am I going in Circles?
 
-No.
+No repeated repair loop is present.
 
 ## Is there a more elegant way of doing this?
 
-No.
+A single small fixture is the simplest route.

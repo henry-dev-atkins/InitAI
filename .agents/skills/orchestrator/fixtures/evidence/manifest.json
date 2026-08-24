@@ -1,0 +1,27 @@
+{
+  "schema": "plan-command-manifest.v1",
+  "workstream_id": "WS001",
+  "plan_id": "P001",
+  "commands": [
+    {
+      "id": "CMD001",
+      "argv": [
+        "python",
+        "--version"
+      ],
+      "cwd": ".",
+      "purpose": "static evidence fixture",
+      "phase": "final-validation",
+      "expected_status": "pass",
+      "requirement_ids": [
+        "REQ001"
+      ],
+      "finding_ids": [
+        "F001"
+      ],
+      "artefact_paths": [],
+      "temp_root": "temp/evidence/WS001",
+      "requires_existing_paths": []
+    }
+  ]
+}

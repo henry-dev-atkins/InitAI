@@ -32,7 +32,7 @@ Review lenses may include:
 Each finding must identify:
 
 - a report-local source finding ID;
-- exact spec requirement/section;
+- exact stable requirement ID plus spec section/line range;
 - exact repository evidence;
 - expected behaviour/state;
 - actual behaviour/state;
@@ -45,9 +45,9 @@ The orchestrator owns deduplication and stable global finding IDs.
 ## Output
 
 ```yaml
-review_id: RXXX
+review_id: SRXXX
 review_lens: requirement_coverage | behaviour | files_and_config | extra_logic | validation | holistic | assigned_scope
-repo_revision: {commit-or-tree-hash}
+repo_tree_hash: {canonical-active-tree-hash}
 scope_reviewed:
   spec:
     - {section-or-requirement}
@@ -55,7 +55,8 @@ scope_reviewed:
     - {path-or-component}
 review_status: PASS | FINDINGS
 findings:
-  - source_finding_id: RXXX-F001
+  - source_finding_id: SRXXX-F001
+    requirement_ids: [REQXXX]
     spec_authority: {exact section/requirement}
     severity: critical | high | medium | low
     expected: {spec-required state}
@@ -67,9 +68,10 @@ findings:
     affected_behaviour: {concise description}
     resolution_evidence: {what would prove alignment}
 coverage_evidence:
-  - spec_requirement: {requirement}
+  - requirement_id: REQXXX
+    spec_requirement: {requirement}
     implementation_evidence: {path/behaviour}
     validation_evidence: {test/command/result or missing}
 ```
 
-Return `PASS` only when the assigned scope has no findings and sufficient coverage evidence.
+Return `PASS` only when the assigned requirement-ID scope has no findings and sufficient coverage evidence. A repository-wide batch must also report the exact requirement IDs covered so the orchestrator can prove the union is exhaustive.

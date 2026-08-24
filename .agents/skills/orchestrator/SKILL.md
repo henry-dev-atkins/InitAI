@@ -77,18 +77,25 @@ Subagents are told what to inspect, review, validate or implement. They do not g
 - Phase ordering applies per workstream, not globally. Different workstreams may concurrently be planned, reviewed, implemented and validated when their individual prerequisites pass and their operations cannot invalidate one another.
 - Refill freed capacity from any eligible readiness queue without waiting for the slowest sibling.
 - Preserve global barriers only for frozen terminal review, repository-wide remapping, shared generated-output cutovers, global schema migrations, exclusive resources and final commit.
-- Parallel write work requires disjoint write scopes and no contract conflict.
-- Serialise dependencies, overlapping writes, shared generated outputs, integration gates and GPU-heavy runs.
+- Parallel write work requires disjoint exact write scopes, no write/stable-read overlap, no contract conflict and no shared mutable resource.
+- Before any write agent starts, the orchestrator creates a non-Git baseline snapshot for that plan. After the agent stops, the orchestrator derives the actual scope diff from the snapshot.
+- A rejected implementation is archived and restored to its baseline before unrelated work continues. This does not create a repair phase and does not alter the rule that implementation failure is always planning failure.
+- Serialise dependencies, overlapping writes, stable-read conflicts, shared generated outputs, integration gates, databases, ports, environments and GPU-heavy runs.
 
 Two workstreams are safe to run together only when:
 
 ```text
 A.write_scope intersection B.write_scope = empty
-A.contracts_changed intersection B.contracts_consumed = empty
-B.contracts_changed intersection A.contracts_consumed = empty
+A.write_scope intersection B.stable_read_scope = empty
+B.write_scope intersection A.stable_read_scope = empty
+A.contracts_changed intersection (B.contracts_changed union B.contracts_consumed) = empty
+B.contracts_changed intersection (A.contracts_changed union A.contracts_consumed) = empty
+A.mutable_resources intersection B.mutable_resources = empty
 A.dependencies are ACCEPTED
 B.dependencies are ACCEPTED
 ```
+
+Use exact repository-relative file or directory roots. Do not use write-scope globs. Run `validate_parallel_plan_collation.py` before authorising a parallel batch and `workstream_snapshot.py` before and after each write assignment.
 
 ## Session artefacts
 
@@ -97,29 +104,46 @@ Create:
 ```text
 AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/
   session_board.md
+  campaign_baseline.json
+  finding_register.json
   finding_register.md
+  requirement_register.json
   workstream_register.md
+  contract_register.json
+  global_validation_manifest.json
   campaign_map.md
   readiness_queues.md
   locks.md
-  parallel_plan_collation.md
   current_state_capsule.md
-  session_compaction_manifest.md
+  reports/
+    parallel-plan-collation/PPC001.md
+    portfolio-next/PN001.md
+    blast-radius/BR001.md
+    campaign-review/CR001.md
+    global-validation/GV001/evidence_ledger.json
+    terminal-review/TR001.md
+    session-compaction/SC001.md
   workstream__WS001__short-name/
-    plan.md
-    plan_command_manifest.json
-    plan_preflight.md
-    plan_review.md
-    task_packet.md
-    result_packet.md
-    evidence_ledger.json
-    implementation_review.md
+    plans/
+      P001/
+        plan.md
+        plan_command_manifest.json
+        plan_preflight.md
+        plan_review.md
+        task_packet.md
+        baseline_snapshot/
+        result_packet.md
+        evidence_ledger.json
+        scope_diff.json
+        implementation_review.md
+        accepted_state.json
 ```
 
 Use the templates under `.agents/skills/orchestrator/assets/`.
 
 Stable IDs:
 
+- requirements: `REQ001`, `REQ002`, ...
 - findings: `F001`, `F002`, ...
 - workstreams: `WS001`, `WS002`, ...
 - plans: `P001`, `P002`, ...
@@ -129,9 +153,12 @@ Stable IDs:
 - blast-radius reports: `BR001`, `BR002`, ...
 - campaign reviews: `CR001`, `CR002`, ...
 - portfolio collation reports: `PPC001`, `PPC002`, ...
-- review reports: `R001`, `R002`, ...
+- spec reviews: `SR001`, `SR002`, ...
+- plan reviews: `PR001`, `PR002`, ...
+- implementation reviews: `IR001`, `IR002`, ...
+- terminal reviews: `TR001`, `TR002`, ...
 
-The finding register, workstream register and campaign map are the durable control state. The readiness queues are a scheduling cache derived from those records. Chat summaries do not replace them. Current-state capsules are caches, not authority.
+IDs use at least three digits and may grow beyond 999. `finding_register.json` is the finding authority; `finding_register.md` is a generated human view. The requirement register, finding register, workstream register, contract register and campaign map are durable control state. Readiness queues are a scheduling cache derived from those records. Chat summaries do not replace them. Current-state capsules are caches, not authority.
 
 ## Workstream state machine
 
@@ -150,6 +177,8 @@ AWAITING_IMPLEMENTATION_REVIEW
 ACCEPTED
 REJECTED
 BLOCKED
+CANCELLED
+SUPERSEDED
 ```
 
 Allowed transitions:
@@ -160,14 +189,20 @@ PLANNING -> AWAITING_PLAN_COLLATION
 AWAITING_PLAN_COLLATION -> AWAITING_PLAN_PREFLIGHT | REPLANNING | BLOCKED
 AWAITING_PLAN_PREFLIGHT -> AWAITING_PLAN_REVIEW | REPLANNING | BLOCKED
 AWAITING_PLAN_REVIEW -> READY | REPLANNING | BLOCKED
-REPLANNING -> AWAITING_PLAN_COLLATION
+REPLANNING -> PLANNING
 READY -> IMPLEMENTING
 IMPLEMENTING -> AWAITING_IMPLEMENTATION_REVIEW | BLOCKED
 AWAITING_IMPLEMENTATION_REVIEW -> ACCEPTED | REJECTED | BLOCKED
 REJECTED -> AWAITING_PLAN
+BLOCKED -> AWAITING_PLAN | READY | CANCELLED | SUPERSEDED
+AWAITING_PLAN | PLANNING | AWAITING_PLAN_COLLATION | AWAITING_PLAN_PREFLIGHT | AWAITING_PLAN_REVIEW | REPLANNING | READY | REJECTED | BLOCKED -> CANCELLED | SUPERSEDED
 ```
 
-Do not invent parallel state vocabularies such as `NEEDS_REPAIR`, `PATCH_UP` or `READY_FOR_MERGE`.
+Do not invent parallel state vocabularies such as `NEEDS_REPAIR`, `PATCH_UP` or `READY_FOR_MERGE`. A `BLOCKED` recovery records the resolved blocker and returns only to the earliest valid state. `PERMISSION_BLOCKED` is a result-packet status: retry once before edits, then map it to workstream `BLOCKED` if the safe path remains unavailable.
+
+## Workflow class
+
+Use `SMALL`, `STANDARD` or `CAMPAIGN` as an explicit control-depth field. `SMALL` uses one bounded finding/workstream, one planning agent, and a mechanically generated one-plan collation record; it does not require portfolio planning, campaign remapping or milestone review unless new scope is discovered. `STANDARD` uses the normal workstream gates. `CAMPAIGN` uses the full portfolio, campaign-map and milestone-review machinery. All classes retain preflight, independent plan review, scoped implementation review and the same terminal correctness standard.
 
 # Core loop
 
@@ -184,13 +219,13 @@ Read:
 
 If no decision-complete authority exists, report `[BLOCKED]`. Do not invent product intent.
 
-Create the session board, empty finding/workstream registers, campaign map, readiness queues and locks before write agents start. Use the templates under the orchestrator assets folder.
+Create the session board, canonical JSON finding register plus rendered Markdown view, hash-bound requirement register, workstream register, contract register, global validation manifest, campaign map, readiness queues and locks before write agents start. Before any product edit, run `tree_hash.py --baseline-output AI_SPACE/sessions/{session}/campaign_baseline.json`; this baseline is later compared with accepted workstream states so every campaign mutation has an owner. Use the templates under the orchestrator assets folder.
 
 If the destination, blocking decisions or outcome boundaries are not decision-complete, run `$spec-explore`. Record committed outcomes, prepared outcomes and fog in `campaign_map.md`. Use `$prototype` only for one explicit bounded decision experiment and archive it after recording the decision evidence.
 
 ## Phase 1 - Agentic spec review
 
-Run a repository-wide `[SPEC.REVIEW]` batch with up to six read-only spec-review agents. For broad reviews, give agents distinct lenses where practical:
+Run a repository-wide `[SPEC.REVIEW]` batch with up to six read-only spec-review agents. First extract `AI_SPACE/SPEC.md` into stable atomic requirement IDs in `requirement_register.json`; every spec line must be covered by a requirement range or an explicit non-normative range, and the register must validate against the current spec hash. For broad reviews, assign explicit requirement ID ranges and give agents distinct lenses where practical:
 
 1. requirement coverage;
 2. behavioural correctness;
@@ -201,7 +236,7 @@ Run a repository-wide `[SPEC.REVIEW]` batch with up to six read-only spec-review
 
 Reviewers return evidence-backed findings only. They do not plan fixes. A disputed, weakly evidenced or non-reproducible claim must pass `$verify-finding` before the orchestrator promotes it into an implementation workstream.
 
-The reviewed repository revision must be recorded. For terminal review, all six agents must inspect the same frozen revision.
+The reviewed canonical active-tree hash must be recorded using `tree_hash.py`. The union of assigned reviewer requirement IDs must cover the register. For terminal review, all six agents must inspect the same frozen active-tree hash.
 
 ## Phase 2 - Collate findings and construct the portfolio
 
@@ -230,14 +265,16 @@ A workstream exists only when it represents one independently implementable dura
 Every workstream records:
 
 - source finding IDs;
-- exact spec requirements;
-- one Primary Work Type;
+- exact stable requirement IDs and spec authority;
+- one Primary Work Type and one Workflow Class;
 - dependencies;
-- write scope;
-- contracts changed;
-- contracts consumed;
+- exact write scope and stable read assumptions;
+- contracts changed and consumed by stable contract ID;
+- mutable resources;
 - acceptance evidence;
 - current state;
+- predecessor plan and causal delta when replanning;
+- baseline snapshot, scope diff and accepted active-tree hash when implementation starts or passes;
 - replan counters and threshold state.
 
 ## Phase 3 - Plan, collate, preflight and plan review
@@ -246,11 +283,11 @@ Maintain explicit readiness queues. Whenever capacity becomes free, run `$portfo
 
 For planning capacity, select the highest-convergence-value `AWAITING_PLAN` workstreams whose dependencies permit planning.
 
-Run up to six planning agents. Each planner handles one workstream and returns one plan using `$plan`. The plan must not broaden the assigned workstream and must include a structured Command Manifest.
+Run up to six planning agents. Each planner handles one workstream and returns one versioned plan under `plans/PXXX/` using `$plan`. The plan must not broaden the assigned workstream. It points to one separate structured Command Manifest, records its SHA-256 and does not duplicate the command list. A successor plan must name its predecessor, the failed assumption and the material causal delta.
 
-Run `[PLAN.PARALLEL_COLLATE]` across the returned portfolio before individual reviews. Collation checks that planning preserved the large-step spec-review signal, covers required findings, detects overlapping write scopes, detects changed/consumed contract conflicts, detects duplicate plan IDs and reports safe parallel batches.
+Run `[PLAN.PARALLEL_COLLATE]` across the returned portfolio before individual reviews. Collation checks that planning preserved the large-step spec-review signal, covers authorised findings and requirement IDs, reads dependency state from the workstream register, detects write/write and write/stable-read overlap, detects changed/consumed/changed contract conflicts, detects mutable-resource conflicts, detects duplicate plan IDs and reports safe parallel batches.
 
-For plans that change or consume material contracts, run `$plan-blastradius` in `PROSPECTIVE` mode before acceptance. Then run `[PLAN.PREFLIGHT]` for each plan in a safe batch. Mechanical preflight must pass before full review. Preflight validates required sections, command manifest shape, command IDs, path references, repo-local temp roots, pytest basetemp use, inline Python syntax where detectable and unresolved placeholders outside templates.
+For plans that change or consume material contracts, run `$plan-blastradius` in `PROSPECTIVE` mode before acceptance. Then run `[PLAN.PREFLIGHT]` for each plan in a safe batch. Mechanical preflight must pass before full review. Preflight compares findings, requirements, exact scopes, contracts and resources with orchestrator authority; validates the separate argv-only command manifest and hash; validates structured command-to-requirement evidence; checks repo-local temp roots, pytest basetemp use, inline Python syntax where detectable and unresolved placeholders outside templates.
 
 Then run read-only `[PLAN.REVIEW]` agents. Plan review may use the retained supporting lenses:
 
@@ -278,35 +315,37 @@ Select `READY` workstreams that are mutually independent under the write-scope a
 
 Every task packet must state:
 
-- workstream, plan and source finding IDs;
+- workstream, plan, source finding and stable requirement IDs;
 - exact mission and spec authority;
-- exact write scope and off-limits scope;
-- contracts changed/consumed;
-- accepted plan path;
-- command manifest path;
-- evidence ledger path;
-- validation commands;
+- exact write scope, stable read assumptions and off-limits scope;
+- contracts changed/consumed and mutable resources;
+- accepted versioned plan path;
+- command manifest and manifest hash;
+- baseline snapshot, scope-diff and evidence-ledger paths;
+- validation command IDs;
 - result schema;
 - no-branch/no-worktree/no-commit policy.
+
+Before assignment, acquire file/contract/resource locks and run `workstream_snapshot.py create`. Include all other active write scopes as concurrent scopes. Do not start the worker if snapshot creation or the complete parallel-safety predicate fails.
 
 Workers:
 
 - implement exactly one accepted plan;
 - edit only assigned files;
-- run packet validation;
-- write the evidence ledger;
-- report changed files, commands, results and unexpected discoveries;
+- run packet validation through `run_command_manifest.py`;
+- let the trusted runner write the manifest-bound evidence ledger;
+- report changed files, command IDs, results and unexpected discoveries;
 - do not replan the portfolio or invoke the terminal condition.
 
 A pre-edit tooling/access failure may retry once with the same packet. Other incomplete results proceed to implementation review or become genuinely `BLOCKED`; the main thread does not patch them.
 
 ## Phase 5 - Agentic implementation review
 
-For every implementation result, run read-only review promptly against:
+For every implementation result, first run `workstream_snapshot.py diff`. Any path outside the union of authorised active write scopes, or any invalidated stable-read assumption, stops the affected batch and rejects the result. Then run read-only review promptly against:
 
 - assigned spec requirements and findings;
 - accepted plan;
-- actual diff and file scope;
+- the baseline-derived workstream scope diff and file scope;
 - behavioural validation evidence;
 - evidence ledger records;
 - extra logic/files;
@@ -317,8 +356,8 @@ Use `merge-captain` for shared-checkout integration review. It is a factual revi
 
 Review outcomes:
 
-- `ACCEPT_IMPLEMENTATION`: set workstream to `ACCEPTED`; mark only evidenced source findings resolved. If contracts changed, run `$plan-blastradius` in `RETROSPECTIVE` mode, update contract versions, recheck only affected prepared/accepted-but-unstarted plans, and release newly unblocked work immediately.
-- `REJECT_IMPLEMENTATION`: increment rejected-implementation count, set workstream to `REJECTED`, add/reopen concrete findings and transition it back to `AWAITING_PLAN` through the normal loop.
+- `ACCEPT_IMPLEMENTATION`: run `workstream_snapshot.py accept`, record `accepted_state.json` and the accepted active-tree hash, set workstream to `ACCEPTED`, and mark only evidenced source findings resolved. Update linked requirement implementation and validation evidence. For `AGENT.WORKFLOW`, acceptance also requires `python tools/workflow_check.py` to pass through the reviewed manifest. If contracts changed, run `$plan-blastradius` in `RETROSPECTIVE` mode, update the canonical contract register, recheck only affected prepared/accepted-but-unstarted plans, and release newly unblocked work immediately.
+- `REJECT_IMPLEMENTATION`: increment rejected-implementation count, set workstream to `REJECTED`, add/reopen concrete findings, archive the rejected scope under `AI_SPACE/archive/rejected/`, restore the pre-edit snapshot with `workstream_snapshot.py restore`, verify restoration, and transition it back to `AWAITING_PLAN` through the normal loop.
 - `BLOCKED`: only for a genuine external blocker.
 
 After 2 rejected implementations in one workstream family, require `[DIAGNOSE]` or a back-to-basics marker before another successor plan may start.
@@ -333,13 +372,13 @@ After each accepted or rejected implementation review:
 2. update workstream states and replan counters;
 3. rerun affected/global validation as appropriate;
 4. check for newly exposed spec misalignment;
-5. create or refresh a current-state capsule when needed;
-6. check session compaction thresholds;
+5. create or refresh the session current-state capsule and `AI_SPACE/current_state.md` pointer when needed;
+6. validate the canonical requirement, finding and contract registers and check session compaction thresholds;
 7. refresh readiness queues;
 8. invoke `$portfolio-next` to refill available capacity from any eligible stage;
 9. continue while open findings or active campaign outcomes remain.
 
-Run `[SESSION.COMPACT]` after 100 plan directories, 10 MB active session size or a major checkpoint after full spec review. Compaction preserves source artefacts, records a manifest and treats current-state summaries as non-authoritative workflow caches.
+Run `[SESSION.COMPACT]` after 100 versioned plan directories, 10 MB active session size or a major checkpoint after full spec review. Compaction preserves source artefacts, records a versioned manifest and treats current-state summaries as non-authoritative workflow caches.
 
 Run `$campain-review` after major milestones, repeated rejection, critical-path blockage, persistent queue starvation, material new fog or suspected route staleness. It may call for no remap, an impact-cone review or a fresh full repository spec-review batch. Do not run redundant full reviews after trivial changes unless needed for evidence.
 
@@ -347,12 +386,14 @@ Run `$campain-review` after major milestones, repeated rejection, critical-path 
 
 Invoke `$terminal-condition` only when:
 
-- no open finding remains;
-- no workstream is active, awaiting review or rejected;
-- global validation passes;
-- evidence ledgers for accepted implementation workstreams validate.
+- no open finding or unwaived deferred requirement remains;
+- no workstream is active, awaiting review, rejected or blocked;
+- the requirement register validates against the current spec and every unwaived requirement has implementation and validation evidence;
+- the global validation manifest passes through `run_command_manifest.py` without changing the canonical active-tree hash;
+- evidence ledgers for accepted implementation workstreams validate against their reviewed manifests;
+- every active-tree change since `campaign_baseline.json` is covered by the latest accepted state of an `ACCEPTED` workstream.
 
-If terminal review reports any finding, collate it into the register and resume Phase 2.
+Run `validate_terminal_coverage.py` on the versioned terminal record. If terminal review reports a disputed, weakly evidenced or non-mechanical finding, pass it through `$verify-finding` before promotion. Collate verified or mechanically proven findings into the register and resume Phase 2.
 
 If terminal review passes, update TODO/learnings/handover as needed, create the final local commit if requested/default policy applies, and report `[DONE]`.
 
@@ -363,12 +404,12 @@ Implementation failure is always planning failure: anything that goes wrong duri
 - tool/access failure before edits: retry once because implementation did not begin;
 - worker scope violation: reject the result and record which scope or control instructions the plan failed to make enforceable;
 - omitted behaviour or incorrect invariant: reject implementation, record the missing planning requirement and replan;
-- local implementation defect: reject implementation, record which step, constraint or acceptance check the plan failed to specify clearly enough, and replan the workstream;
+- local implementation defect: reject implementation, record which step, constraint or acceptance check the plan failed to specify clearly enough, restore the workstream baseline, and replan the workstream;
 - newly discovered pre-existing issue: record it as a separate finding/workstream when independent and update the original plan assumptions when relevant;
 - reviewer disagreement: resolve through repository/spec evidence and make the next plan explicit enough to remove the ambiguity;
 - concurrent write/contract conflict: stop affected workstreams, record the missing dependency/lock/contract constraint and replan.
 
-Use `[DIAGNOSE]` when evidence does not explain the failure or when replan thresholds are exceeded. Diagnosis agents report cause and evidence only; the orchestrator decides the workflow response.
+Use `[DIAGNOSE]` when evidence does not explain the failure or when replan thresholds are exceeded. Diagnosis agents report cause and evidence only; the orchestrator decides the workflow response. A successor plan is not new merely because it has a new ID: it must record the failed assumption, new evidence and material causal delta.
 
 # Commit policy
 

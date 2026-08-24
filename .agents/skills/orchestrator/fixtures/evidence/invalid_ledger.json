@@ -2,21 +2,48 @@
   "schema": "evidence-ledger.v1",
   "workstream_id": "WS001",
   "plan_id": "P001",
-  "status": "FAIL",
+  "manifest_path": ".agents/skills/orchestrator/fixtures/evidence/manifest.json",
+  "manifest_sha256": "13fb7b125baf4b45250508486c7b5dcf4b525bb7a62f803f26600dff043161c1",
+  "status": "PASS",
   "first_failed_gate": null,
+  "repository_tree_hash_before": "0000000000000000000000000000000000000000000000000000000000000000",
+  "repository_tree_hash_after": "0000000000000000000000000000000000000000000000000000000000000000",
+  "runner": {
+    "name": "run_command_manifest.py",
+    "version": "1",
+    "sha256": "29828308383919c5c66c5e01e8e3faa28ea3e681b7596f2a151feca110b961cf"
+  },
+  "environment": {
+    "platform": "fixture",
+    "python": "fixture",
+    "repo_root": "."
+  },
   "commands": [
     {
       "id": "CMD001",
-      "argv": ["python", "${{bad}}"],
-      "cwd": "../outside",
+      "argv": [
+        "nonexistent-command"
+      ],
+      "cwd": ".",
+      "expected_status": "pass",
+      "requirement_ids": [
+        "REQ001"
+      ],
+      "finding_ids": [
+        "F001"
+      ],
+      "started_at": "2026-08-01T00:00:00Z",
+      "finished_at": "2026-08-01T00:00:01Z",
       "exit_code": 0,
-      "status": "FAIL",
-      "artefacts": [
-        {
-          "path": "{missing}",
-          "sha256": "not-a-hash"
-        }
-      ]
+      "status": "PASS",
+      "tree_hash_before": "0000000000000000000000000000000000000000000000000000000000000000",
+      "tree_hash_after": "0000000000000000000000000000000000000000000000000000000000000000",
+      "stdout_path": ".agents/skills/orchestrator/fixtures/evidence/valid_command_logs/CMD001.stdout.txt",
+      "stdout_sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff",
+      "stderr_path": ".agents/skills/orchestrator/fixtures/evidence/valid_command_logs/CMD001.stderr.txt",
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "summary": "static fixture",
+      "artefacts": []
     }
   ]
 }

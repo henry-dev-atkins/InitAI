@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "campaign-baseline.v1",
+  "type": "object",
+  "required": ["schema", "created_at", "tree_hash", "inventory"],
+  "additionalProperties": false,
+  "properties": {
+    "schema": { "const": "campaign-baseline.v1" },
+    "created_at": { "type": "string", "minLength": 1 },
+    "tree_hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "inventory": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["kind", "sha256"],
+        "additionalProperties": false,
+        "properties": {
+          "kind": { "type": "string", "enum": ["file", "symlink"] },
+          "sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      }
+    }
+  }
+}

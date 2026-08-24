@@ -11,10 +11,11 @@ Collate a batch of submitted workstream plans before individual `[PLAN.REVIEW]`.
 
 - parent session path;
 - candidate plan paths;
-- current finding register;
+- canonical current finding register;
 - current workstream register;
-- current locks;
-- dependency and contract records from each plan.
+- canonical contract register;
+- current file, contract and mutable-resource locks;
+- dependency, stable-read, contract and resource records from each plan.
 
 If any required register or plan is missing, return `BLOCKED` with the exact missing path.
 
@@ -22,11 +23,12 @@ If any required register or plan is missing, return `BLOCKED` with the exact mis
 
 - Every candidate has a unique plan ID and workstream ID.
 - Every candidate maps to an open or replanning workstream.
-- Required findings remain covered by at least one candidate plan.
+- Authorised findings and requirement IDs remain covered by their candidate plans.
 - No candidate broadens beyond its assigned workstream.
-- Planned write scopes are explicit and pairwise disjoint for any proposed parallel batch.
-- Contract changes and contract consumers do not conflict across a proposed parallel batch.
-- Dependencies are already accepted or are excluded from the same parallel batch.
+- Planned write scopes and stable read assumptions use exact canonical roots. Write/write and write/stable-read intersections are empty for any proposed parallel batch.
+- Contract changes do not conflict with another plan's changes or consumers.
+- Mutable resources do not conflict across a proposed parallel batch.
+- Dependencies are read from the workstream register and are already `ACCEPTED`.
 - Planning output does not collapse the portfolio into support-only churn when capability findings remain open.
 
 ## Output

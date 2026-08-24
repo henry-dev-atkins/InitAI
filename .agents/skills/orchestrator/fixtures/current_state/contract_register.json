@@ -1,0 +1,27 @@
+{
+  "schema": "contract-register.v1",
+  "contracts": [
+    {
+      "id": "CON001",
+      "name": "plan manifest",
+      "version": "1",
+      "state_hash": null,
+      "owner_workstream": "WS001",
+      "consumers": [],
+      "last_changed_by_plan": null,
+      "evidence": []
+    },
+    {
+      "id": "CON002",
+      "name": "evidence ledger",
+      "version": "1",
+      "state_hash": null,
+      "owner_workstream": "WS002",
+      "consumers": [
+        "WS001"
+      ],
+      "last_changed_by_plan": null,
+      "evidence": []
+    }
+  ]
+}

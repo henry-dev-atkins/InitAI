@@ -7,24 +7,24 @@ last_verified_revision = ""
 
 [[mapping]]
 workstream = "WS001"
-topic = "runtime/warmup"
-paths = ["src/CAT/runtime.py", "src/CAT/execution/**"]
-tests = ["relevant execution tests"]
+topic = "runtime capability"
+paths = ["src/<package>/runtime.py", "src/<package>/execution/**"]
+tests = ["relevant runtime tests"]
+
+[[mapping]]
+workstream = "WS002"
+topic = "data and model behaviour"
+paths = ["src/<package>/data.py", "src/<package>/models.py", "configs/**"]
+tests = ["relevant data and model tests"]
+
+[[mapping]]
+workstream = "WS003"
+topic = "metrics and monitoring"
+paths = ["src/<package>/metrics.py", "src/<package>/monitoring.py"]
+tests = ["relevant metrics and monitoring tests"]
 
 [[mapping]]
 workstream = "WS004"
-topic = "MovieLens"
-paths = ["src/CAT/data.py", "src/CAT/models.py", "src/CAT/use_cases.py", "configs/paper-suite/**", "configs/test-suite/schema_v1p0/**"]
-tests = ["relevant MovieLens tests"]
-
-[[mapping]]
-workstream = "WS006"
-topic = "NCU"
-paths = ["src/CAT/metrics.py", "src/CAT/monitoring.py", "tools/ws006_acceptance.py"]
-tests = ["NCU tests"]
-
-[[mapping]]
-workstream = "WS009"
-topic = "paper outputs"
-paths = ["src/CAT/results.py"]
-tests = ["result tests"]
+topic = "result outputs"
+paths = ["src/<package>/results.py"]
+tests = ["relevant result tests"]

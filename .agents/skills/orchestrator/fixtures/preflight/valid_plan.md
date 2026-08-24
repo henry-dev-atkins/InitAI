@@ -4,9 +4,14 @@
 
 - Workstream ID: WS001
 - Plan ID: P001
+- Predecessor plan: none
+- Failed assumption from predecessor: none
+- Material causal delta: none
 - Source findings: F001
+- Requirement IDs: REQ001
 - Spec authority: AGENTS.md workflow rules
 - Owner agent: planner
+- Workflow class: STANDARD
 
 ## Work Classification
 
@@ -21,18 +26,24 @@ Add a workflow validator fixture.
 ## Scope and Contracts
 
 Write scope:
-- `agents/skills/orchestrator/fixtures`
+- `.agents/skills/orchestrator/fixtures`
+
+Stable read assumptions:
+- `.agents/skills/orchestrator/assets`
 
 Off-limits:
-- `src`
+- `AI_SPACE/SPEC.md`
 
 Dependencies:
 - none
 
 Contracts changed:
-- `plan-command-manifest.v1`
+- `CON001`
 
 Contracts consumed:
+- none
+
+Mutable resources:
 - none
 
 ## Protected Invariants / Must Not
@@ -42,49 +53,10 @@ Contracts consumed:
 
 ## Command Manifest
 
-```json
-{
-  "schema": "plan-command-manifest.v1",
-  "commands": [
-    {
-      "id": "CMD001",
-      "argv": [
-        "python",
-        "-m",
-        "pytest",
-        "agents/skills/orchestrator/fixtures",
-        "--basetemp",
-        "temp/pytest/WS001"
-      ],
-      "cwd": ".",
-      "purpose": "prove workflow fixture validation",
-      "phase": "final-validation",
-      "expected_status": "pass",
-      "evidence_target": "F001",
-      "artefact_paths": [],
-      "temp_root": "temp/pytest/WS001",
-      "requires_existing_paths": [
-        "agents/skills/orchestrator/assets/plan-template.md"
-      ]
-    },
-    {
-      "id": "CMD002",
-      "argv": [
-        "python",
-        "-c",
-        "print('ok')"
-      ],
-      "cwd": ".",
-      "purpose": "compile inline Python probe",
-      "phase": "diagnostic",
-      "expected_status": "pass",
-      "evidence_target": "F001",
-      "artefact_paths": [],
-      "temp_root": "temp/python/WS001"
-    }
-  ]
-}
-```
+- Path: `.agents/skills/orchestrator/fixtures/preflight/valid_manifest.json`
+- SHA-256: `df1036be0175c72d4ade4a0e0e3178083b1aa1116f3a7aaae54f50537b9bc6aa`
+
+The manifest is the only command source of truth.
 
 ## Implementation Steps
 
@@ -92,8 +64,9 @@ Contracts consumed:
 
 ## Validation and Resolution Evidence
 
-- `CMD001` proves F001.
-- `CMD002` proves inline Python command syntax.
+| Command ID | Requirement IDs | Finding IDs | Proof |
+|---|---|---|---|
+| CMD001 | REQ001 | F001 | Proves the reviewed command is executable. |
 
 ## Risks and Assumptions
 
@@ -101,7 +74,7 @@ Contracts consumed:
 
 ## Result Packet Contract
 
-Return the result packet and evidence ledger.
+Return the result packet and trusted evidence ledger.
 
 ## Executive Summary
 

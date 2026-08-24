@@ -3,7 +3,7 @@
 ## Authority and frozen state
 
 - Current checkout: fixture
-- Current workflow phase: PLAN_REVIEW
+- Campaign status: ACTIVE
 
 ## Register summary
 

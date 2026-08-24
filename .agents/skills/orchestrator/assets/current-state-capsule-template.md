@@ -4,9 +4,11 @@ This is a workflow cache, not spec authority and not product capability.
 
 ## Revision
 
+- Canonical active-tree hash:
 - Current checkout:
-- Dirty state:
 - Active session:
+- Session capsule path:
+- Global pointer path: `AI_SPACE/current_state.md`
 
 ## Open Blockers
 
@@ -21,12 +23,15 @@ This is a workflow cache, not spec authority and not product capability.
 
 ## Alignment
 
+- Requirement register:
+- Covered requirements:
+- Uncovered or unwaived requirements:
 - Latest alignment estimate:
 - Source:
 
 ## Locks
 
-- {lock summary}
+- {file/contract/resource lock summary}
 
 ## Missing or Deferred Sources
 

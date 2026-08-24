@@ -10,19 +10,43 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "status", "severity", "owner", "spec_authority", "problem", "repo_evidence", "resolution_evidence"],
+        "required": [
+          "id", "status", "severity", "owner", "requirement_ids", "spec_authority",
+          "problem", "repo_evidence", "affected_behaviour_files", "resolution_evidence",
+          "source_reports", "resolved_by", "closed_at", "waiver"
+        ],
         "additionalProperties": false,
         "properties": {
-          "id": { "type": "string", "pattern": "^F[0-9]{3}$" },
+          "id": { "type": "string", "pattern": "^F[0-9]{3,}$" },
           "status": { "type": "string", "enum": ["OPEN", "ASSIGNED", "RESOLVED", "DEFERRED_BY_HUMAN", "BLOCKED"] },
           "severity": { "type": "string", "enum": ["critical", "high", "medium", "low"] },
           "owner": { "type": "string", "minLength": 1 },
+          "requirement_ids": {
+            "type": "array",
+            "items": { "type": "string", "pattern": "^REQ[0-9]{3,}$" }
+          },
           "spec_authority": { "type": "string", "minLength": 1 },
           "problem": { "type": "string", "minLength": 1 },
           "repo_evidence": { "type": "string", "minLength": 1 },
+          "affected_behaviour_files": { "type": "string", "minLength": 1 },
           "resolution_evidence": { "type": "string", "minLength": 1 },
+          "source_reports": {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 }
+          },
           "resolved_by": { "type": ["string", "null"] },
-          "closed_at": { "type": ["string", "null"] }
+          "closed_at": { "type": ["string", "null"] },
+          "waiver": {
+            "type": ["object", "null"],
+            "properties": {
+              "waiver_id": { "type": "string", "pattern": "^WVR[0-9]{3,}$" },
+              "authority": { "type": "string", "minLength": 1 },
+              "reason": { "type": "string", "minLength": 1 },
+              "expires_at": { "type": ["string", "null"] }
+            },
+            "required": ["waiver_id", "authority", "reason", "expires_at"],
+            "additionalProperties": false
+          }
         }
       }
     }

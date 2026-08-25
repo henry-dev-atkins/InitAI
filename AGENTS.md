@@ -212,7 +212,7 @@ Implementation agents may use any relevant implementation skill inside the accep
     - Any time operations like 'this will take 2 weeks' is human time. You think in turns, sessions and can work orders of magnitude faster than humans. 
 - Be Parsimonious with code.
 - All agent based runs are given 5min time allowances for all runs (scripts, tests, runs, experiments etc). Any more than this requries a reduction in scope (epochs, steps, parameter count etc) and repeat.
-- Your target audidence for code (comments, docs etc) is a 3rd party audience, not the prompting user.
+- Your target audidence for code (comments, docs etc) is a 3rd party audience, not the prompting user. No comments specific to the current conversation, only comments relevant for that 3rd party.
 
 
 

@@ -246,4 +246,4 @@ After completing all increments for a task:
 
 ## See Also
 
-Per-increment verification is the local check. Before declaring a task done, apply `AGENTS.md`, the accepted plan, and the result-packet contract as the final gate.
+Per-increment verification is the local check. Before declaring implementation done, apply `AGENTS.md`, the accepted plan, and its validation requirements as the final gate.

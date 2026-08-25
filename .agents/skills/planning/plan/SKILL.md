@@ -1,57 +1,44 @@
 ---
 name: plan
-description: Use when the prompt contains [PLAN], or when one assigned workstream needs an implementation plan before editing.
+description: Create one implementation-ready plan for one selected workstream. The plan fixes WHAT is authorised while leaving the implementation agent freedom over HOW to execute it safely.
 ---
 
 # [PLAN]
 
-Create one implementation plan for one assigned workstream. Do not broaden the workstream, create portfolio priorities or absorb unrelated findings.
-
-Apply `$workflow-ontology` and declare one Primary Work Type. Required tests, configuration and behaviour documentation may be supporting changes inside the same coherent workstream.
-
-## Required inputs
-
-- workstream ID;
-- source finding IDs;
-- exact spec authority;
-- dependencies;
-- allowed write scope;
-- contracts changed and consumed;
-- acceptance evidence.
-
-If these are materially missing, return a factual planning blocker to the orchestrator rather than inventing scope.
+Plan one workstream only.
 
 ## Required plan sections
+
+- `Plan ID`;
+- `Workstream ID`;
+- source finding IDs;
+- exact spec authority;
+- intended durable outcome;
+- exact or bounded write scope;
+- important read/dependency assumptions;
+- ordered implementation steps;
+- meaningful validation;
+- protected invariants;
+- prohibited shortcuts, compatibility layers, fallbacks, or workarounds;
+
 
 1. `Identity and Traceability`
 2. `Work Classification`
 3. `Mission`
 4. `Scope and Contracts`
 5. `Protected Invariants / Must Not`
-6. `Command Manifest`
 7. `Implementation Steps`
 8. `Validation and Resolution Evidence`
 9. `Risks and Assumptions`
-10. `Result Packet Contract`
 11. `Executive Summary`
 12. `Am I going in Circles?`
 13. `Is there a more elegant way of doing this?`
 
-## Command Manifest
+The plan must be clear enough for one implementation agent to execute without inventing requirements or broadening scope.
 
-Every plan must include a structured command manifest. Each command entry must declare:
+Use supporting skills when they improve this plan. Examples include `$planning-and-task-breakdown`, `$first-principles`, `$flowguard`, `$prototype`, and domain-specific skills. They are tools inside planning. They do not create more orchestration stages.
 
-- stable command ID;
-- command `argv` or exact shell command;
-- working directory;
-- purpose;
-- expected status;
-- evidence target;
-- whether it is pre-edit, implementation validation, final validation or diagnostic;
-- output artefact paths, if any;
-- temp/cache root, if the command writes temporary files.
-
-Pytest commands must use a repo-local `temp/` basetemp. Inline Python snippets must be syntactically valid. Commands must fail loudly and must not rely on silent fallback behaviour.
+For a successor plan after rejection, state what the previous plan failed to make clear, complete, or correct. Do not produce a cosmetic rewording of the same plan.
 
 ## Planning rules
 
@@ -65,11 +52,6 @@ Pytest commands must use a repo-local `temp/` basetemp. Inline Python snippets m
 - Do not assume a later repair phase. The plan must be complete enough for one controlled implementation attempt, while implementation rejection still returns through the normal finding/workstream loop.
 - Do not create legacy compatibility, special cases, wrapper layers or speculative abstractions unless the spec requires them.
 
-## Supporting review lenses
-
-`[PLAN.REVIEW]` may invoke `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review`. These are review criteria, not extra planning stages.
-
-Plans guide implementation; they are not completion deliverables unless plan-only output was explicitly requested.
 
 ## Consequence review
 

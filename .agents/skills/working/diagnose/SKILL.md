@@ -21,7 +21,7 @@ Rules:
 
 Output a report card with hypotheses, methodologies, possible missed factors, detailed causes and evidence.
 
-You may call `[DIAGNOSE]` at any point in terminal-condition loops.
+You may call `[DIAGNOSE]` after repeated plan or implementation failure, or whenever the current evidence does not explain the problem, or whenever it is clear you are missing some info (you don't know what you don't know!). 
 
 
 ## Role boundary

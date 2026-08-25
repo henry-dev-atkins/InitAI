@@ -16,3 +16,15 @@ Then, write a prompt like:
 ```
 
 Then, come back in 10-20 days and you will have your spec.
+
+
+```text
+review spec
+-> misalignments
+-> collate into independent workstreams
+-> select next N
+-> plan each workstream
+-> review each plan
+-> implement accepted plans + independently review them
+-> review spec again
+```

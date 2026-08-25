@@ -11,7 +11,7 @@ Use this skill as the single lifecycle entrypoint for agent work that can drift,
 
 This skill coordinates other skills; it does not replace them. Use task-specific skills such as `diagnose`, `comprehensive-testing`, `retro`, or `doubt-driven-development` only when their trigger is clearly met.
 
-In this repository, Flowguard is a local guardrail. It does not replace the project-scoped orchestrator. When orchestration is active, the orchestrator remains the control-plane authority for workstream state, locks, agent assignment, review gates, commits, and completion claims.
+In this repository, Flowguard is a local guardrail. It does not replace the project-scoped orchestrator. When orchestration is active, the orchestrator remains the authority for misalignments, workstreams, assignments, review verdicts, and completion claims.
 
 ## Operating Contract
 

@@ -1,37 +1,20 @@
 ---
 name: session-clean
-description: Use when the prompt contains [SESSION.CLEAN], or when repo clutter, handovers, plans, session boards, TODOs, learnings, temporary artefacts or agent outputs need consolidation without deleting files.
+description: Consolidate AI_SPACE session clutter without deleting durable evidence. Use for old plans, reviews, handovers, temporary artefacts, TODOs or learnings.
 ---
 
 # [SESSION.CLEAN]
 
-Move/aggregate clutter/fluff/noise from repo into the `archive/` folder, or move files into their correct place.
+Keep the active session easy to read.
 
-Never delete files/folders.
+Keep active:
 
-Review:
+- latest `misalignments.md`;
+- current `workstreams.md` and `selected_workstreams.md`;
+- plans and reviews still needed to understand current or repeated work;
+- unresolved blockers;
+- useful TODOs and learnings.
 
-- TODOs
-- handovers
-- session boards
-- plans and subplans
-- result packets
-- AI learnings
-- temporary diagnostics
-- one-off plots/fluff
-- obsolete duplicate skill folders
+Move superseded control files to `AI_SPACE/archive/`. Move removed product material to repository-root `archive/`.
 
-Before moving or aggregating files, use `maintain-declutter` when a report-only commit/archive/move audit is needed. Use `maintain-despaghettify` when cleanup reveals tangled repo/code organisation that should be reviewed before restructuring.
-
-For each entry, label as one or more of:
-
-- CORRECT
-- OUTDATED
-- INCORRECT
-- IRRELEVANT
-- DUPLICATE_<CLUSTER_NAME>
-- COMPLETED
-
-Collate/aggregate relevant info into the correct document and archive noise.
-
-Ensure the repo is navigable and self-explanatory.
+Do not edit `AI_SPACE/SPEC.md`. Do not delete durable project history merely to make the folder look tidy.

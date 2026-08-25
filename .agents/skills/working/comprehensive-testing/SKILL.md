@@ -81,7 +81,7 @@ Do NOT create any implementation yet."
 
 ### Step 3: Checkpoint Test Suite
 
-Record the failing-test evidence in the current task or result packet. Workers do not commit in this repository. The orchestrator creates the final commit unless the human says otherwise.
+Record the failing-test evidence with the current implementation result. Workers do not commit during orchestrated work.
 
 ### Step 4: Implement Incrementally
 
@@ -107,7 +107,7 @@ Write code -> Run tests -> Analyze failures -> Adjust -> Repeat
 
 ### Step 6: Checkpoint Implementation
 
-Record the passing-test evidence and changed files in the result packet. Do not commit from a worker context.
+Record the passing-test evidence and changed files with the implementation result. Do not commit from a worker context.
 
 ---
 

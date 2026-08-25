@@ -1,19 +1,25 @@
 ---
 name: plan-sub
-description: Use when the prompt contains [PLAN.SUB] or [SUBPLAN], or when an accepted workstream plan needs a bounded supporting subplan.
+description: Break an accepted plan step into local execution substeps without changing the accepted workstream outcome, scope, requirements or validation intent.
 ---
 
-# [PLAN.SUB] / [SUBPLAN]
+# [PLAN.SUB]
 
-A subplan is a bounded supporting component of one parent workstream. It does not create a separate workflow or bypass plan review.
+Use only inside an accepted workstream plan when the implementation agent needs a clearer local sequence.
 
-Rules:
+Allowed:
 
-- Name the parent workstream and plan.
-- Keep the parent's Primary Work Type unless the subplan is temporary diagnostic/support work explicitly labelled as such.
-- If the work has an independent durable outcome, the orchestrator must create a separate workstream instead.
-- Temporary diagnostics must not be committed and must be removed/archived before terminal completion.
-- A separate owner requires orchestrator-approved locks, dependencies and contract scope.
-- Completion returns to the parent workstream; only the orchestrator changes workstream state.
+- reorder local execution for safety;
+- break one accepted step into smaller coding/testing steps;
+- identify a read-only inspection needed before editing.
 
-Store subplan artefacts inside the parent `workstream__WSXXX__short-name/` folder according to `$workflow-structure`.
+Forbidden:
+
+- new product requirements;
+- broader write scope;
+- new workstreams;
+- changed acceptance criteria;
+- architectural changes outside the accepted plan;
+- portfolio or orchestration decisions.
+
+If one of those is needed, stop and return to normal planning.

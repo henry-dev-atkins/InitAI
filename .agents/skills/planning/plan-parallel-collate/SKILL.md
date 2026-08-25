@@ -1,50 +1,19 @@
 ---
 name: plan-parallel-collate
-description: Use when the prompt contains [PLAN.PARALLEL_COLLATE], or after a batch of planning agents returns to collate portfolio safety before individual plan review.
+description: Optional safety check for a set of accepted plans before parallel implementation. Use only when parallel independence is not obvious.
 ---
 
 # [PLAN.PARALLEL_COLLATE]
 
-Collate a batch of submitted workstream plans before individual `[PLAN.REVIEW]`. This skill preserves the large-step signal from spec review, detects unsafe parallelism and reports which plans may proceed to mechanical preflight.
+Input: two or more accepted plans.
 
-## Inputs
+Output: `SAFE`, `SERIALISE`, or `REPLAN`, plus the exact collision when one exists.
 
-- parent session path;
-- candidate plan paths;
-- canonical current finding register;
-- current workstream register;
-- canonical contract register;
-- current file, contract and mutable-resource locks;
-- dependency, stable-read, contract and resource records from each plan.
+Check only what matters for parallel work:
 
-If any required register or plan is missing, return `BLOCKED` with the exact missing path.
+- overlapping write scope;
+- one plan writing an important file another plan assumes stable;
+- shared generated outputs, database, port, GPU-heavy job, or other exclusive resource;
+- explicit dependency between the workstreams.
 
-## Required checks
-
-- Every candidate has a unique plan ID and workstream ID.
-- Every candidate maps to an open or replanning workstream.
-- Authorised findings and requirement IDs remain covered by their candidate plans.
-- No candidate broadens beyond its assigned workstream.
-- Planned write scopes and stable read assumptions use exact canonical roots. Write/write and write/stable-read intersections are empty for any proposed parallel batch.
-- Contract changes do not conflict with another plan's changes or consumers.
-- Mutable resources do not conflict across a proposed parallel batch.
-- Dependencies are read from the workstream register and are already `ACCEPTED`.
-- Planning output does not collapse the portfolio into support-only churn when capability findings remain open.
-
-## Output
-
-```yaml
-parallel_plan_collation_id: PPCXXX
-session: session__YYYYMMDD_HHMMSS
-status: PASS | FAIL | BLOCKED
-safe_batches:
-  - batch_id: B001
-    plans: [PXXX]
-blocked_or_conflicting_plans:
-  - plan_id: PXXX
-    reason: {overlap/dependency/contract/finding-coverage issue}
-coverage_gaps:
-  - {finding/workstream not preserved}
-```
-
-Only plans in a safe batch may proceed to `[PLAN.PREFLIGHT]`. Collation is a safety gate, not a replacement for full plan review.
+Do not redesign the plans. Do not create a new workflow phase. The orchestrator uses this result when deciding whether accepted plans may run in parallel.

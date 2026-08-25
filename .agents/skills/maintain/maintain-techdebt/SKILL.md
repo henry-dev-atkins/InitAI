@@ -9,13 +9,9 @@ Review technical debt in the repo/codebase and decide whether it should block, s
 
 This is a repo/codebase review output. Do not edit files, move files, stage files, commit, or implement fixes unless a separate workflow explicitly asks for implementation.
 
-## Orchestrator Review-Lens Mode
+## Use inside the simple loop
 
-When invoked inside `$orchestrator` plan review or implementation review:
-
-- return findings, repository evidence, materiality/severity and acceptance evidence only;
-- do not return commands, required-change instructions, repair guidance, follow-up actions, scheduling advice or next-step fields;
-- do not change finding/workstream state or issue the parent review verdict;
+When a plan or implementation reviewer invokes this skill, return only the bounded review findings and evidence. The parent reviewer owns `ACCEPT` / `REJECT` or the implementation verdict. Do not create workstreams, workflow stages, or future-work decisions.
 - the parent `plan-review` or implementation reviewer owns the final verdict and the orchestrator owns all subsequent action.
 
 ## Review Focus

@@ -1,6 +1,6 @@
 ---
 name: session-end
-description: Use when the prompt contains [SESSION.END], or when ending a work session by updating docs, learnings, TODOs, progress, session board, result packets and a reproducible handover.
+description: End an orchestration session with a short handover containing the current outer-loop state and unresolved work.
 ---
 
 # [SESSION.END]
@@ -19,5 +19,3 @@ Include:
 - checkout state and final commit, if any
 - validation status
 - open issues and next steps
-
-Open issues are not closure. A human deferral remains `[BLOCKED]` for terminal completion unless every linked requirement has an explicit recorded waiver with authority.

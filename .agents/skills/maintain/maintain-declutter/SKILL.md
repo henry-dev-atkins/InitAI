@@ -9,13 +9,9 @@ Perform a non-mutating repo declutter audit. Inspect tracked and untracked files
 
 Do not move, delete, stage, commit, format, rewrite, or generate cleanup artefacts unless the user separately asks for that action after the report.
 
-## Orchestrator Review-Lens Mode
+## Use inside the simple loop
 
-When invoked inside `$orchestrator` plan review or implementation review:
-
-- return findings, repository evidence, materiality/severity and acceptance evidence only;
-- do not return commands, required-change instructions, repair guidance, follow-up actions, scheduling advice or next-step fields;
-- do not change finding/workstream state or issue the parent review verdict;
+When a plan or implementation reviewer invokes this skill, return only the bounded review findings and evidence. The parent reviewer owns `ACCEPT` / `REJECT` or the implementation verdict. Do not create workstreams, workflow stages, or future-work decisions.
 - the parent `plan-review` or implementation reviewer owns the final verdict and the orchestrator owns all subsequent action.
 
 ## Scope

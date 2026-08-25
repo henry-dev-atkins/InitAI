@@ -1,6 +1,6 @@
 ---
 name: session-start
-description: Use when the prompt contains [SESSION.START], or when starting by teaching back the project, philosophy, goals, progress, current state, next steps, and likely session board.
+description: Start one lightweight orchestration session and create only the minimal durable files needed to resume the simple convergence loop.
 ---
 
 # [SESSION.START]
@@ -19,4 +19,16 @@ Then note:
 
 Store session work under `$workflow-structure`.
 
-Focus on real capabilities and not software theatre.
+```text
+AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/
+  misalignments.md
+  workstreams.md
+  selected_workstreams.md
+  plans/
+  plan_reviews/
+  implementation_reviews/
+```
+
+Record the human objective and the current spec path. Do not create empty registers, manifests, queues, contract databases, evidence ledgers, or other control files unless the task independently needs them.
+
+Then hand control to `$orchestrator`.

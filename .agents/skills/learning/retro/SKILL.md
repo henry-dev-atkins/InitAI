@@ -29,27 +29,27 @@ Run a retrospective on agent work quality using repo evidence. The purpose is to
 
 ## Evidence Sources
 
-Inspect the narrowest relevant time window first, then widen if needed:
+- `misalignments.md`;
+- `workstreams.md`;
+- `selected_workstreams.md`;
+- plans and plan reviews;
+- implementation reviews;
+- TODOs, learnings and handovers;
+- relevant repository diffs and validation output.
 
-- `AI_SPACE/sessions/session__*/session_board.md` for mission, constraints, dependency graph, work packages, status, evidence, GPU schedule, stop conditions, and global done gate.
-- `AI_SPACE/sessions/session__*/locks.md` for file ownership, read/write scope, overlap, off-limits areas, and merge safety.
-- `AI_SPACE/sessions/session__*/plan__*/plan.md` for work classification, assumptions, scope, validation gate, risks, and review requirements.
-- `AI_SPACE/sessions/session__*/plan__*/task_packet.md` for delegation quality, worker authority, file scope, required checks, and expected result schema.
-- `AI_SPACE/sessions/session__*/plan__*/result_packet.md` for actual changes, validation, failures, repairs, temporary files, spec review, and worker closure status.
-- `AI_SPACE/TODO.md` for live unresolved work, stale carry-over, cleanup records, and whether retro findings already have tracked actions.
-- `AI_SPACE/AI_LEARNINGS_LOG.md` for repeated mistakes, durable lessons, and whether prior lessons influenced later work.
-- `AI_SPACE/handovers/` for resumability, exact commands, current state, and deferred work.
-- `archive/` for moved historical records when live files reference them.
-- Output roots and run metadata only when they are needed to understand validation effort, GPU usage, or repair loops.
+Evaluate:
 
-## Work Classification
+- Did spec reviews find material issues with strong evidence?
+- Did workstreams group genuinely independent durable outcomes?
+- Did selection favour useful executable work?
+- Were plans clear enough to implement once without invention?
+- Did plan reviews reject weak plans before writing?
+- Was parallel work genuinely independent?
+- Did implementation reviewers accept only correct work?
+- Did rejected implementations return to planning?
+- Did the next spec review show measurable convergence?
+- Were the same failures repeated without new evidence?
 
-Classify the retro itself before writing durable output:
-
-- Use `DOCS.MEMORY` when producing a durable retro report, TODO update, handover note, or learning update.
-- Use `AGENT.WORKFLOW` when editing skills, agent instructions, templates, or orchestration rules.
-- Use `TEMPORARY.DIAGNOSTIC` for scratch analysis that will not be committed and must be removed or archived.
-- Use a separate plan if the retro discovers implementation, validation, cleanup, or spec-edit work that should be performed later.
 
 ## Retrospective Questions
 
@@ -95,33 +95,6 @@ Report counts and rates only when they can be derived from records:
 - TODOs opened, closed, deferred, or left stale
 - learnings added for repeated mistakes
 
-## Report Shape
-
-Use this structure unless the user asks for a different output:
-
-1. `[RETRO] Work Classification`
-2. `Evidence Reviewed`
-3. `Process Summary`
-4. `What Worked Well Operationally`
-5. `Friction / Inefficiency`
-6. `Parallelisation Review`
-7. `Validation And Resource Review`
-8. `Planning And Delegation Review`
-9. `Memory, TODO, And Handover Review`
-10. `Actionable Improvements`
-11. `Open Questions / Missing Evidence`
-
-Keep each finding evidence-backed. Prefer references to session IDs, plan IDs, commands, result packets, and artefact roots over broad judgements.
-
-## Finding Format
-
-For each material finding, include:
-
-- evidence: exact session, plan, packet, command, status, or artefact root;
-- process interpretation: what this says about how the agents worked;
-- impact on future work: time, risk, repeated effort, validation cost, user clarity, or parallelisation quality;
-- improvement: one concrete behaviour change, rule, template change, metric, or follow-up plan.
-
 ## Anti-Patterns To Flag
 
 - "Good outcome" used to excuse weak process evidence.
@@ -135,6 +108,16 @@ For each material finding, include:
 - Handover or TODO text that preserves history but does not make the next action clear.
 - Learning-log entries that describe an event but do not change future behaviour.
 
+## Ask when repeated work occurs:
+
+- `Am I going in Circles?`
+- `Is there a more elegant way of doing this?`
+
+Do not invent metrics. Do not rewrite `AI_SPACE/SPEC.md`. Record only evidence-backed process findings and reusable lessons.
+
 ## Closure
 
 End with the smallest useful set of process improvements. If the retro creates new durable TODOs, learnings, skill changes, or session notes, state exactly what changed and where. If it is read-only, state that no files were changed.
+
+
+

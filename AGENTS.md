@@ -23,17 +23,15 @@ If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it sup
 - No legacy compatibility, alternate-track behaviour, band-aids or local-only workarounds unless the spec explicitly requires them.
 - All code and validation must run from inside the repository sandbox.
 - If required network access, external data or permission is unavailable, report `[BLOCKED]` with the exact need. Do not retry silently or invent an offline substitute. A human may restart with an explicit exception.
-- Execution evidence is written by the trusted command-manifest runner. Agents must not manually assert command execution in an evidence ledger.
-- A commit failure is a blocker. Do not conflate multiple commits because of commit failures.
 - Minimalist infrastructure requirements: use the repository's existing package manager. Use uv by default only for a new Python setup. Package setup is lowest priority and must not displace capability work.
 - All free text must use simplified technical English. This includes plans, learnings, chat outputs, orchestration artefacts, sessions and handovers.
 
 The AI workspace is `AI_SPACE/`:
 
-- `sessions/`: finding registers, workstream registers, plans, reviews, task packets, locks and results.
+- `sessions/`: lightweight misalignment lists, workstreams, selected batches, plans and reviews.
 - `handovers/`: reproducible end-of-session context.
 - `AI_LEARNINGS_LOG.md`: durable lessons and mistakes.
-- `TODO.md`: concrete unresolved work aligned with the current finding/workstream registers.
+- `TODO.md`: concrete unresolved work aligned with the latest spec review and workstream list.
 - `archive/`: old, superseded or noisy material moved out of active project paths but retained for manual recovery.
 
 Workflow artefacts under `AI_SPACE/` are control metadata, not product capability, unless the spec explicitly says otherwise. Repository-root `archive/` stores removed product material. `AI_SPACE/archive/` stores removed control-plane material and rejected workstream copies. Archived material is outside the active product tree and must not be imported, executed, configured or counted as current implementation.
@@ -75,35 +73,35 @@ If skill invocation is unavailable, locate the matching `SKILL.md` recursively u
 
 # Orchestrator authority
 
-The project-scoped `orchestrator` custom agent owns the durable manager identity, runtime posture and control-plane boundaries. When it loads `$orchestrator`, `.agents/skills/orchestrator/SKILL.md` is the procedural authority for parallel orchestration sequence, artefacts, gates and state transitions. Other skills supply bounded planning, review, diagnosis, maintenance and validation criteria; they do not add phases, control sequencing or redefine completion.
+The project-scoped `orchestrator` custom agent owns the manager role. It loads `$orchestrator`, which is the single procedural authority for the convergence loop.
 
-The orchestrator manages a rolling convergence campaign rather than one globally synchronised loop. Detailed sequence and artefact rules live in `$orchestrator`; do not duplicate those procedures in this root file.
+The loop is deliberately small:
 
-1. `$spec-explore` maps uncertain territory when the destination or route is not yet decision-complete.
-2. Agentic spec review produces findings; `$verify-finding` verifies disputed or insufficiently evidenced claims before promotion.
-3. `$plan-portfolio` groups verified findings and committed outcomes into several independent durable workstreams.
-4. Different workstreams may concurrently occupy planning, review, implementation and validation stages when their own prerequisites pass.
-5. `$portfolio-next` ranks currently ready safe transitions whenever capacity becomes free; the orchestrator authorises assignments and state changes.
-6. `$plan-blastradius` checks semantic impact and stale-plan risk for contract-changing plans or accepted diffs.
-7. Review agents accept implementations or return concrete findings; accepted outcomes immediately release newly unblocked work.
-8. `$campain-review` remaps the route only at meaningful milestones, stalls or evidence changes.
-9. The frozen terminal condition remains a global barrier.
+1. `$spec-review` compares the current repository with `AI_SPACE/SPEC.md` and outputs misalignments.
+2. `$plan-portfolio` collates the misalignments into independent durable workstreams.
+3. `$portfolio-next` selects the next N useful ready workstreams.
+4. One planning agent creates one `$plan` per selected workstream.
+5. An independent agent runs `$plan-review`. Rejected plans return to planning.
+6. Accepted plans are implemented in parallel when they are independent enough to write safely. Every implementation gets independent review using `ACCEPT_IMPLEMENTATION`, `REJECT_IMPLEMENTATION`, or `BLOCKED`.
+7. After the batch, return to a fresh `$spec-review`. Stop only when it finds no material misalignment.
+
+Supporting skills do not create phases. Planning agents, reviewers and implementation agents may use them when useful inside their assigned operation.
 
 Operating boundaries:
 
 - The main thread is the control plane and does not implement project source code while orchestration is active.
-- The main thread may inspect, validate, write orchestration artefacts under `AI_SPACE/`, review diffs and create the final local commit.
-- Only the orchestrator changes finding/workstream state, chooses work, assigns agents, manages locks, commits and declares session completion.
-- Workers handle one task packet and report facts. They do not plan the portfolio, start unapproved write agents, select future work or invoke the terminal condition.
-- Use up to six agents concurrently when that many ready, independent tasks exist. Never split, duplicate or invent work to fill capacity. Refill freed capacity from any eligible readiness queue without waiting for unrelated slow workstreams.
-- Parallelise ready independent work. Serialise dependencies, write/stable-read overlap, contract conflicts, shared mutable resources, integration gates and GPU-heavy runs.
+- Only the orchestrator owns the current finding/workstream lists, selects N, assigns agents, records verdicts and declares session completion.
+- Workers handle one accepted plan. They do not choose future work or broaden their workstream.
+- Use up to six agents concurrently when that many independent useful tasks exist. Never split, duplicate or invent work to fill capacity.
+- Parallel implementation is allowed only when accepted plans have non-overlapping write scopes and no important shared dependency/resource conflict. Serialise uncertain cases or use `$plan-parallel-collate`.
 - One session uses one current checkout. Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
-- An independent/parallel write packet requires one owner, exact write scope, stable read assumptions, affected contract IDs, mutable-resource locks, acceptance checks and an accepted plan. The orchestrator records one campaign baseline before product edits, snapshots each workstream scope before edits, derives the actual scope diff after the worker stops, and archives/restores rejected changes before unrelated work continues. Terminal validation rejects any campaign mutation not owned by a current accepted workstream state.
-- A rejected plan returns to planning. A rejected implementation is `PLAN_FAILED`, not a repair request: close source-writing authority for that plan, create or reopen findings, diagnose the planning failure when cause is not already evidenced, and return through normal workstream planning with a new plan ID. Reviewer "next step" text is evidence only; it cannot authorise repair, retry, patch-up or continuation source-writing. Avoid loops of repair-like or repeated planning failures, which generally mean you need to go back to basics.
-- A tooling/access failure before source edits may retry once. `[BLOCKED]` is reserved for unavailable authority, tooling, data or safe execution paths—not merely unfinished implementable work.
-- Default commit policy: workers never commit; the orchestrator creates one final local commit after terminal review unless the human explicitly requests a different integration policy. Generic `git add` and `git commit` commands are not worker tools.
+- A rejected plan returns to planning.
+- A rejected implementation returns to planning. Implementation failure is always planning failure.
+- Reviewer next-step text is evidence only. It cannot authorise an ad hoc repair phase.
+- A tooling/access failure before source edits may retry once. `[BLOCKED]` is reserved for unavailable authority, tooling, data or a safe execution path.
+- After repeated failure ask `Am I going in Circles?` and `Is there a more elegant way of doing this?`. Use `$diagnose`, `$first-principles` or `$campain-review` when needed, then return to the same loop.
 
-Required session structure: use the exact versioned layout in `.agents/skills/orchestrator/SKILL.md`. That skill is the single authority for detailed session paths.
+For substantial work, the minimal session structure is defined by `$workflow-structure`. Do not create extra orchestration artefacts unless they directly help resume or review the simple loop.
 
 # Work types
 
@@ -119,7 +117,7 @@ Every workstream and plan declares one Primary Work Type and one Workflow Class:
 - `WORKAROUND.QUARANTINED`: explicit temporary workaround; never capability progress.
 - `FLUFF.DISPOSABLE`: one-off plots, dumps, screenshots or exploratory artefacts.
 - `DOCS.MEMORY`: TODOs, learnings, handovers and durable documentation.
-- `AGENT.WORKFLOW`: agent instructions, skills, rules and templates. These changes require `python tools/workflow_check.py` in the accepted validation manifest.
+- `AGENT.WORKFLOW`: agent instructions, skills, rules and templates.
 - `CLEANUP.HYGIENE`: organisation without behaviour change.
 - `SPEC.EDIT`: spec change requiring explicit spec-edit authority.
 
@@ -129,29 +127,27 @@ Only `CAPABILITY.RESEARCH`, `CAPABILITY.PRODUCT` and qualifying `FIX.ALIGNMENT` 
 
 # Planning and review requirements
 
-Every durable plan must contain:
+Every workstream plan must contain:
 
-- workstream ID, source finding IDs, stable requirement IDs and exact spec authority;
-- one Primary Work Type;
-- one coherent outcome;
-- owner agent;
-- exact write scope, stable read assumptions and off-limits scope;
-- stable contract IDs changed and consumed;
-- mutable resources;
+- workstream ID and source finding IDs;
+- exact spec authority;
+- one coherent durable outcome;
+- exact or bounded write scope;
+- important read/dependency assumptions;
 - ordered implementation steps;
-- one separate argv-only command manifest, its hash, and structured command-to-requirement acceptance evidence;
-- protected invariants and prohibited behaviour;
-- result-packet contract;
+- meaningful validation;
+- protected invariants and prohibited shortcuts;
 - an explicit `Am I going in Circles?` self-check;
-- an explicit `Is there a more elegant way of doing this?` self-check;
-- for a successor plan, the predecessor plan, failed assumption and material causal delta.
+- an explicit `Is there a more elegant way of doing this?` self-check.
 
-Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` as bounded review lenses. These skills remain supporting reviewers; they do not create new workflow stages.
+Every plan requires independent `[PLAN.REVIEW]` before source writing. Review may use `plan-preflight`, `plan-parallel-collate`, `plan-blastradius`, `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` when their specific question matters. These are supporting tools, not workflow stages.
+
+Implementation agents may use any relevant implementation skill inside the accepted plan. `$plan-sub` is local execution decomposition only. Material scope or requirement changes return to normal planning.
 
 # Guidance
 
 - Work top-down: major missing capabilities and incorrect core behaviour before minor cleanup.
-- Use the hash-bound requirement register to keep large-spec coverage exhaustive and enumerable.
+- Make spec review exhaustive enough that a clean result is meaningful. Split large review scopes among read-only reviewers when useful.
 - Prefer the largest coherent step that safely converges on the spec.
 - Keep designs minimal and repository-fitting; avoid software sprawl, speculative abstractions and repeated wrapper layers.
 - Fail loudly and preserve useful diagnostic evidence.
@@ -159,7 +155,7 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
 - Keep experiment behaviour config-driven.
 - Keep generated artefacts in intentional locations and large data/checkpoints out of commits unless repository policy requires them.
 - Apply GPU/ML rules only when the current repository or spec contains ML work. Use one GPU-heavy run at a time unless explicitly authorised otherwise.
-- Worker `[DONE]` means only that its packet completed. Session `[DONE]` requires the terminal condition.
+- Worker `[DONE]` means only that its assigned work completed. Session `[DONE]` requires a fresh clean spec review.
 
 
 
@@ -174,7 +170,7 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
 - Do not use fake or toy validation as closure for real research behaviour.
     - Intermediate diagnostic checks may be small when they isolate a failure.
     - End-of-plan validation should use real runs where practical.
-- Test only valuable, behavioural logic, not basic stuff. Do not skip small unit or parser tests when they improve diagnosis.
+- Test valuable behaviour and the cheapest invariants that expose likely defects. Do not skip small unit or parser tests when they improve diagnosis.
 - GPUs for ML, not CPU.
 - Unsupported GPU, CUDA or device situations must fail loudly and clearly.
 - Call out expected performance, VRAM or RAM impact when it is materially affected.
@@ -199,11 +195,11 @@ Every plan requires agentic `[PLAN.REVIEW]`. Review may invoke `plan-elegance`, 
     - No named shortfalls as deliverables.
     - No laziness.
     - No cosmetic completion.
-    - A failed post-implementation check invalidates acceptance. It is not permission for an ad hoc patch; return the evidence through implementation review and replanning.
+    - A failed post-implementation check invalidates acceptance. It is not permission for an ad hoc patch. Return through implementation review and replanning.
 - When inside goal mode, a worker `[DONE]` means a small subtask is done, not the whole goal, so keep iterating.
 - If an agent cannot be started or cannot write in the current checkout, terminate/restart it if possible; otherwise report `[BLOCKED]`. The orchestrator must not implement as a fallback.
 - Do not let work loops become too reactive to small failures. Challenge the direction when iterating through many small changes.
-- Record durable decisions, accepted plans, findings, validation evidence, unresolved work and reusable lessons. Do not log every prompt, transient thought or routine action.
+- Record misalignments, workstreams, accepted plans, review verdicts, unresolved work and reusable lessons. Do not log every prompt, transient thought or routine action.
 - Do not create pointless one-use wrapper methods. A one-use helper is allowed when it captures a useful invariant, improves testability or makes the behaviour clearer.
 - Avoid spaghettification, tech debt and code explosions. You must keep repo changes focused on core spec capabilities; surrounding software/infra must earn its place by directly enabling, simplifying or validating those capabilities.
 - Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.

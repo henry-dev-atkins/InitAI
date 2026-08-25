@@ -1,0 +1,4 @@
+interface:
+  display_name: "Code Like Henry"
+  short_description: "Code Style guide"
+  default_prompt: "Adhere to the style guide in $code-style when writing code."

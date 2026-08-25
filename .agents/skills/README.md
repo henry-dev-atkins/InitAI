@@ -10,6 +10,7 @@ The orchestrator loop has six core skills. Every other skill remains available a
 - `$plan-review`: Independently review one workstream plan for spec alignment, completeness, scope, validation and implementation clarity. Return ACCEPT, REJECT or BLOCKED.
 - `$portfolio-next`: Select the next N useful ready independent workstreams from the current workstream list for planning or implementation.
 - `$spec-review`: Compare AI_SPACE/SPEC.md with the current repository and return an exhaustive list of material misalignments, or PASS when none remain. This is the outer convergence test for the orchestrator loop.
+- `$code-style`: Code style guide.
 
 ## Optional control and utility skills
 

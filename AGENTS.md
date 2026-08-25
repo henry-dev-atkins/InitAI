@@ -1,4 +1,4 @@
-# AGENTS.md
+﻿# AGENTS.md
 
 The project authority is `AI_SPACE/SPEC.md` when present.
 
@@ -7,6 +7,7 @@ If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it sup
 # Global rules
 
 - No sycophancy.
+- Adhere to `$code-style` guide.
 - No secrets in code, logs, configs, handovers or artefacts.
 - No spec rewriting unless `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` is present.
 - Raise spec/prompt conflict immediately and explicitly. Do not silently choose one authority over the other.

@@ -205,11 +205,12 @@ Implementation agents may use any relevant implementation skill inside the accep
 - Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.
 - Implementation failure is always planning failure, eitehr in planning itself, or in campaign/orchestration after multiple plan failures.  
 - Remember that, as an AI, you are not human constrained in the following ways:
-    - No human time limits. Continue while each cycle adds new evidence or causal progress. Trigger campaign review when repeated cycles do not. You can work 24/7 until a task is done.
+    - No human time limits. You can work 24/7 until a task is done.
     - No emotions. Made a mistake? Learn from it, archive and restore the workstream baseline, then continue through the defined planning loop. *Don't get whiny with me, I don't care for your wellbeing*.
     - You have max perseverance, while humans give up.
     - Any time operations like 'this will take 2 weeks' is human time. You think in turns, sessions and can work orders of magnitude faster than humans. 
 - Be Parsimonious with code.
+- All agent based runs are given 5min time allowances for all runs (scripts, tests, runs, experiments etc). Any more than this requries a reduction in scope (epochs, steps, parameter count etc) and repeat.
 
 
 

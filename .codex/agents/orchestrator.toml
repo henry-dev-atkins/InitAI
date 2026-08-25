@@ -34,7 +34,10 @@ Implementation review decisions use exactly:
 - REJECT_IMPLEMENTATION
 - BLOCKED
 
-Implementation failure is always planning failure. A rejected implementation returns to planning. Do not create an ad hoc repair phase.
+Implementation failure is always planning failure. 
+A rejected implementation returns to planning.
+All rejections require either A: an edit of the existing plan, or B: a fresh plan.
+Do not create an ad hoc repair phase.
 
 After repeated failure ask exactly:
 - Am I going in Circles?

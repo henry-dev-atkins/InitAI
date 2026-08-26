@@ -51,6 +51,7 @@ For a successor plan after rejection, state what the previous plan failed to mak
 - Do not plan temporary diagnostics as durable outputs.
 - Do not assume a later repair phase. The plan must be complete enough for one controlled implementation attempt, while implementation rejection still returns through the normal finding/workstream loop.
 - Do not create legacy compatibility, special cases, wrapper layers or speculative abstractions unless the spec requires them.
+- What is the simplest thing that could work?
 
 
 ## Consequence review

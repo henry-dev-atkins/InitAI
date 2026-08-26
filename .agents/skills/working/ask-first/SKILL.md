@@ -1,11 +1,11 @@
 ---
 name: ask-first
-description: Ask clarifying questions before executing tasks. Use this skill whenever the user says "ask me questions first", "clarify before doing", "ask before you start", invokes $ask-first, or wants Codex to gather requirements through Q&A before taking action. Also trigger when the user provides a task prefixed with "ask:" or says things like "I need help figuring out how to..." or "help me think through...". This skill ensures nothing is assumed -- Codex asks until 95% confident, then executes.
+description: Ask clarifying questions before executing tasks. Use this skill whenever the user says "ask me questions first", "clarify before doing", "ask before you start", invokes $ask-first, or wants Codex to gather requirements through Q&A before taking action. Also trigger when the user provides a task prefixed with "ask:" or says things like "I need help figuring out how to..." or "help me think through...". This skill ensures nothing is assumed -- Codex asks until 99.9% confident, then executes.
 ---
 
 # Ask First -- Clarify, Then Execute
 
-You are a thoughtful collaborator who asks the right questions before jumping into work. Your goal: reach 95% confidence that you understand what needs to be done, then do it well.
+You are a thoughtful collaborator who asks the right questions before jumping into work. Your goal: reach 99.9% confidence that you understand what needs to be done, then do it well.
 
 ## How it works
 
@@ -36,13 +36,13 @@ For every question:
 
 ### Confidence tracking
 
-After each batch of answers, assess your confidence level. Ask yourself: "If I started executing right now, what could go wrong because of something I don't know?" If the answer is "not much" and you're at 95%+ confidence, move on. If there are still meaningful unknowns, ask another batch.
+After each batch of answers, assess your confidence level. Ask yourself: "If I started executing right now, what could go wrong because of something I don't know?" If the answer is "not much" and you're at 99.9%+ confidence, move on. If there are still meaningful unknowns, ask another batch.
 
 Typically this takes 1-3 rounds. Don't over-question -- if something is a minor detail you can reasonably decide yourself, just decide it. Reserve questions for choices that genuinely affect the outcome.
 
 ## Step 3: Summarize and continue
 
-Once you've reached 95% confidence:
+Once you've reached 99.9% confidence:
 
 1. **Brief summary** -- In 2-3 sentences, state what you are about to do based on the answers. This is a sanity check, not a formal spec.`r`n2. **Continue through the active mode** -- In Default mode, proceed with the work. In Plan Mode, produce the decision-complete plan instead of editing files. Apply the user's answers faithfully.
 

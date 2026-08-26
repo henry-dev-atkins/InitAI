@@ -1,6 +1,6 @@
 ---
 name: plan-sub
-description: Break an accepted plan step into local execution substeps without changing the accepted workstream outcome, scope, requirements or validation intent.
+description: Break an accepted plan step into local execution substeps without changing the accepted workstream outcome, scope, requirements or validation intent. A sub-plan is a plan within a plan.
 ---
 
 # [PLAN.SUB]

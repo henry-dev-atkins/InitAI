@@ -67,3 +67,27 @@ Before finishing, ask:
 - Does each helper remove clutter from that loop?
 - Did any safety rule obscure the reason this works?
 - Would the first proof-of-concept still recognise itself here?
+
+
+## Explicit Code Style:
+1. Prefer if, elif, else over basic if/else chains.
+2. Indentation should follow on from brackets, for example:
+```python
+function_call(
+    arg1,
+    arg2,
+    arg3
+)
+```
+should instead be:
+```python 
+function_call(
+            arg1,
+            arg2,
+            arg3
+            )
+```
+3. All functions/classes should have docstrings, with parameters [inputs/outputs, (shapes, types), assumptions, operations, use case].
+4. Type hint everywhere.
+5. Function structure should generally be: 1) docstring, 2) type hints, 3) input validation, 4) main logic, 5) return statement.
+6. Comments should be used to explain why and how something is done, not what is done. The code itself should be clear enough to convey the "what."

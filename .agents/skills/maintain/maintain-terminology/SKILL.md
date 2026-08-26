@@ -27,6 +27,7 @@ Prohibited Idea Types:
   - "That was wrong",
   - "Next time I should",
   - "Instead I should have",
+  - "As prompted"
 
 
 

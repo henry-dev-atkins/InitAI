@@ -1,6 +1,6 @@
 ---
 name: spec-explore
-description: Optional read-only exploration used when the spec or repository area is not yet clear enough for a confident spec review or plan. Use when the prompt contains [SPEC.EXPLORE], when a large or uncertain request cannot yet be converted into decision-complete workstreams, or when repeated replanning indicates unresolved specification fog.
+description: Optional read-only exploration used when the spec or repository area is not yet clear enough for a confident spec review or plan. Use when the prompt contains [SPEC.EXPLORE] or capabilities are asked for, when a large or uncertain request cannot yet be converted into decision-complete workstreams, or when repeated replanning indicates unresolved specification fog.
 ---
 
 # [SPEC.EXPLORE]

@@ -145,23 +145,10 @@ Every plan requires independent `[PLAN.REVIEW]` before source writing. Review ma
 
 Implementation agents may use any relevant implementation skill inside the accepted plan. `$plan-sub` is local execution decomposition only. Material scope or requirement changes return to normal planning.
 
-# Guidance
-
-- Work top-down: major missing capabilities and incorrect core behaviour before minor cleanup.
-- Make spec review exhaustive enough that a clean result is meaningful. Split large review scopes among read-only reviewers when useful.
-- Prefer the largest coherent step that safely converges on the spec.
-- Keep designs minimal and repository-fitting; avoid software sprawl, speculative abstractions and repeated wrapper layers.
-- Fail loudly and preserve useful diagnostic evidence.
-- Use layered validation. Apply cheap static, unit, invariant or property checks where they diagnose risk. Use integration and real behavioural runs where they prove the required outcome. Small checks alone are not final proof for real behaviour.
-- Keep experiment behaviour config-driven.
-- Keep generated artefacts in intentional locations and large data/checkpoints out of commits unless repository policy requires them.
-- Apply GPU/ML rules only when the current repository or spec contains ML work. Use one GPU-heavy run at a time unless explicitly authorised otherwise.
-- Worker `[DONE]` means only that its assigned work completed. Session `[DONE]` requires a fresh clean spec review.
-
-
-
 # Guide
 
+- Make spec review exhaustive enough that a clean result is meaningful. Split large review scopes among read-only reviewers when useful.
+- Work top-down: major missing capabilities and incorrect core behaviour before minor cleanup.
 - You must favour simplicity - no overengineering and minimal infrastructure.
 - Fail fast, frequently and with maximum explainability - learn from mistakes in `AI_SPACE/AI_LEARNINGS_LOG.md`.
 - For ML work, we have access to one GPU locally (RTX 5090).
@@ -214,6 +201,14 @@ Implementation agents may use any relevant implementation skill inside the accep
 - All agent based runs are given 5min time allowances for all runs (scripts, tests, runs, experiments etc). Any more than this requries a reduction in scope (epochs, steps, parameter count etc) and repeat.
 - Your target audidence for code (comments, docs etc) is a 3rd party audience, not the prompting user. No comments specific to the current conversation, only comments relevant for that 3rd party.
 - When using the `request_user_input` tool, include clear pros/cons for each option.
+- Prefer the largest coherent step that safely converges on the spec.
+- Keep designs minimal and repository-fitting; avoid software sprawl, speculative abstractions and repeated wrapper layers.
+- Fail loudly and preserve useful diagnostic evidence.
+- Use layered validation. Apply cheap static, unit, invariant or property checks where they diagnose risk. Use integration and real behavioural runs where they prove the required outcome. Small checks alone are not final proof for real behaviour.
+- Keep experiment behaviour config-driven.
+- Keep generated artefacts in intentional locations and large data/checkpoints out of commits unless repository policy requires them.
+- Apply GPU/ML rules only when the current repository or spec contains ML work. Use one GPU-heavy run at a time unless explicitly authorised otherwise.
+- Worker `[DONE]` means only that its assigned work completed. Session `[DONE]` requires a fresh clean spec review.
 
 
 

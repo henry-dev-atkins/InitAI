@@ -71,23 +71,113 @@ Before finishing, ask:
 
 ## Explicit Code Style:
 1. Prefer if, elif, else over basic if/else chains.
-2. Indentation should follow on from brackets, for example:
+2. Indentation should follow on from brackets, Examples:
 ```python
 function_call(
     arg1,
     arg2,
     arg3
 )
-```
-should instead be:
-```python 
+->
 function_call(
             arg1,
             arg2,
             arg3
             )
 ```
+or
+```python
+if step != self._last_completed_step + 1:
+    raise CATLifecycleError(
+        f"CAT steps must be strictly monotonic; expected {self._last_completed_step + 1}, got {step}."
+    )
+->
+if step != self._last_completed_step + 1:
+    raise CATLifecycleError(
+                            f"CAT steps must be strictly monotonic; expected {
+                            self._last_completed_step + 1}, got {step}."
+                            )
+```
+or
+```python
+self._active_schedule_hasher.update(
+        json.dumps(
+            schedule_payload,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8")
+    )
+->
+self._active_schedule_hasher.update(
+                                    json.dumps(
+                                                schedule_payload,
+                                                sort_keys=True,
+                                                separators=(",", ":"),
+                                                ).encode("utf-8")
+                                    )
+```
+or
+```python
+def estimate_dormant(
+    self,
+    selection: ActiveSelection,
+    g_A: Any,
+    *,
+    step: int,
+) -> EstimateResult:
+    """Query dormant values from the last committed estimator state."""
+->
+def estimate_dormant(
+                    self,
+                    selection: ActiveSelection,
+                    g_A: Any,
+                    *,
+                    step: int,
+                    ) -> EstimateResult:
+    """Query dormant values from the last committed estimator state."""
+# or even better:
+    def estimate_dormant(self,selection: ActiveSelection,g_A: Any,*,step: int,) -> EstimateResult:
+        """Query dormant values from the last committed estimator state."""
+```
+or
+```python
+def diagnostic_summary(self) -> dict[str, Any]:
+    """Return constant-size factual CAT lifecycle diagnostics."""
+
+    return {
+        "temporal_fill_truth_firewall_passed": True,
+        "dense_guard": (
+            self.dense_guard.summary()
+            if self.dense_guard is not None
+            else {
+                "format_version": "cat_dense_guard_v1",
+                "passed": True,
+                "applicability": "diagnostic_or_non_systems_route",
+                "evidence_source": "not_instrumented",
+            }
+        ),
+    }
+->
+def diagnostic_summary(self) -> dict[str, Any]:
+    """Return constant-size factual CAT lifecycle diagnostics."""
+
+    return {
+            "temporal_fill_truth_firewall_passed": True,
+            "dense_guard": (
+                            self.dense_guard.summary()
+                            if self.dense_guard is not None
+                            else {
+                                "format_version": "cat_dense_guard_v1",
+                                "passed": True,
+                                "applicability": "diagnostic_or_non_systems_route",
+                                "evidence_source": "not_instrumented",
+                                }
+                            ),
+            }
+```
+
 3. All functions/classes should have docstrings, with parameters [inputs/outputs, (shapes, types), assumptions, operations, use case].
 4. Type hint everywhere.
 5. Function structure should generally be: 1) docstring, 2) type hints, 3) input validation, 4) main logic, 5) return statement.
 6. Comments should be used to explain why and how something is done, not what is done. The code itself should be clear enough to convey the "what."
+7. Blank lines depend on seperation of code types. Between classes: 3, between functions: 2, between code blocks: 1.

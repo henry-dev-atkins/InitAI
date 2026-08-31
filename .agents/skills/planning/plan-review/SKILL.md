@@ -81,6 +81,7 @@ Reject support-only churn unless it directly unlocks the assigned capability or 
 - capability progress is claimed for support-only work;
 - a simpler repository-fitting solution is clearly available and unaddressed;
 - it relies on an assumed later repair pass;
+- There is a more elegant way of doing it;
 - either required reflection section is missing, superficial or contradicted by the plan.
 
 `BLOCKED` is only for missing authority, tooling, data or a safe execution path, not ordinary plan defects.

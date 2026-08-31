@@ -34,6 +34,8 @@ Plan one workstream only.
 12. `Am I going in Circles?`
 13. `Is there a more elegant way of doing this?`
 
+If there is a more elegant way of doing it, replan with that elegant method and iterate until the plan is as elegant as possible. 
+
 The plan must be clear enough for one implementation agent to execute without inventing requirements or broadening scope.
 
 Use supporting skills when they improve this plan. Examples include `$planning-and-task-breakdown`, `$first-principles`, `$flowguard`, `$prototype`, and domain-specific skills. They are tools inside planning. They do not create more orchestration stages.

@@ -26,6 +26,7 @@ If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it sup
 - If required network access, external data or permission is unavailable, report `[BLOCKED]` with the exact need. Do not retry silently or invent an offline substitute. A human may restart with an explicit exception.
 - Minimalist infrastructure requirements: use the repository's existing package manager. Use uv by default only for a new Python setup. Package setup is lowest priority and must not displace capability work.
 - All free text must use simplified technical English. This includes plans, learnings, chat outputs, orchestration artefacts, sessions and handovers.
+- Always start chats and agent-interactions with the current timestep in yyyyMMdd_hhmmss format. 
 
 The AI workspace is `AI_SPACE/`:
 

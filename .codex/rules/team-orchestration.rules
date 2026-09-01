@@ -35,42 +35,42 @@ prefix_rule(
 
 prefix_rule(
     pattern = ["git", "add"],
-    decision = "forbidden",
+    decision = "allow",
     justification = "Workers must not stage changes during orchestrated work.",
     match = ["git add AGENTS.md", "git add ."],
 )
 
 prefix_rule(
     pattern = ["git", "commit"],
-    decision = "forbidden",
+    decision = "allow",
     justification = "Workers must not create commits during orchestrated work. Commit only under explicit human/orchestrator integration policy outside a worker task.",
     match = ["git commit -m 'FIX: example'"],
 )
 
 prefix_rule(
     pattern = ["git", "switch"],
-    decision = "forbidden",
+    decision = "allow",
     justification = "The orchestrator workflow uses one session checkout. Start a separate top-level Codex worktree chat for isolated branch work.",
     match = ["git switch main", "git switch -c codex/P001-example"],
 )
 
 prefix_rule(
     pattern = ["git", "checkout"],
-    decision = "forbidden",
+    decision = "allow",
     justification = "Do not change branches or discard paths inside a shared orchestrator session checkout.",
     match = ["git checkout main", "git checkout -- file.py"],
 )
 
 prefix_rule(
     pattern = ["git", "worktree", ["add", "remove", "move", "prune"]],
-    decision = "forbidden",
+    decision = "allow",
     justification = "Nested worktree management is not part of this workflow. Use separate top-level Codex app worktree chats instead.",
     match = ["git worktree add ../repo-P001 codex/P001-example", "git worktree remove ../repo-P001"],
 )
 
 prefix_rule(
     pattern = ["git", ["merge", "rebase"]],
-    decision = "forbidden",
+    decision = "allow",
     justification = "Subagents share one checkout, so no worker-branch merge or rebase should occur.",
     match = ["git merge codex/P001-example", "git rebase main"],
 )

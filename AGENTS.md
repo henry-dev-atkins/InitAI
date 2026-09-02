@@ -188,6 +188,7 @@ Implementation agents may use any relevant implementation skill inside the accep
 - Record misalignments, workstreams, accepted plans, review verdicts, unresolved work and reusable lessons. Do not log every prompt, transient thought or routine action.
 - Do not create pointless one-use wrapper methods. A one-use helper is allowed when it captures a useful invariant, improves testability or makes the behaviour clearer.
 - Avoid spaghettification, tech debt and code explosions. You must keep repo changes focused on core spec capabilities; surrounding software/infra must earn its place by directly enabling, simplifying or validating those capabilities.
+- Avoid software BS like using code for: hashing files, tracking provenance, versioning.
 - Never ever make 'special case' edits for branches within the repo, unless a high level requirement needs it.
 - Implementation failure is always planning failure, eitehr in planning itself, or in campaign/orchestration after multiple plan failures.  
 - Remember that, as an AI, you are not human constrained in the following ways:

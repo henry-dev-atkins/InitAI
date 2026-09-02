@@ -71,7 +71,7 @@ Before finishing, ask:
 
 ## Explicit Code Style:
 1. Prefer if, elif, else over basic if/else chains.
-2. Indentation should follow on from brackets, Examples:
+2. Indentation should follow on from brackets in a vertical line and not the standard one indent per bracket nest. Examples:
 ```python
 function_call(
     arg1,

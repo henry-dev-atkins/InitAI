@@ -1,0 +1,4 @@
+interface:
+  display_name: "Diagnose"
+  short_description: "Find root causes using evidence and testable hypotheses"
+  default_prompt: "Use $diagnose to investigate the underlying cause of this failure or unexplained behaviour without implementing a fix."

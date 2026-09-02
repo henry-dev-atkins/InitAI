@@ -1,0 +1,4 @@
+interface:
+  display_name: "Requirements Discovery"
+  short_description: "Explore unclear requirements before review or planning"
+  default_prompt: "Use $requirements-discovery to inspect one bounded area of uncertainty until conformance review or planning can make a decision."

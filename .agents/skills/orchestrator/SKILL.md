@@ -34,17 +34,17 @@ USER: input prompt
 v
 ORCHESTRATOR
     |
-    +-> SPEC REVIEW AGENT(S)
+    +-> CONFORMANCE REVIEW AGENT(S)
     |       |
     |       +-> optional read-only sub-agent(s) for bounded inspection
     |       |
     |       +-> output: misalignments
     |
-    +-> $plan-portfolio
+    +-> $outcome-decomposition
     |       |
     |       +-> output: independent workstreams
     |
-    +-> $portfolio-next
+    +-> $select-ready-work
     |       |
     |       +-> output: selected workstreams
     |
@@ -53,9 +53,8 @@ ORCHESTRATOR
     |       +-> $plan
     |       |       |
     |       |       +-> optional supporting skill
-    |       |           $planning-and-task-breakdown
     |       |           $first-principles
-    |       |           $flowguard
+    |       |           $bounded-execution
     |       |
     |       +-> output: plan
     |
@@ -65,7 +64,7 @@ ORCHESTRATOR
     |       |       |
     |       |       +-> optional review lens
     |       |           $plan-preflight
-    |       |           $plan-blastradius
+    |       |           $change-impact-analysis
     |       |           $plan-elegance
     |       |           $peer-review
     |       |           maintenance review skills
@@ -79,9 +78,8 @@ ORCHESTRATOR
     |       +-> accepted plan is fixed authority
     |       |
     |       +-> any useful implementation skill
-    |       |       $api-and-interface-design
-    |       |       $doubt-driven-development
-    |       |       $incremental-implementation
+    |       |       $adversarial-review
+    |       |       $vertical-slicing
     |       |       $test-driven-development
     |       |       $comprehensive-testing
     |       |       $plan-sub for local execution decomposition only
@@ -132,13 +130,13 @@ STOP when misalignments[] is empty.
 
 ```python
 while True:
-    findings = spec_review(spec, repo)
+    findings = conformance_review(spec, repo)
 
     if not findings:
         return DONE
 
-    workstreams = collate(findings)
-    selected = select_next_n(workstreams, N)
+    workstreams = decompose_outcomes(findings)
+    selected = select_ready_work(workstreams, N)
 
     plans = parallel(
         plan(ws)
@@ -188,7 +186,7 @@ The pseudocode is policy, not a requirement to implement a software scheduler.
 
 ## 1. Review the spec
 
-Run `$spec-review` against the current repository and the whole relevant `AI_SPACE/SPEC.md`.
+Run `$conformance` against the current repository and the whole relevant `AI_SPACE/SPEC.md`.
 
 The output is a list of material misalignments. Each misalignment needs:
 
@@ -201,11 +199,11 @@ The output is a list of material misalignments. Each misalignment needs:
 
 A clean review returns `PASS` and an empty misalignment list.
 
-Use `$verify-finding` only when a finding is disputed, weakly evidenced, or materially ambiguous. Do not add a verification stage to findings that are already clear.
+Use `$finding-verification` only when a finding is disputed, weakly evidenced, or materially ambiguous. Do not add a verification stage to findings that are already clear.
 
 ## 2. Collate misalignments into workstreams
 
-Run `$plan-portfolio` on the current misalignment list.
+Run `$outcome-decomposition` on the current misalignment list.
 
 Split only genuinely independent durable outcomes. Required tests, config changes and behaviour documentation may remain supporting changes within the capability workstream.
 
@@ -225,7 +223,7 @@ Do not build a second requirements system around the spec. The spec review will 
 
 ## 3. Select the next N workstreams
 
-Run `$portfolio-next`.
+Run `$select-ready-work`.
 
 Select up to the available agent capacity. Prefer the largest useful independent workstreams that are ready now. Do not select blocked work merely to fill capacity.
 
@@ -255,7 +253,7 @@ A plan needs:
 - `Am I going in Circles?`;
 - `Is there a more elegant way of doing this?`.
 
-The planner may use supporting skills such as `$planning-and-task-breakdown`, `$first-principles`, `$flowguard`, `$prototype`, or domain skills when they help. Supporting skills do not create workflow stages.
+The planner may use supporting skills such as `$first-principles`, `$bounded-execution`, `$plan-desk-check`, or domain skills when they help. Supporting skills do not create workflow stages.
 
 ## 5. Review each plan
 
@@ -269,9 +267,9 @@ The reviewer returns exactly one plan verdict:
 
 `REJECT` returns the workstream to planning with concrete findings. It is not permission for an implementation worker to improvise a repair.
 
-Use `$plan-preflight`, `$plan-parallel-collate`, `$plan-blastradius`, `$plan-elegance`, `$peer-review`, or maintenance skills only when their specific question matters. They are review tools, not mandatory global phases.
+Use `$plan-preflight`, `$parallel-safety`, `$change-impact-analysis`, `$plan-elegance`, `$peer-review`, or maintenance skills only when their specific question matters. They are review tools, not mandatory global phases.
 
-Before parallel implementation, compare accepted plans. Parallelise only workstreams whose write scopes and important shared dependencies do not conflict. If that is unclear, use `$plan-parallel-collate`.
+Before parallel implementation, compare accepted plans. Parallelise only workstreams whose write scopes and important shared dependencies do not conflict. If that is unclear, use `$parallel-safety`.
 
 ## 6. Implement and review
 
@@ -299,7 +297,7 @@ A tooling/access failure before source edits may retry once. `BLOCKED` is for un
 
 ## 7. Return to spec review
 
-After the selected workstreams have been reviewed, run a fresh `$spec-review` against the current repository.
+After the selected workstreams have been reviewed, run a fresh `$conformance` against the current repository.
 
 Do not rely on old workstream status as proof of completion. The repository must now satisfy the spec.
 
@@ -323,7 +321,7 @@ After repeated failure ask:
 - `Am I going in Circles?`
 - `Is there a more elegant way of doing this?`
 
-Use `$diagnose`, `$first-principles`, or `$campain-review` when repeated failure shows that the workstream boundary, plan, or campaign direction is wrong. Then return to the same simple loop.
+Use `$diagnose`, `$first-principles`, or `$strategy-review` when repeated failure shows that the workstream boundary, plan, or campaign direction is wrong. Then return to the same simple loop.
 
 ## Authority
 

@@ -1,4 +1,4 @@
 interface:
-  display_name: "Desk Check"
-  short_description: "Desk check an implementation."
-  default_prompt: "Desk check implementated code."
+  display_name: "Implementation Desk Check"
+  short_description: "Trace implementation behaviour without executing it"
+  default_prompt: "Use $implementation-desk-check to manually trace representative implementation paths before paying for a real run."

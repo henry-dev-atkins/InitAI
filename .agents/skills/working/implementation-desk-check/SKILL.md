@@ -1,9 +1,9 @@
 ---
-name: desk-check
+name: implementation-desk-check
 description: Use when the user asks for a "desk check", "desk execution", "hypothetical run", "manual trace", "trace-table run", "dry run", "run it in your head", or when real execution is slow, expensive, destructive, unavailable, or disproportionate as a first check. Manually trace representative execution paths through control flow, data flow, state changes and contracts without running the code. Prefer concrete inputs; use lightweight symbolic reasoning where concrete values are unavailable.
 ---
 
-# Desk Check
+# Implementation Desk Check
 
 ## Overview
 
@@ -263,7 +263,7 @@ Do not pad the report with every correct line of code. Preserve the causal chain
 - **`test-driven-development`** -- a desk check may find the likely bug or narrow the reproduction case, but the failing/passing test remains the behavioural proof when execution is available.
 - **`comprehensive-testing`** -- use desk checking to decide which expensive test is actually necessary; do not replace the testing strategy with manual reasoning.
 - **`diagnose`** -- desk checking is a diagnostic methodology when code and known inputs can explain the symptom. Diagnosis may still need experimental evidence where runtime state matters.
-- **`doubt-driven-development`** -- desk checking follows execution logic; doubt-driven development provides independent adversarial review. They address different failure modes and can be combined.
+- **`adversarial-review`** -- desk checking follows execution logic; doubt-driven development provides independent adversarial review. They address different failure modes and can be combined.
 
 ## Do
 
@@ -311,6 +311,6 @@ The terminology in this skill follows established programming and program-analys
 - **ETH Zurich -- Program Tracing:** defines program tracing as executing program code by hand with concrete inputs.
 - **Trace-table teaching material:** uses trace tables to record variable/output changes during a manual dry run.
 - **Hunt and Thomas / Rubber Duck Debugging:** the debugging method of explaining code line by line until the difference between intended and actual behaviour becomes visible.
-- **Symbolic-execution literature:** executes paths using symbolic values and path constraints. `desk-check` borrows the idea of carrying constrained unknowns through code, but does not claim formal symbolic execution or solver-backed proof.
+- **Symbolic-execution literature:** executes paths using symbolic values and path constraints. `implementation-desk-check` borrows the idea of carrying constrained unknowns through code, but does not claim formal symbolic execution or solver-backed proof.
 
-These are related methods, not synonyms in every context. `desk-check` is the repository term for the combined practical behaviour defined above.
+These are related methods, not synonyms in every context. `implementation-desk-check` is the repository term for the combined practical behaviour defined above.

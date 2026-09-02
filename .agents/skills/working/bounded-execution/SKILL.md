@@ -9,7 +9,7 @@ description: "Guard long, ambiguous, or stateful AI-agent work from drift. Use w
 
 Use this skill as the single lifecycle entrypoint for agent work that can drift, lose context, or become expensive. It routes the task, verifies current state, runs bounded execution loops, and leaves a resumable handoff.
 
-This skill coordinates other skills; it does not replace them. Use task-specific skills such as `diagnose`, `comprehensive-testing`, `retro`, or `doubt-driven-development` only when their trigger is clearly met.
+This skill coordinates other skills; it does not replace them. Use task-specific skills such as `diagnose`, `comprehensive-testing`, `retro`, or `adversarial-review` only when their trigger is clearly met.
 
 In this repository, bounded-execution is a local guardrail. It does not replace the project-scoped orchestrator. When orchestration is active, the orchestrator remains the authority for misalignments, workstreams, assignments, review verdicts, and completion claims.
 

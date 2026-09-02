@@ -1,0 +1,4 @@
+interface:
+  display_name: "Strategy Review"
+  short_description: "Reframe work after repeated failure or no progress"
+  default_prompt: "Use $strategy-review to test whether the current workstream split or problem framing should change after repeated failure."

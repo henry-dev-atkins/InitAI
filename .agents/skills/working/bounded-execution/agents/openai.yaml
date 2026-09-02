@@ -1,4 +1,4 @@
 interface:
-  display_name: "bounded-execution"
-  short_description: "Prevent workflow drift"
-  default_prompt: "Use $bounded-execution to keep long agent work aligned, checked, and resumable."
+  display_name: "Bounded Execution"
+  short_description: "Keep long agent work bounded, checked, and resumable"
+  default_prompt: "Use $bounded-execution to keep long agent work aligned, checked, bounded, and resumable."

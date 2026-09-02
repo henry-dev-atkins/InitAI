@@ -1,0 +1,4 @@
+interface:
+  display_name: "Change Impact Analysis"
+  short_description: "Trace downstream effects of shared contract changes"
+  default_prompt: "Use $change-impact-analysis to identify concrete consumers and downstream consequences of this planned change."

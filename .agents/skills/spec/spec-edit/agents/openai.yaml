@@ -1,0 +1,6 @@
+interface:
+  display_name: "Spec Edit"
+  short_description: "Apply an explicitly authorised specification edit"
+  default_prompt: "Use $spec-edit to plan, review, and apply the explicitly authorised minimal edit to AI_SPACE/SPEC.md."
+policy:
+  allow_implicit_invocation: false

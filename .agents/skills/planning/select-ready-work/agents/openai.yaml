@@ -1,0 +1,4 @@
+interface:
+  display_name: "Select Ready Work"
+  short_description: "Select the next useful independent workstreams"
+  default_prompt: "Use $select-ready-work to choose the next useful ready independent workstreams from the current list."

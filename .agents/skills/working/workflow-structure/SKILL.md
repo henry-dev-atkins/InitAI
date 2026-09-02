@@ -1,6 +1,6 @@
 ---
 name: workflow-structure
-description: Define the minimal AI_SPACE file layout for the simplified spec-review -> workstreams -> plans -> implementation-review loop.
+description: Define the minimal AI_SPACE file layout for the simplified conformance -> workstreams -> plans -> implementation-review loop.
 ---
 
 # [WORKFLOW_STRUCTURE]

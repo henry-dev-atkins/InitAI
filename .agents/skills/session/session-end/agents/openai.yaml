@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session End"
+  short_description: "Write a reproducible end-of-session handover"
+  default_prompt: "Use $session-end to write the current state, validation evidence, open issues, and next steps into a reproducible handover."

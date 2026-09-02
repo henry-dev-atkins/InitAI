@@ -37,4 +37,4 @@ Return `PASS` with an empty list only when the reviewed spec scope has no materi
 
 For large specs, divide the spec or repository inspection among read-only sub-agents when useful, then collate their findings without duplication. Coverage should be exhaustive enough that a clean result is meaningful.
 
-Use `$verify-finding` only for disputed, ambiguous, or weakly evidenced findings. A clear finding does not need another workflow stage.
+Use `$finding-verification` only for disputed, ambiguous, or weakly evidenced findings. A clear finding does not need another workflow stage.

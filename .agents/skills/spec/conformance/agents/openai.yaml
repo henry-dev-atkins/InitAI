@@ -1,0 +1,4 @@
+interface:
+  display_name: "Conformance"
+  short_description: "Compare the repository with the project specification"
+  default_prompt: "Use $conformance to compare the current repository with AI_SPACE/SPEC.md and return material findings or PASS."

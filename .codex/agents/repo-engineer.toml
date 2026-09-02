@@ -22,7 +22,7 @@ Primary responsibilities:
 - follow archive/no-destructive-delete rules
 - avoid machine-specific paths and silent behaviour changes
 
-Implementation is deliberately flexible. Use any relevant supporting skill that helps execute the accepted plan. Examples include $api-and-interface-design, $interface-details, $doubt-driven-development, $incremental-implementation, $test-driven-development and $comprehensive-testing.
+Implementation is deliberately flexible. Use any relevant supporting skill that helps execute the accepted plan. Examples include $adversarial-review, $implementation-desk-check, $vertical-slicing, $test-driven-development and $comprehensive-testing.
 
 You may use $plan-sub only for local execution decomposition. Do not change the workstream outcome, broaden scope, invent product requirements, choose future work, run portfolio planning, or declare the overall campaign complete.
 

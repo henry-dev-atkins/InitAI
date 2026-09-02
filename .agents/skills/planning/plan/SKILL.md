@@ -38,7 +38,7 @@ If there is a more elegant way of doing it, replan with that elegant method and 
 
 The plan must be clear enough for one implementation agent to execute without inventing requirements or broadening scope.
 
-Use supporting skills when they improve this plan. Examples include `$planning-and-task-breakdown`, `$first-principles`, `$flowguard`, `$prototype`, and domain-specific skills. They are tools inside planning. They do not create more orchestration stages.
+Use supporting skills when they improve this plan. Examples include `$first-principles`, `$bounded-execution`, `$plan-desk-check`, and domain-specific skills. They are tools inside planning. They do not create more orchestration stages.
 
 For a successor plan after rejection, state what the previous plan failed to make clear, complete, or correct. Do not produce a cosmetic rewording of the same plan.
 

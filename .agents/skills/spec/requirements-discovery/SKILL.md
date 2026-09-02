@@ -7,7 +7,7 @@ description: Optional read-only exploration used when the spec or repository are
 
 Map uncertain spec territory until the destination, blocking questions and candidate durable outcomes are explicit enough for portfolio planning. Do not implement, authorise work or disguise unresolved decisions as plans. Explore one bounded uncertainty and return evidence that helps `$conformance` or `$plan` make a decision.
 
-Do not create durable implementation scope, workstreams, or workflow state. Use `$prototype` only when a disposable experiment is genuinely needed to settle the uncertainty.
+Do not create durable implementation scope, workstreams, or workflow state. If a disposable experiment is genuinely required to settle the uncertainty, classify the question as `EVIDENCE_BLOCKED` and state the smallest experiment or observation needed. Do not run that experiment inside this read-only skill.
 
 
 ## Exploration model

@@ -1,9 +1,9 @@
 ---
-name: campain-review
+name: strategy-review
 description: Perform a double-loop review when no-progress detection indicates that retrying within the current framing is unlikely to converge.
 ---
 
-# [CAMPAIN.REVIEW]
+# [STRATEGY.REVIEW]
 
 Instead of asking:
 
@@ -25,7 +25,7 @@ Review the current misalignments, workstream boundaries, repeated failures, and 
 Return one of:
 
 - `CONTINUE`: the current workstream structure is still sound;
-- `RECOLLATE`: return the current misalignments to `$plan-portfolio`;
-- `REREVIEW_SPEC`: run a fresh `$spec-review` now.
+- `RECOLLATE`: return the current misalignments to `$outcome-decomposition`;
+- `REREVIEW_SPEC`: run a fresh `$conformance` now.
 
 Do not create a second campaign state machine.

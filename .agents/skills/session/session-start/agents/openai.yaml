@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session Start"
+  short_description: "Start a minimal resumable orchestration session"
+  default_prompt: "Use $session-start to initialise the minimal session state needed to resume the spec-convergence loop."

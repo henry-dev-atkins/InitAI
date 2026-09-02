@@ -1,0 +1,4 @@
+interface:
+  display_name: "Maintain Terminology"
+  short_description: "Check resources for accepted project terminology"
+  default_prompt: "Use $maintain-terminology to review this resource for prohibited ideas and accepted project terminology."

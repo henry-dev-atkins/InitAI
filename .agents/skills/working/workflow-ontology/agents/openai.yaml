@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workflow Ontology"
+  short_description: "Classify repository work by project workflow type"
+  default_prompt: "Use $workflow-ontology to classify this repository work by Primary Work Type and workflow class."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Orchestrator"
+  short_description: "Run the repository spec-convergence workflow"
+  default_prompt: "Use $orchestrator to run the repository spec-convergence loop until a fresh conformance review is clean."

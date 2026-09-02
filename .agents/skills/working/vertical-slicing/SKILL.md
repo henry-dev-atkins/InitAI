@@ -3,8 +3,8 @@ name: vertical-slicing
 description: Delivers changes incrementally during implementation or planning. Use when planning or implementing any work that touches more than one file. Use when you're about to write a large amount of code at once, or when a task feels too big to land in one step. 
 ---
 
-# Incremental Implementation
-Incremental Implementation is synonym.
+# Vertical Slicing
+Incremental implementation is a synonym.
 May be invoked as a planner, which applies these to a read only planner.
 
 ## Overview

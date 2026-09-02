@@ -47,28 +47,25 @@ Capitalised bracket keywords are human-facing actions. Lowercase hyphenated name
 - `[SESSION.COMPACT]` -> `$session-compact`
 - `[SESSION.END]` -> `$session-end`
 - `[PLAN]` -> `$plan`
-- `[PLAN.PORTFOLIO]` -> `$plan-portfolio`
-- `[PORTFOLIO.NEXT]` -> `$portfolio-next`
-- `[PLAN.BLASTRADIUS]` -> `$plan-blastradius`
+- `[PLAN.PORTFOLIO]` -> `$outcome-decomposition`
+- `[PORTFOLIO.NEXT]` -> `$select-ready-work`
+- `[PLAN.BLASTRADIUS]` -> `$change-impact-analysis`
 - `[PLAN.PREFLIGHT]` -> `$plan-preflight`
-- `[PLAN.PARALLEL_COLLATE]` -> `$plan-parallel-collate`
+- `[PLAN.PARALLEL_SAFETY]` -> `$parallel-safety`
 - `[PLAN.REVIEW]` or `[PLAN_REVIEW]` -> `$plan-review`
 - `[PLAN.SUB]` or `[SUBPLAN]` -> `$plan-sub`
-- `[PLAN.TERMINAL_CONDITION]` or `[TERMINAL_CONDITION]` -> `$terminal-condition`
+- `[PLAN.TERMINAL_CONDITION]` or `[TERMINAL_CONDITION]` -> `$conformance`
 - `[LEARN]` -> `$learn`
-- `[MONITOR]` -> `$monitor`
 - `[DIAGNOSE]` -> `$diagnose`
-- `[PROTOTYPE]` -> `$prototype`
-- `[SPEC.EXPLORE]` -> `$spec-explore`
-- `[VERIFY.FINDING]` -> `$verify-finding`
-- `[SPEC.REVIEW]` or `[SPEC_REVIEW]` -> `$spec-review`
-- `[SPEC.IMPLEMENT]` or `[SPEC_IMPLEMENT]` -> `$spec-implement`
+- `[SPEC.EXPLORE]` -> `$requirements-discovery`
+- `[VERIFY.FINDING]` -> `$finding-verification`
+- `[SPEC.REVIEW]` or `[SPEC_REVIEW]` -> `$conformance`
+- `[SPEC.IMPLEMENT]` or `[SPEC_IMPLEMENT]` -> use the project-scoped `orchestrator` custom agent; that agent loads `$orchestrator`
 - `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` -> `$spec-edit`
 - `[WORK_TYPE]` or `[WORKFLOW_ONTOLOGY]` -> `$workflow-ontology`
 - `[WORKFLOW_STRUCTURE]` -> `$workflow-structure`
-- `[CURRENT_STATE]` -> `$current-state-capsule`
-- `[DONE]` / `[BLOCKED]` -> `$final-report`
-- `[CAMPAIN.REVIEW]` -> `$campain-review`
+- `[DONE]` / `[BLOCKED]` -> `$done`
+- `[STRATEGY.REVIEW]` -> `$strategy-review`
 - `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` -> use the project-scoped `orchestrator` custom agent from `.codex/agents/orchestrator.toml`; that agent loads `$orchestrator`
 
 If skill invocation is unavailable, locate the matching `SKILL.md` recursively under `.agents/skills/` using its frontmatter `name`, then apply it directly.
@@ -79,13 +76,13 @@ The project-scoped `orchestrator` custom agent owns the manager role. It loads `
 
 The loop is deliberately small:
 
-1. `$spec-review` compares the current repository with `AI_SPACE/SPEC.md` and outputs misalignments.
-2. `$plan-portfolio` collates the misalignments into independent durable workstreams.
-3. `$portfolio-next` selects the next N useful ready workstreams.
+1. `$conformance` compares the current repository with `AI_SPACE/SPEC.md` and outputs misalignments.
+2. `$outcome-decomposition` collates the misalignments into independent durable workstreams.
+3. `$select-ready-work` selects the next N useful ready workstreams.
 4. One planning agent creates one `$plan` per selected workstream.
 5. An independent agent runs `$plan-review`. Rejected plans return to planning.
 6. Accepted plans are implemented in parallel when they are independent enough to write safely. Every implementation gets independent review using `ACCEPT_IMPLEMENTATION`, `REJECT_IMPLEMENTATION`, or `BLOCKED`.
-7. After the batch, return to a fresh `$spec-review`. Stop only when it finds no material misalignment.
+7. After the batch, return to a fresh `$conformance`. Stop only when it finds no material misalignment.
 
 Supporting skills do not create phases. Planning agents, reviewers and implementation agents may use them when useful inside their assigned operation.
 
@@ -95,13 +92,13 @@ Operating boundaries:
 - Only the orchestrator owns the current finding/workstream lists, selects N, assigns agents, records verdicts and declares session completion.
 - Workers handle one accepted plan. They do not choose future work or broaden their workstream.
 - Use up to six agents concurrently when that many independent useful tasks exist. Never split, duplicate or invent work to fill capacity.
-- Parallel implementation is allowed only when accepted plans have non-overlapping write scopes and no important shared dependency/resource conflict. Serialise uncertain cases or use `$plan-parallel-collate`.
+- Parallel implementation is allowed only when accepted plans have non-overlapping write scopes and no important shared dependency/resource conflict. Serialise uncertain cases or use `$parallel-safety`.
 - One session uses one current checkout. Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
 - A rejected plan returns to planning.
 - A rejected implementation returns to planning. Implementation failure is always planning failure.
 - Reviewer next-step text is evidence only. It cannot authorise an ad hoc repair phase.
 - A tooling/access failure before source edits may retry once. `[BLOCKED]` is reserved for unavailable authority, tooling, data or a safe execution path.
-- After repeated failure ask `Am I going in Circles?` and `Is there a more elegant way of doing this?`. Use `$diagnose`, `$first-principles` or `$campain-review` when needed, then return to the same loop.
+- After repeated failure ask `Am I going in Circles?` and `Is there a more elegant way of doing this?`. Use `$diagnose`, `$first-principles` or `$strategy-review` when needed, then return to the same loop.
 
 For substantial work, the minimal session structure is defined by `$workflow-structure`. Do not create extra orchestration artefacts unless they directly help resume or review the simple loop.
 
@@ -142,7 +139,7 @@ Every workstream plan must contain:
 - an explicit `Am I going in Circles?` self-check;
 - an explicit `Is there a more elegant way of doing this?` self-check.
 
-Every plan requires independent `[PLAN.REVIEW]` before source writing. Review may use `plan-preflight`, `plan-parallel-collate`, `plan-blastradius`, `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` when their specific question matters. These are supporting tools, not workflow stages.
+Every plan requires independent `[PLAN.REVIEW]` before source writing. Review may use `plan-preflight`, `parallel-safety`, `change-impact-analysis`, `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` when their specific question matters. These are supporting tools, not workflow stages.
 
 Implementation agents may use any relevant implementation skill inside the accepted plan. `$plan-sub` is local execution decomposition only. Material scope or requirement changes return to normal planning.
 

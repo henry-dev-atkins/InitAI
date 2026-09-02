@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Sub"
+  short_description: "Break an accepted plan step into local substeps"
+  default_prompt: "Use $plan-sub to break this accepted plan step into local execution substeps without changing scope or outcome."

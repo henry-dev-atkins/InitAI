@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Review"
+  short_description: "Review one workstream plan for acceptance"
+  default_prompt: "Use $plan-review to independently accept, reject, or block this workstream plan against its findings and spec authority."

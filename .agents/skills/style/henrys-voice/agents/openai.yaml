@@ -1,0 +1,4 @@
+interface:
+  display_name: "Henry's Voice"
+  short_description: "Write technical prose in Henry Atkins's voice"
+  default_prompt: "Use $henrys-voice to draft or revise this free text in Henry Atkins's evidence-led British-English technical voice."

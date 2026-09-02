@@ -1,0 +1,4 @@
+interface:
+  display_name: "Done"
+  short_description: "Check completion and produce DONE or BLOCKED evidence"
+  default_prompt: "Use $done to check whether the requested work is complete and validated before reporting DONE or BLOCKED."

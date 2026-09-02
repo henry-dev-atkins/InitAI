@@ -1,0 +1,4 @@
+interface:
+  display_name: "Workflow Structure"
+  short_description: "Define the minimal resumable AI_SPACE session layout"
+  default_prompt: "Use $workflow-structure to define the minimal AI_SPACE files needed for a resumable orchestration session."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Parallel Safety"
+  short_description: "Check accepted plans for safe parallel execution"
+  default_prompt: "Use $parallel-safety to check whether these accepted plans can execute concurrently without write or resource collisions."

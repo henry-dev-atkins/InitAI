@@ -30,5 +30,5 @@ fog:
     why_not_specifiable: {reason}
     clearing_action: {bounded evidence action}
 critical_path: []
-last_campain_review: null
+last_strategy_review: null
 ```

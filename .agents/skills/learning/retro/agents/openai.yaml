@@ -1,0 +1,4 @@
+interface:
+  display_name: "Retro"
+  short_description: "Review agent workflow quality and session efficiency"
+  default_prompt: "Use $retro to review how the work was done and identify process improvements."

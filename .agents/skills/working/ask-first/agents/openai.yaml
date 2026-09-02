@@ -1,4 +1,4 @@
 interface:
   display_name: "Ask First"
-  short_description: "Clarify before acting"
+  short_description: "Clarify requirements before planning or implementation"
   default_prompt: "Use $ask-first to clarify the request before planning or implementation."

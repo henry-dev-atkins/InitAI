@@ -1,0 +1,4 @@
+interface:
+  display_name: "Session Compact"
+  short_description: "Compact session state while preserving resumability"
+  default_prompt: "Use $session-compact to reduce transient session noise while keeping the next orchestrator operation reproducible."

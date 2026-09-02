@@ -1,0 +1,4 @@
+interface:
+  display_name: "Plan Preflight"
+  short_description: "Check plan completeness before semantic review"
+  default_prompt: "Use $plan-preflight to check this plan for mechanical completeness before independent semantic review."

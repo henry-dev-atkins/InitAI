@@ -1,4 +1,4 @@
 interface:
-  display_name: "Desk Check"
-  short_description: "Desk check a plan."
-  default_prompt: "Desk check plan."
+  display_name: "Plan Desk Check"
+  short_description: "Simulate a plan before implementation begins"
+  default_prompt: "Use $plan-desk-check to play this plan forward against current repository state and find missing or contradictory steps."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "First Principles"
+  short_description: "Challenge assumptions and reason from first principles"
+  default_prompt: "Use $first-principles to challenge the current assumptions and derive the simplest solution from the underlying problem."

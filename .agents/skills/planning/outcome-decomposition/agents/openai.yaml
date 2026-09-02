@@ -1,0 +1,4 @@
+interface:
+  display_name: "Outcome Decomposition"
+  short_description: "Group misalignments into durable independent workstreams"
+  default_prompt: "Use $outcome-decomposition to group current conformance findings into coherent independent durable workstreams."

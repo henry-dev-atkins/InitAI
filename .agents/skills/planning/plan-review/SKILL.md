@@ -58,7 +58,7 @@ They inform this single plan-review verdict; they do not create additional workf
 
 A rejection returns concrete findings about the plan. Do not write the replacement plan inside the review.
 
-Use `$plan-preflight`, `$plan-blastradius`, `$plan-elegance`, `$peer-review`, or maintenance skills as optional review lenses when their question matters. They do not add stages to the orchestrator loop.
+Use `$plan-preflight`, `$change-impact-analysis`, `$plan-elegance`, `$peer-review`, or maintenance skills as optional review lenses when their question matters. They do not add stages to the orchestrator loop.
 
 
 ## Capability-first gate

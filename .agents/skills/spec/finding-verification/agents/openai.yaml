@@ -1,0 +1,4 @@
+interface:
+  display_name: "Finding Verification"
+  short_description: "Verify one disputed conformance finding independently"
+  default_prompt: "Use $finding-verification to independently verify one disputed, ambiguous, or weakly evidenced conformance finding."

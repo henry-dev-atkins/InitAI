@@ -9,6 +9,9 @@ This skill defines the simple convergence loop for `.codex/agents/orchestrator.t
 
 `AI_SPACE/SPEC.md` is the product authority. The orchestrator is the control thread. Agents do bounded work and return evidence. The outer spec review decides whether the campaign is finished.
 
+Counterexample-guided convergence toward specification conformance.
+Each evidence-backed misalignment from `$conformance` review acts like a practical counterexample to the claim that the repository satisfies the specification.
+
 The workflow has seven operations:
 
 1. review the spec against the repository;

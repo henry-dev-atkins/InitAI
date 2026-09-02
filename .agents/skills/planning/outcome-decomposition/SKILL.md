@@ -1,11 +1,11 @@
 ---
-name: plan-portfolio
-description: Collate the current spec-review misalignments into coherent independent durable workstreams. Output the workstream list only; do not plan implementation details.
+name: outcome-decomposition
+description: Split independent durable outcomes, not files or incidental implementation steps. Collate the current spec-review misalignments into coherent independent durable workstreams. Output the workstream list only; do not plan implementation details.
 ---
 
-# [PLAN.PORTFOLIO]
+# [PLAN.PORTFOLIO] / outcome-decomposition
 
-Input: the current misalignment list from `$spec-review`.
+Input: the current misalignment list from `$conformance`.
 
 Output: a list of workstreams.
 

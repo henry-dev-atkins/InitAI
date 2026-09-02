@@ -1,0 +1,4 @@
+interface:
+  display_name: "adversarial-review"
+  short_description: "Review non-trivial decisions"
+  default_prompt: "Use $adversarial-review to test a non-trivial decision against its contract."

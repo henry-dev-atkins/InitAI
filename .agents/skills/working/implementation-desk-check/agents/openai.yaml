@@ -1,0 +1,4 @@
+interface:
+  display_name: "Desk Check"
+  short_description: "Desk check an implementation."
+  default_prompt: "Desk check implementated code."

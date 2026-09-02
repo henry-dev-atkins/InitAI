@@ -1,0 +1,4 @@
+interface:
+  display_name: "Desk Check"
+  short_description: "Desk check a plan."
+  default_prompt: "Desk check plan."

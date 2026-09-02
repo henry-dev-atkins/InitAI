@@ -1,9 +1,9 @@
 ---
-name: flowguard
+name: bounded-execution
 description: "Guard long, ambiguous, or stateful AI-agent work from drift. Use when the user asks to run or continue a multi-step task, autonomous loop, bug fix, repo change, PR readiness check, compaction handoff, resume from previous context, cost-control checkpoint, or any task likely to span many tool calls, files, sessions, agents, or verification gates."
 ---
 
-# Flowguard
+# bounded-execution
 
 ## Overview
 
@@ -11,7 +11,7 @@ Use this skill as the single lifecycle entrypoint for agent work that can drift,
 
 This skill coordinates other skills; it does not replace them. Use task-specific skills such as `diagnose`, `comprehensive-testing`, `retro`, or `doubt-driven-development` only when their trigger is clearly met.
 
-In this repository, Flowguard is a local guardrail. It does not replace the project-scoped orchestrator. When orchestration is active, the orchestrator remains the authority for misalignments, workstreams, assignments, review verdicts, and completion claims.
+In this repository, bounded-execution is a local guardrail. It does not replace the project-scoped orchestrator. When orchestration is active, the orchestrator remains the authority for misalignments, workstreams, assignments, review verdicts, and completion claims.
 
 ## Operating Contract
 

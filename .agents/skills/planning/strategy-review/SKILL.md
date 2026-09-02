@@ -1,9 +1,17 @@
 ---
 name: campain-review
-description: Optional back-to-basics review when repeated plan or implementation failures suggest the current workstream split or direction is wrong.
+description: Perform a double-loop review when no-progress detection indicates that retrying within the current framing is unlikely to converge.
 ---
 
 # [CAMPAIN.REVIEW]
+
+Instead of asking:
+
+  Is the current implementation/plan correct?
+
+We ask:
+
+  Are we solving/decomposing/framing the problem correctly in the first place?
 
 Use after repeated failure, persistent blocking, or evidence that the current workstream decomposition is wrong.
 

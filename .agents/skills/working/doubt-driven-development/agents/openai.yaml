@@ -1,4 +1,0 @@
-interface:
-  display_name: "Doubt Driven Development"
-  short_description: "Review non-trivial decisions"
-  default_prompt: "Use $doubt-driven-development to test a non-trivial decision against its contract."

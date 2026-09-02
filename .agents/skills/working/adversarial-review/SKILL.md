@@ -1,9 +1,12 @@
 ---
-name: doubt-driven-development
+name: adversarial-review
 description: Subjects every non-trivial decision to a fresh-context adversarial review before it stands. Use when a confident output would be cheaper to verify now than to debug later.
 ---
 
 # Doubt-Driven Development
+
+Doubt driven development is synonym.
+Doubt-driven development: non-trivial decisions do not stand until they survive an independent adversarial review
 
 ## Overview
 
@@ -38,6 +41,15 @@ Apply the skill when:
 - The user has explicitly asked for speed over verification
 
 If you doubt every keystroke, you ship nothing. The skill applies only to non-trivial decisions as defined above.
+
+## Philosophy
+
+General agent pattern is normally described as:
+
+        generator–critic, review/critique, or evaluator–optimizer.
+
+Google describes the generator–critic pattern as one component producing an output and another critic evaluating it against criteria, accepting it or returning corrective feedback. 
+Anthropic uses the closely related evaluator–optimizer terminology
 
 ## Loading Constraints
 

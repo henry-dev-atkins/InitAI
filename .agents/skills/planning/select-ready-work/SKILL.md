@@ -1,9 +1,9 @@
 ---
-name: portfolio-next
+name: select-ready-work
 description: Select the next N useful ready independent workstreams from the current workstream list for planning or implementation.
 ---
 
-# [PORTFOLIO.NEXT]
+# [PORTFOLIO.NEXT] / select-ready-work
 
 Input: current workstreams and available agent capacity.
 

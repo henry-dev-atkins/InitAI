@@ -1,6 +1,6 @@
 ---
-name: plan-blastradius
-description: Optional impact check for a plan or accepted implementation that changes a shared interface, schema, config contract or other widely consumed behaviour.
+name: change-impact-analysis
+description: Determine the blast radius of the planned change. Impact check for a plan or implementation that changes a shared interface, schema, config contract or other widely consumed behaviour.
 ---
 
 # [PLAN.BLASTRADIUS]

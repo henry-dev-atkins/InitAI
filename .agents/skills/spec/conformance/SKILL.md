@@ -1,6 +1,6 @@
 ---
-name: spec-review
-description: Compare AI_SPACE/SPEC.md with the current repository and return an exhaustive list of material misalignments, or PASS when none remain. This is the outer convergence test for the orchestrator loop.
+name: conformance
+description: Compare AI_SPACE/SPEC.md with the current repository and return an exhaustive list of material misalignments, or PASS when none remain. This is the outer convergence test for the orchestrator loop. SPEC.REVIEW == SPEC_REVIEW == conformance
 ---
 
 # [SPEC.REVIEW]

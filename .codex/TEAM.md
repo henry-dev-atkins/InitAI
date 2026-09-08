@@ -14,6 +14,7 @@ Use `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` to select the project-scoped `orch
 - `repo-engineer`: repository/config/dependency implementation for one accepted plan.
 - `agent-workflow-engineer`: AGENTS/skills/Codex workflow implementation for one accepted plan.
 - `validation-engineer`: bounded behavioural validation. It writes only when the accepted plan includes validation files.
+- `progress-reporter`: read session evidence and write one progress report in the selected session report directory.
 - `merge-captain`: read-only implementation acceptance reviewer.
 - `diagnosis-agent`: read-only root-cause investigation.
 

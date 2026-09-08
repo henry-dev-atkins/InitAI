@@ -22,6 +22,7 @@ The orchestrator loop has six core skills. Every other installed skill is an opt
 - `$plan-preflight`: Check mechanical plan completeness before semantic review.
 - `$plan-sub`: Break one accepted plan step into local execution substeps.
 - `$strategy-review`: Reframe the current approach after repeated failure or no progress.
+- `$procedural-task-entry-points`: Keep concrete task control flow procedural.
 
 ## Specification tools
 
@@ -48,7 +49,9 @@ The orchestrator loop has six core skills. Every other installed skill is an opt
 
 - `$learn`: Record durable lessons and unresolved follow-up work.
 - `$retro`: Review process quality, progress rate, efficiency, and orchestration behaviour.
+- `$progress-report`: Write a quantitative report for one orchestration session.
 - `$maintain-declutter`: Audit repository files for commit, archive, move, or human-review decisions.
+- `$thorough-removal`: Remove obsolete repository paths and their orphaned consequences.
 - `$maintain-despaghettify`: Review tangled structure, coupling, and dependency spread.
 - `$maintain-elegance`: Review repository-wide simplicity, coherence, and capability fit.
 - `$maintain-review`: Review drift away from the spec and core capabilities.

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Thorough Removal"
+  short_description: "Remove obsolete repository paths completely"
+  default_prompt: "Use $thorough-removal to complete the removal and clean its orphaned consequences."

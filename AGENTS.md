@@ -38,6 +38,19 @@ The AI workspace is `AI_SPACE/`:
 
 Workflow artefacts under `AI_SPACE/` are control metadata, not product capability, unless the spec explicitly says otherwise. Repository-root `archive/` stores removed product material. `AI_SPACE/archive/` stores removed control-plane material and rejected workstream copies. Archived material is outside the active product tree and must not be imported, executed, configured or counted as current implementation.
 
+# Philosophies to Code By:
+- Keep it Simple, Stupid!
+- Implementation failure is always planning failure
+- Fail fast, frequently and with maximum explainability
+- Activity is not progress
+- Support must earn its place
+- Every abstraction should justify its existence
+- Good work removes questions from the future
+- Build only what the purpose can defend
+- Good code explains itself through its structure
+- Names are the first form of documentation
+
+
 # Action routing
 
 Capitalised bracket keywords are human-facing actions. Lowercase hyphenated names refer to folders under `.agents/skills/`.
@@ -46,6 +59,7 @@ Capitalised bracket keywords are human-facing actions. Lowercase hyphenated name
 - `[SESSION.CLEAN]` -> `$session-clean`
 - `[SESSION.COMPACT]` -> `$session-compact`
 - `[SESSION.END]` -> `$session-end`
+- `[PROGRESS.REPORT]` -> `$progress-report`
 - `[PLAN]` -> `$plan`
 - `[PLAN.PORTFOLIO]` -> `$outcome-decomposition`
 - `[PORTFOLIO.NEXT]` -> `$select-ready-work`

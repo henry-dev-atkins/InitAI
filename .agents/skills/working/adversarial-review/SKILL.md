@@ -10,7 +10,8 @@ Doubt-driven development: non-trivial decisions do not stand until they survive 
 
 ## Overview
 
-A confident answer is not a correct one. Long sessions accumulate context that quietly turns assumptions into "facts" without anyone noticing. Doubt-driven development is the discipline of materializing a fresh-context reviewer -- biased to **disprove**, not approve -- before any non-trivial output stands.
+A confident answer is not a correct one. 
+Long sessions accumulate context that quietly turns assumptions into "facts" without anyone noticing. Doubt-driven development is the discipline of materializing a fresh-context reviewer -- biased to **disprove**, not approve -- before any non-trivial output stands.
 
 This is not `/review`. `/review` is a verdict on a finished artifact. This is an in-dev perspective: non-trivial decisions get cross-examined while course-correction is still cheap.
 

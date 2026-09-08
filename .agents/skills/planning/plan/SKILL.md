@@ -45,6 +45,11 @@ For a successor plan after rejection, state what the previous plan failed to mak
 ## Planning rules
 
 - Resolve the assigned findings completely and minimally.
+- Prefer a coherent end state over the smallest diff.
+- Remove orphaned code, tests, configuration and documentation recursively when the change makes them redundant.
+- Do not preserve legacy compatibility without concrete evidence or explicit authority.
+- Split large work into phases that each leave a clear, testable repository state.
+- Keep progress in session artefacts and reports. Do not add a progress appendix to a plan.
 - Start with the highest-level behaviour required by the workstream; support software must directly enable or validate it.
 - Name exact files to create/modify and all off-limits files.
 - Name public interfaces, schemas, configs or generated outputs changed/consumed.
@@ -54,6 +59,19 @@ For a successor plan after rejection, state what the previous plan failed to mak
 - Do not assume a later repair phase. The plan must be complete enough for one controlled implementation attempt, while implementation rejection still returns through the normal finding/workstream loop.
 - Do not create legacy compatibility, special cases, wrapper layers or speculative abstractions unless the spec requires them.
 - What is the simplest thing that could work?
+
+## Planning philosophy
+
+Keep the plan short and factual. 
+State the intended end state, required changes, proof, and protected invariants. 
+Omit history and external migration detail unless the authority requires them.
+
+When a change removes a concept, trace its dependants until the active repository has no orphaned path that exists only because of the removed concept.
+Use the repository archive rules when a durable file must leave the active tree.
+
+Split work at durable boundaries. 
+Front-load discovery when the repository is unclear.
+Keep later phases mechanical. End each phase with the cheapest meaningful validation.
 
 
 ## Consequence review

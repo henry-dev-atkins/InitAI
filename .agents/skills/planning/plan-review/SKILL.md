@@ -32,6 +32,9 @@ Accept only when the plan:
 - capability-first alignment with assigned findings;
 - top-down convergence impact;
 - minimal complete implementation;
+- coherent end state rather than minimum-diff optimisation;
+- recursive orphan cleanup where the accepted scope permits it;
+- phase boundaries that leave a clear, testable state;
 - exact write/off-limits scope;
 - dependencies and parallel-safety;
 - contracts changed/consumed;
@@ -79,6 +82,8 @@ Reject support-only churn unless it directly unlocks the assigned capability or 
 - command manifest or evidence ledger requirements are incomplete;
 - temporary/workaround/fluff output may survive;
 - capability progress is claimed for support-only work;
+- the plan preserves orphaned paths without evidence or authority;
+- the plan uses a progress appendix instead of session progress artefacts;
 - a simpler repository-fitting solution is clearly available and unaddressed;
 - it relies on an assumed later repair pass;
 - There is a more elegant way of doing it;

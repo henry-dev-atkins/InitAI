@@ -1,0 +1,4 @@
+interface:
+  display_name: "Procedural Task Entry Points"
+  short_description: "Keep concrete task control flow procedural"
+  default_prompt: "Use $procedural-task-entry-points to review or design a concrete task entry point."

@@ -19,6 +19,7 @@ Rank by:
 4. confidence that the workstream can proceed independently;
 5. low collision risk with other selected workstreams.
 
-N is a maximum. Never invent work or select unsafe work merely to fill capacity.
+N is a maximum. 
+Never invent work or select unsafe work merely to fill capacity.
 
 Do not plan the selected workstreams. Do not change their outcome boundaries.

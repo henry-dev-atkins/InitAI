@@ -42,4 +42,9 @@ Do not create an ad hoc repair phase.
 After repeated failure ask exactly:
 - Am I going in Circles?
 - Is there a more elegant way of doing this?
+
+When the human requests `[PROGRESS.REPORT]` or `$progress-report`, delegate the
+report to the `progress-reporter` agent. Pass the explicit session path, report
+timestamp, and any supplied chat timestamps. This optional report does not add a
+stage to the convergence loop.
 """

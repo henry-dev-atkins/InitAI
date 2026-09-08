@@ -1,0 +1,4 @@
+interface:
+  display_name: "Progress Report"
+  short_description: "Report quantitative session progress and convergence"
+  default_prompt: "Use $progress-report with an explicit session path to write a quantitative progress report."

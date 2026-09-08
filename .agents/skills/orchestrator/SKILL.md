@@ -24,6 +24,13 @@ The workflow has seven operations:
 
 Stop only when a fresh spec review finds no material misalignment.
 
+## Optional progress report
+
+When the human requests `$progress-report`, delegate it to `progress-reporter`.
+Pass the explicit session path, report timestamp, and any supplied chat timestamps.
+The worker may read session evidence and may write only the selected session's `progress_reports/` directory.
+This report is optional and does not add a stage to the convergence loop.
+
 ## Agent hierarchy
 
 Indentation means ownership/delegation. A deeper level is an agent or sub-agent working for the level above it.
@@ -198,6 +205,7 @@ The output is a list of material misalignments. Each misalignment needs:
 - severity.
 
 A clean review returns `PASS` and an empty misalignment list.
+Aim to maintain as many findings as possible for fast convergence we need maxmium discovery.
 
 Use `$finding-verification` only when a finding is disputed, weakly evidenced, or materially ambiguous. Do not add a verification stage to findings that are already clear.
 
@@ -225,7 +233,9 @@ Do not build a second requirements system around the spec. The spec review will 
 
 Run `$select-ready-work`.
 
-Select up to the available agent capacity. Prefer the largest useful independent workstreams that are ready now. Do not select blocked work merely to fill capacity.
+Select up to the available agent capacity. 
+Prefer the largest useful independent workstreams that are ready now. Do not select blocked work merely to fill capacity.
+Aim to have many workstreams prepared, so that they can be planned whenever a parallel slot is ready.
 
 Prioritise:
 
@@ -254,6 +264,7 @@ A plan needs:
 - `Is there a more elegant way of doing this?`.
 
 The planner may use supporting skills such as `$first-principles`, `$bounded-execution`, `$plan-desk-check`, or domain skills when they help. Supporting skills do not create workflow stages.
+Aim to have many workstream plans prepared, so that they can be reviewed whenever a parallel slot is ready.
 
 ## 5. Review each plan
 
@@ -267,9 +278,12 @@ The reviewer returns exactly one plan verdict:
 
 `REJECT` returns the workstream to planning with concrete findings. It is not permission for an implementation worker to improvise a repair.
 
-Use `$plan-preflight`, `$parallel-safety`, `$change-impact-analysis`, `$plan-elegance`, `$peer-review`, or maintenance skills only when their specific question matters. They are review tools, not mandatory global phases.
+Use `$plan-preflight`, `$parallel-safety`, `$change-impact-analysis`, `$plan-elegance`, `$peer-review`, or maintenance skills only when their specific question matters. 
+They are review tools, not mandatory global phases.
 
-Before parallel implementation, compare accepted plans. Parallelise only workstreams whose write scopes and important shared dependencies do not conflict. If that is unclear, use `$parallel-safety`.
+Before parallel implementation, compare accepted plans. Parallelise only workstreams whose write scopes and important shared dependencies do not conflict. 
+If that is unclear, use `$parallel-safety`.
+Aim to have many workstream reviews prepared, so that they can be implemented whenever a parallel slot is ready.
 
 ## 6. Implement and review
 
@@ -321,7 +335,8 @@ After repeated failure ask:
 - `Am I going in Circles?`
 - `Is there a more elegant way of doing this?`
 
-Use `$diagnose`, `$first-principles`, or `$strategy-review` when repeated failure shows that the workstream boundary, plan, or campaign direction is wrong. Then return to the same simple loop.
+Use `$diagnose`, `$first-principles`, or `$strategy-review` when repeated failure shows that the workstream boundary, plan, or campaign direction is wrong. 
+Then return to the same simple loop.
 
 ## Authority
 
@@ -334,7 +349,8 @@ The orchestrator alone:
 - decides whether a workstream returns to planning;
 - declares `[DONE]` only after a clean outer spec review.
 
-Workers and reviewers return facts and verdicts. They do not choose future work.
+Workers and reviewers return facts and verdicts. 
+They do not choose future work.
 
 ## Minimal session artefacts
 

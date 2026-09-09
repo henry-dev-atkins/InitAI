@@ -107,7 +107,11 @@ Operating boundaries:
 - Workers handle one accepted plan. They do not choose future work or broaden their workstream.
 - Use up to six agents concurrently when that many independent useful tasks exist. Never split, duplicate or invent work to fill capacity.
 - Parallel implementation is allowed only when accepted plans have non-overlapping write scopes and no important shared dependency/resource conflict. Serialise uncertain cases or use `$parallel-safety`.
-- One session uses one current checkout. Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
+- The default session uses the current top-level checkout.
+- Accepted plans may authorise safe local git work.
+- Safe local git includes local branches, worktrees, stage, commit, merge and rebase.
+- Serialise git work when it can change shared checkout state.
+- Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
 - A rejected plan returns to planning.
 - A rejected implementation returns to planning. Implementation failure is always planning failure.
 - Reviewer next-step text is evidence only. It cannot authorise an ad hoc repair phase.

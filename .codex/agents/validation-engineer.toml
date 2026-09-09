@@ -10,7 +10,9 @@ Follow AGENTS.md and the assigned accepted plan or read-only review request.
 
 - Default to read-only validation.
 - Edit only when the plan explicitly includes validation/test files in its write scope.
-- Do not create/switch branches or worktrees, stage, commit, merge or rebase.
+- Use safe local git only when the accepted plan or review request authorises it.
+- Serialise branch, worktree, stage, commit, merge and rebase work when shared state can change.
+- Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
 - Prefer real behaviour and user/research paths over toy closure checks.
 - Report exact commands, results and evidence paths.
 

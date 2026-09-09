@@ -43,34 +43,34 @@ prefix_rule(
 prefix_rule(
     pattern = ["git", "commit"],
     decision = "allow",
-    justification = "Workers may create commits during orchestrated work. Commit only under explicit human/orchestrator integration policy outside a worker task.",
+    justification = "Safe local commit work is allowed when the accepted plan or session policy authorises it.",
     match = ["git commit -m 'FIX: example'"],
 )
 
 prefix_rule(
     pattern = ["git", "switch"],
     decision = "allow",
-    justification = "The orchestrator workflow uses one session checkout. Start a separate top-level Codex worktree chat for isolated branch work.",
+    justification = "Safe local branch work is allowed when the accepted plan or session policy authorises it.",
     match = ["git switch main", "git switch -c codex/P001-example"],
 )
 
 prefix_rule(
     pattern = ["git", "checkout"],
     decision = "allow",
-    justification = "Workers may change branches or discard paths inside a shared orchestrator session checkout.",
+    justification = "Safe local checkout work is allowed. Path discard remains blocked by safety rules.",
     match = ["git checkout main", "git checkout -- file.py"],
 )
 
 prefix_rule(
     pattern = ["git", "worktree", ["add", "remove", "move", "prune"]],
     decision = "allow",
-    justification = "Nested worktree management is not part of this workflow but it is available. Favour top-level Codex app worktree chats instead.",
+    justification = "Safe local worktree work is allowed when the accepted plan or session policy authorises it.",
     match = ["git worktree add ../repo-P001 codex/P001-example", "git worktree remove ../repo-P001"],
 )
 
 prefix_rule(
     pattern = ["git", ["merge", "rebase"]],
     decision = "allow",
-    justification = "No worker-branch merge or rebase should occur because agents/subagents share a checkout, but it is available.",
+    justification = "Safe local merge and rebase work is allowed when the accepted plan or session policy authorises it.",
     match = ["git merge codex/P001-example", "git rebase main"],
 )

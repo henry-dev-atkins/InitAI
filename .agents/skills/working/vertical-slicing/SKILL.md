@@ -46,7 +46,7 @@ For each slice:
 1. **Implement** the smallest complete piece of functionality
 2. **Test** -- run the test suite (or write a test if none exists)
 3. **Verify** -- confirm the slice works as expected (tests pass, build succeeds, manual check)
-4. **Checkpoint** -- record changed files, verification evidence, and the next slice. Workers do not commit in this repository.
+4. **Checkpoint** -- record changed files, verification evidence, and the next slice. Commit only when the accepted plan authorises it.
 5. **Move to the next slice** -- carry forward, do not restart
 
 ## Slicing Strategies

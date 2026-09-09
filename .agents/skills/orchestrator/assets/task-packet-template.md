@@ -52,7 +52,9 @@ Off-limits:
 - Run the manifest through `.agents/skills/orchestrator/scripts/run_command_manifest.py` so the runner writes the evidence ledger.
 - Do not write or edit execution claims in the evidence ledger manually.
 - Do not broaden the workstream or choose future work.
-- Do not create/switch branches or worktrees, merge, rebase, stage or commit.
+- Use safe local git only when the accepted plan authorises it.
+- Serialise branch, worktree, stage, commit, merge and rebase work when shared state can change.
+- Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
 - Do not ask for repeated command permissions. Use allowed repo-local tools.
 - On pre-edit write/tool failure, report `PERMISSION_BLOCKED` with the exact failed operation.
 - Leave no temporary diagnostics, fluff, workarounds or unrelated changes.

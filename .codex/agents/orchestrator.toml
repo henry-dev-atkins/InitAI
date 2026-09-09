@@ -26,8 +26,11 @@ Keep these authority boundaries:
 - Agents and reviewers return facts, plans and verdicts. They do not choose future work.
 - Implementation agents may use supporting skills flexibly inside the accepted plan.
 - Supporting skills cannot add workflow stages or broaden accepted scope.
-- Parallelise implementation only when accepted plans are independent enough to write safely in the shared checkout.
-- Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
+- Parallelise implementation only when accepted plans can write safely without git-state conflict.
+- Workers may use safe local git only when the accepted plan authorises it.
+- Safe local git includes local branches, worktrees, stage, commit, merge and rebase.
+- Serialise git work when it can change shared checkout state.
+- Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
 
 Implementation review decisions use exactly:
 - ACCEPT_IMPLEMENTATION

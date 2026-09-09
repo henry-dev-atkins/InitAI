@@ -34,10 +34,13 @@ Use `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` to select the project-scoped `orch
 ## Concurrency and checkout
 
 - Use up to six agents when that many useful independent tasks exist.
-- All subagents use the current top-level checkout.
+- The default session uses the current top-level checkout.
 - Parallel write agents need independent accepted write scopes.
 - Serialise overlapping work and important shared resources.
-- Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
+- Accepted plans may authorise safe local git work.
+- Safe local git includes local branches, worktrees, stage, commit, merge and rebase.
+- Serialise git work when it can change shared checkout state.
+- Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
 
 ## Skills
 

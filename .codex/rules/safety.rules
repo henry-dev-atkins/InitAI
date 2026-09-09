@@ -90,10 +90,11 @@ prefix_rule(
 prefix_rule(
     pattern = ["uv", "add"],
     decision = "allow",
-    justification = "Repo-local dependency changes are allowed only when justified by an accepted workstream plan; network policy remains unchanged.",
+    justification = "Repo-local dependency changes are allowed only when justified by an accepted workstream plan. Network policy remains unchanged.",
     match = [
         "uv add numpy",
         "uv add --dev pytest",
+        "uv add ruff pytest",
     ],
 )
 

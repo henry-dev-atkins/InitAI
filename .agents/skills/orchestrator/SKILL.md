@@ -281,7 +281,7 @@ The reviewer returns exactly one plan verdict:
 Use `$plan-preflight`, `$parallel-safety`, `$change-impact-analysis`, `$plan-elegance`, `$peer-review`, or maintenance skills only when their specific question matters. 
 They are review tools, not mandatory global phases.
 
-Before parallel implementation, compare accepted plans. Parallelise only workstreams whose write scopes and important shared dependencies do not conflict. 
+Before parallel implementation, compare accepted plans. Parallelise only workstreams whose write scopes, git state and important shared dependencies do not conflict.
 If that is unclear, use `$parallel-safety`.
 Aim to have many workstream reviews prepared, so that they can be implemented whenever a parallel slot is ready.
 
@@ -293,7 +293,13 @@ Implementation agents are deliberately flexible. They may use any relevant imple
 
 `$plan-sub` is allowed only for local execution decomposition inside the accepted plan. If a material plan change is required, stop implementation and return to planning.
 
-Workers do not create/switch branches or worktrees, merge, rebase, stage or commit.
+Workers may use safe local git only when the accepted plan authorises it.
+
+Safe local git includes local branches, worktrees, stage, commit, merge and rebase.
+
+Serialise git work when it can change shared checkout state.
+
+Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
 
 Review every implementation independently. The review decision uses exactly:
 

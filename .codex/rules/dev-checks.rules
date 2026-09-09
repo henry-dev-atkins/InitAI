@@ -38,54 +38,30 @@ prefix_rule(
 )
 
 prefix_rule(
-    pattern = ["uv", "lock", "--check"],
+    pattern = ["uv", "lock"],
     decision = "allow",
-    justification = "Template-standard lockfile verification command.",
+    justification = "Repo-local lockfile updates are allowed when dependency changes are justified by an accepted plan.",
     match = [
+        "uv lock",
         "uv lock --check",
     ],
     not_match = [
-        "uv lock",
         "uv sync --locked",
     ],
 )
 
 prefix_rule(
-    pattern = ["uv", "sync", "--locked"],
+    pattern = ["uv", "sync"],
     decision = "allow",
-    justification = "Template-standard environment bootstrap using the locked dependency set.",
+    justification = "Repo-local environment sync is allowed. Network policy remains unchanged.",
     match = [
+        "uv sync",
         "uv sync --locked",
-    ],
-    not_match = [
-        "uv sync",
         "uv sync --extra dev",
-    ],
-)
-
-prefix_rule(
-    pattern = ["uv", "sync", "--extra", "dev"],
-    decision = "allow",
-    justification = "Template-standard developer environment bootstrap with dev dependencies.",
-    match = [
-        "uv sync --extra dev",
-    ],
-    not_match = [
-        "uv sync",
-        "uv sync --extra prod",
-    ],
-)
-
-prefix_rule(
-    pattern = ["uv", "sync", "--locked", "--extra", "dev"],
-    decision = "allow",
-    justification = "Template-standard locked developer environment bootstrap.",
-    match = [
         "uv sync --locked --extra dev",
     ],
     not_match = [
-        "uv sync --locked",
-        "uv sync --extra prod",
+        "uv run pytest",
     ],
 )
 
@@ -106,5 +82,3 @@ prefix_rule(
         "uv run streamlit run app.py",
     ],
 )
-
-

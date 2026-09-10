@@ -1,0 +1,4 @@
+interface:
+  display_name: "Pattern Write"
+  short_description: "Apply one planned mechanical file change"
+  default_prompt: "Use $pattern-write only for the exact one-file change in the accepted plan."

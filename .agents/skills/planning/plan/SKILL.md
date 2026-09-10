@@ -40,6 +40,8 @@ The plan must be clear enough for one implementation agent to execute without in
 
 Use supporting skills when they improve this plan. Examples include `$first-principles`, `$bounded-execution`, `$plan-desk-check`, and domain-specific skills. They are tools inside planning. They do not create more orchestration stages.
 
+Use `$pattern-write` only for one new file copied mechanically from one named reference. State the target, reference, permitted differences, protected invariants, and validation. Do not use it for dependencies, schemas, public interfaces, security, concurrency, migrations, shared state, or adjacent edits.
+
 For a successor plan after rejection, state what the previous plan failed to make clear, complete, or correct. Do not produce a cosmetic rewording of the same plan.
 
 ## Planning rules

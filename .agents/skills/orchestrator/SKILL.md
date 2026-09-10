@@ -19,6 +19,8 @@ The DSL binds seven operations to existing roles and skills. It keeps the simple
 
 The runner owns saved mechanical state. The orchestrator alone chooses work within the permitted operations, launches agents, and submits their facts and verdicts. It does not implement project source code while orchestration is active. Workers do not edit runner state or choose future work.
 
+Use `$bulk-read` for bounded factual reads. Use `$pattern-write` only for one planned mechanical file change. These skills do not add workflow operations or replace independent review.
+
 ## Dispatch
 
 1. Run `check` against the repository. Start an explicit session with `init`, using the concrete spec or saved explicit human authority. Keep that session path for every later command.

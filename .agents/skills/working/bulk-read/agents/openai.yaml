@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bulk Read"
+  short_description: "Summarise large files with cited evidence"
+  default_prompt: "Use $bulk-read for this bounded evidence request."

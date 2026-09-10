@@ -1,0 +1,18 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "^Bash$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 .codex/hooks/large_read_guard.py --line-threshold 800 --byte-threshold 65536",
+            "commandWindows": "powershell.exe -NoProfile -Command \"$repo = (& git rev-parse --show-toplevel).Trim(); [Console]::In.ReadToEnd() | py -3 (Join-Path $repo '.codex/hooks/large_read_guard.py') --line-threshold 800 --byte-threshold 65536; exit $LASTEXITCODE\"",
+            "timeout": 5,
+            "statusMessage": "Checking read size"
+          }
+        ]
+      }
+    ]
+  }
+}

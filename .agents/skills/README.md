@@ -32,6 +32,11 @@ The orchestrator loop has six core skills. `.agents/workflow/workflow.toml` owns
 
 ## Implementation and diagnostic tools
 
+- `$bulk-read`: Summarise bounded large reads into cited evidence.
+- `$pattern-write`: Apply one planned mechanical file change.
+- `$code-tour`: Create a verified CodeTour walkthrough when requested.
+- `$scientific-literature-review`: Produce a traceable literature review for a defined question.
+
 - `$adversarial-review`: Challenge a non-trivial decision with a fresh-context critic.
 - `$ask-first`: Clarify the request before planning or implementation when the user asks for that mode.
 - `$bounded-execution`: Keep long or stateful agent work bounded, checked, and resumable.

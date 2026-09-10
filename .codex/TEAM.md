@@ -17,6 +17,8 @@ Use `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` to select the project-scoped `orch
 - `progress-reporter`: read session evidence and write one progress report in the selected session report directory.
 - `merge-captain`: read-only implementation acceptance reviewer.
 - `diagnosis-agent`: read-only root-cause investigation.
+- `bulk-reader`: optional read-only bounded large-read evidence route.
+- `pattern-writer`: optional one-file mechanical implementation after plan acceptance.
 
 ## Core execution pattern
 

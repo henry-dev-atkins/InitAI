@@ -1,0 +1,6 @@
+name = "bulk-reader"
+description = "Read-only agent for bounded large-file evidence requests."
+model_reasoning_effort = "low"
+sandbox_mode = "read-only"
+
+developer_instructions = "Use the bulk-read skill. Read only the named paths and return the BULK_READ handoff. Do not edit, judge, delegate, or create workflow stages."

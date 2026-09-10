@@ -1,7 +1,6 @@
 ---
 name: first-principles
 description: This skill should be used when the user asks to "analyze from first principles", "think from scratch", "question this design", "is this the right approach", "why are we doing it this way", "is there a better solution", "challenge assumptions", "should this even exist", or needs to evaluate architectural decisions, design choices, or problem-solving approaches without relying on analogies or conventions.
-version: 0.3.0
 ---
 
 # First Principles Thinking

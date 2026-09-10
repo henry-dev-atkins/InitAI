@@ -1,10 +1,10 @@
 # Skill map
 
-The orchestrator loop has six core skills. Every other installed skill is an optional bounded tool. Optional skills do not create workflow phases or own future-work decisions.
+The orchestrator loop has six core skills. `.agents/workflow/workflow.toml` owns mechanical workflow policy, and `.agents/workflow/run.py` checks transitions and saves session state. Skills guide judgement inside those operations. Every other installed skill is an optional bounded tool. Optional skills do not create workflow phases or own future-work decisions.
 
 ## Core loop
 
-- `$orchestrator`: Run the project-scoped spec-convergence loop.
+- `$orchestrator`: Dispatch the project-scoped spec-convergence loop through the DSL runner.
 - `$conformance`: Compare `AI_SPACE/SPEC.md` with the repository and return material findings or `PASS`.
 - `$outcome-decomposition`: Group current findings into independent durable workstreams.
 - `$select-ready-work`: Select the next useful ready independent workstreams.
@@ -19,7 +19,7 @@ The orchestrator loop has six core skills. Every other installed skill is an opt
 - `$peer-review`: Review repository defensibility and reproducibility.
 - `$plan-desk-check`: Simulate one plan before implementation begins.
 - `$plan-elegance`: Review whether a plan is the simplest coherent solution.
-- `$plan-preflight`: Check mechanical plan completeness before semantic review.
+- `$plan-preflight`: Check mechanical plan completeness when useful or required by the workflow's preflight policy.
 - `$plan-sub`: Break one accepted plan step into local execution substeps.
 - `$strategy-review`: Reframe the current approach after repeated failure or no progress.
 - `$procedural-task-entry-points`: Keep concrete task control flow procedural.

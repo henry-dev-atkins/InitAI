@@ -1,0 +1,337 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI workflow DSL v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "name",
+    "max_agents",
+    "preflight",
+    "independent_reviews",
+    "completion",
+    "operations"
+  ],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "\\S"
+    },
+    "max_agents": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 6
+    },
+    "preflight": {
+      "type": "string",
+      "enum": [
+        "optional",
+        "required"
+      ]
+    },
+    "independent_reviews": {
+      "type": "boolean",
+      "const": true
+    },
+    "completion": {
+      "const": "fresh_full_conformance",
+      "type": "string"
+    },
+    "operations": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conformance",
+        "collate",
+        "select",
+        "planning",
+        "plan_review",
+        "implementation",
+        "implementation_review"
+      ],
+      "properties": {
+        "conformance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agent",
+            "transitions",
+            "skill"
+          ],
+          "properties": {
+            "agent": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "transitions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "PASS",
+                "FINDINGS",
+                "BLOCKED"
+              ],
+              "properties": {
+                "PASS": {
+                  "const": "done",
+                  "type": "string"
+                },
+                "FINDINGS": {
+                  "const": "collate",
+                  "type": "string"
+                },
+                "BLOCKED": {
+                  "const": "blocked",
+                  "type": "string"
+                }
+              }
+            },
+            "skill": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "collate": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agent",
+            "transitions",
+            "skill"
+          ],
+          "properties": {
+            "agent": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "transitions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "COLLATED",
+                "BLOCKED"
+              ],
+              "properties": {
+                "COLLATED": {
+                  "const": "select",
+                  "type": "string"
+                },
+                "BLOCKED": {
+                  "const": "blocked",
+                  "type": "string"
+                }
+              }
+            },
+            "skill": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "select": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agent",
+            "transitions",
+            "skill"
+          ],
+          "properties": {
+            "agent": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "transitions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "SELECTED",
+                "BLOCKED"
+              ],
+              "properties": {
+                "SELECTED": {
+                  "const": "planning",
+                  "type": "string"
+                },
+                "BLOCKED": {
+                  "const": "blocked",
+                  "type": "string"
+                }
+              }
+            },
+            "skill": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "planning": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agent",
+            "transitions",
+            "skill"
+          ],
+          "properties": {
+            "agent": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "transitions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "PLANNED",
+                "BLOCKED"
+              ],
+              "properties": {
+                "PLANNED": {
+                  "const": "plan_review",
+                  "type": "string"
+                },
+                "BLOCKED": {
+                  "const": "blocked",
+                  "type": "string"
+                }
+              }
+            },
+            "skill": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "plan_review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agent",
+            "transitions",
+            "skill"
+          ],
+          "properties": {
+            "agent": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "transitions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ACCEPT",
+                "REJECT",
+                "BLOCKED"
+              ],
+              "properties": {
+                "ACCEPT": {
+                  "const": "implementation",
+                  "type": "string"
+                },
+                "REJECT": {
+                  "const": "planning",
+                  "type": "string"
+                },
+                "BLOCKED": {
+                  "const": "blocked",
+                  "type": "string"
+                }
+              }
+            },
+            "skill": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            }
+          }
+        },
+        "implementation": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agent",
+            "transitions"
+          ],
+          "properties": {
+            "agent": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "transitions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "IMPLEMENTED",
+                "BLOCKED"
+              ],
+              "properties": {
+                "IMPLEMENTED": {
+                  "const": "implementation_review",
+                  "type": "string"
+                },
+                "BLOCKED": {
+                  "const": "blocked",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "implementation_review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "agent",
+            "transitions"
+          ],
+          "properties": {
+            "agent": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "\\S"
+            },
+            "transitions": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "ACCEPT_IMPLEMENTATION",
+                "REJECT_IMPLEMENTATION",
+                "BLOCKED"
+              ],
+              "properties": {
+                "ACCEPT_IMPLEMENTATION": {
+                  "const": "accepted",
+                  "type": "string"
+                },
+                "REJECT_IMPLEMENTATION": {
+                  "const": "planning",
+                  "type": "string"
+                },
+                "BLOCKED": {
+                  "const": "blocked",
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

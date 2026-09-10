@@ -1,0 +1,64 @@
+# Checked policy for the fixed spec-convergence loop.
+version = 1
+name = "spec-convergence"
+max_agents = 6
+preflight = "optional"
+independent_reviews = true
+completion = "fresh_full_conformance"
+
+[operations.conformance]
+agent = "conformance-reviewer"
+skill = "conformance"
+
+[operations.conformance.transitions]
+PASS = "done"
+FINDINGS = "collate"
+BLOCKED = "blocked"
+
+[operations.collate]
+agent = "orchestrator"
+skill = "outcome-decomposition"
+
+[operations.collate.transitions]
+COLLATED = "select"
+BLOCKED = "blocked"
+
+[operations.select]
+agent = "orchestrator"
+skill = "select-ready-work"
+
+[operations.select.transitions]
+SELECTED = "planning"
+BLOCKED = "blocked"
+
+[operations.planning]
+agent = "research-architect"
+skill = "plan"
+
+[operations.planning.transitions]
+PLANNED = "plan_review"
+BLOCKED = "blocked"
+
+[operations.plan_review]
+agent = "conformance-reviewer"
+skill = "plan-review"
+
+[operations.plan_review.transitions]
+ACCEPT = "implementation"
+REJECT = "planning"
+BLOCKED = "blocked"
+
+[operations.implementation]
+agent = "repo-engineer"
+
+[operations.implementation.transitions]
+IMPLEMENTED = "implementation_review"
+BLOCKED = "blocked"
+
+[operations.implementation_review]
+agent = "merge-captain"
+
+[operations.implementation_review.transitions]
+ACCEPT_IMPLEMENTATION = "accepted"
+REJECT_IMPLEMENTATION = "planning"
+BLOCKED = "blocked"

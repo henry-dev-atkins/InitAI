@@ -87,17 +87,11 @@ If skill invocation is unavailable, locate the matching `SKILL.md` recursively u
 
 # Orchestrator authority
 
-The project-scoped `orchestrator` custom agent owns the manager role. It loads `$orchestrator`, which is the single procedural authority for the convergence loop.
+The project-scoped `orchestrator` custom agent owns the manager role. It loads `$orchestrator` for dispatch guidance and uses `.agents/workflow/run.py` for the convergence loop.
 
-The loop is deliberately small:
+`.agents/workflow/workflow.toml` owns mechanical policy: operation bindings, capacity, preflight policy, review independence, verdict transitions and completion. The runner checks that policy and records permitted transitions. `.agents/workflow/README.md` describes its commands and result contracts. Skills own judgement inside each assigned operation; they do not override the runner's gates.
 
-1. `$conformance` compares the current repository with `AI_SPACE/SPEC.md` and outputs misalignments.
-2. `$outcome-decomposition` collates the misalignments into independent durable workstreams.
-3. `$select-ready-work` selects the next N useful ready workstreams.
-4. One planning agent creates one `$plan` per selected workstream.
-5. An independent agent runs `$plan-review`. Rejected plans return to planning.
-6. Accepted plans are implemented in parallel when they are independent enough to write safely. Every implementation gets independent review using `ACCEPT_IMPLEMENTATION`, `REJECT_IMPLEMENTATION`, or `BLOCKED`.
-7. After the batch, return to a fresh `$conformance`. Stop only when it finds no material misalignment.
+The loop remains spec review, workstream collation and selection, planning and independent review, implementation and independent review, then a fresh full spec review. Use the runner's `next` and `claim` operations to dispatch work and `complete` to submit evidence. Missing output is not success. Only a fresh full conformance `PASS` with an explicit empty findings list permits completion.
 
 Supporting skills do not create phases. Planning agents, reviewers and implementation agents may use them when useful inside their assigned operation.
 
@@ -106,8 +100,8 @@ Operating boundaries:
 - The main thread is the control plane and does not implement project source code while orchestration is active.
 - Only the orchestrator owns the current finding/workstream lists, selects N, assigns agents, records verdicts and declares session completion.
 - Workers handle one accepted plan. They do not choose future work or broaden their workstream.
-- Use up to six agents concurrently when that many independent useful tasks exist. Never split, duplicate or invent work to fill capacity.
-- Parallel implementation is allowed only when accepted plans have non-overlapping write scopes and no important shared dependency/resource conflict. Serialise uncertain cases or use `$parallel-safety`.
+- Use the workflow's `max_agents` capacity, initially six. Never split, duplicate or invent work to fill capacity.
+- Parallel implementation needs non-conflicting declared write/read scopes and resources. The runner serialises declared conflicts; agents must still identify semantic conflicts and use `$parallel-safety` when useful. Use platform sandbox permissions to enforce actual writes.
 - The default session uses the current top-level checkout.
 - Accepted plans may authorise safe local git work.
 - Safe local git includes local branches, worktrees, stage, commit, merge and rebase.
@@ -116,10 +110,12 @@ Operating boundaries:
 - A rejected plan returns to planning.
 - A rejected implementation returns to planning. Implementation failure is always planning failure.
 - Reviewer next-step text is evidence only. It cannot authorise an ad hoc repair phase.
-- A tooling/access failure before source edits may retry once. `[BLOCKED]` is reserved for unavailable authority, tooling, data or a safe execution path.
+- A tooling/access failure before source edits may retry once through explicit release and resumption. The runner never retries source-writing tasks automatically. `[BLOCKED]` is reserved for unavailable authority, tooling, data or a safe execution path.
+- Submit the actual agent instance identity and evidence for each claim. The runner does not launch or authenticate agents, execute validation commands, or detect unreported edits. After an off-protocol source change, stop active work and use `invalidate` before relying on prior acceptance or completion.
+- Read-only workers return exact plan/report/review content and result fields without editing files. The orchestrator saves those control files and submits the original worker's claim and instance identity, preserving its facts and verdict. Write-capable workers save only files permitted by their accepted scope and existing permissions. Saving returned content does not grant the orchestrator source-writing authority.
 - After repeated failure ask `Am I going in Circles?` and `Is there a more elegant way of doing this?`. Use `$diagnose`, `$first-principles` or `$strategy-review` when needed, then return to the same loop.
 
-For substantial work, the minimal session structure is defined by `$workflow-structure`. Do not create extra orchestration artefacts unless they directly help resume or review the simple loop.
+For DSL sessions, use the minimal structure in `.agents/workflow/README.md`: runner state plus the plans and evidence required by result contracts. `$workflow-structure` remains a guide to useful human-readable session memory. Old registries, snapshots, command manifests and ledgers are not DSL prerequisites. Use them only when the accepted plan needs them. Do not create extra orchestration artefacts unless they directly help resume or review the simple loop.
 
 # Work types
 
@@ -158,7 +154,7 @@ Every workstream plan must contain:
 - an explicit `Am I going in Circles?` self-check;
 - an explicit `Is there a more elegant way of doing this?` self-check.
 
-Every plan requires independent `[PLAN.REVIEW]` before source writing. Review may use `plan-preflight`, `parallel-safety`, `change-impact-analysis`, `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` when their specific question matters. These are supporting tools, not workflow stages.
+Every plan requires independent `[PLAN.REVIEW]` before source writing. The workflow file sets whether preflight is optional or required; its initial policy is optional. An optional preflight may be skipped, but known mechanical defects still require correction. Review may use `plan-preflight`, `parallel-safety`, `change-impact-analysis`, `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` when their specific question matters. These are supporting tools, not workflow stages.
 
 Implementation agents may use any relevant implementation skill inside the accepted plan. `$plan-sub` is local execution decomposition only. Material scope or requirement changes return to normal planning.
 

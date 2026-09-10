@@ -1,40 +1,57 @@
 ---
 name: orchestrator
-description: Procedural workflow for the project-scoped orchestrator custom agent. Use to repeatedly review the repository against AI_SPACE/SPEC.md, turn misalignments into independent workstreams, plan and review them, implement accepted plans, review the work, and repeat until spec review is clean.
+description: Dispatch the checked spec-convergence workflow through .agents/workflow/run.py. Use to review spec conformance, collate and select workstreams, plan and independently review, implement and independently review, and repeat until fresh full conformance passes.
 ---
 
 # Orchestrator Procedure
 
-This skill defines the simple convergence loop for `.codex/agents/orchestrator.toml`.
+This skill guides the manager in `.codex/agents/orchestrator.toml`.
 
-`AI_SPACE/SPEC.md` is the product authority. The orchestrator is the control thread. Agents do bounded work and return evidence. The outer spec review decides whether the campaign is finished.
+`AI_SPACE/SPEC.md` is the product authority. If it is absent, follow the explicit-prompt authority rule in `AGENTS.md`. The orchestrator is the control thread. Agents do bounded work and return evidence. The outer spec review decides whether the campaign is finished.
 
-Counterexample-guided convergence toward specification conformance.
-Each evidence-backed misalignment from `$conformance` review acts like a practical counterexample to the claim that the repository satisfies the specification.
+Counterexample-guided convergence toward specification conformance: each evidence-backed misalignment from `$conformance` is a practical counterexample to the claim that the repository satisfies the specification.
 
-The workflow has seven operations:
+## Workflow authority
 
-1. review the spec against the repository;
-2. output misalignments;
-3. collate misalignments into independent workstreams;
-4. select the next N workstreams;
-5. plan and review each selected workstream;
-6. implement accepted plans and independently review the work;
-7. return to spec review.
+Use `.agents/workflow/workflow.toml` for mechanical policy, `.agents/workflow/run.py` for checked transitions, and `.agents/workflow/results.schema.json` for typed handoffs. Read `.agents/workflow/README.md` for exact commands, packet examples and limitations. Do not maintain a second transition table or bypass a gate in prose.
 
-Stop only when a fresh spec review finds no material misalignment.
+The DSL binds seven operations to existing roles and skills. It keeps the simple loop: full conformance review, workstream collation and selection, planning and independent review, implementation and independent review, then fresh full conformance. Supporting skills do not create phases.
 
-## Optional progress report
+The runner owns saved mechanical state. The orchestrator alone chooses work within the permitted operations, launches agents, and submits their facts and verdicts. It does not implement project source code while orchestration is active. Workers do not edit runner state or choose future work.
 
-When the human requests `$progress-report`, delegate it to `progress-reporter`.
-Pass the explicit session path, report timestamp, and any supplied chat timestamps.
-The worker may read session evidence and may write only the selected session's `progress_reports/` directory.
-This report is optional and does not add a stage to the convergence loop.
+## Dispatch
+
+1. Run `check` against the repository. Start an explicit session with `init`, using the concrete spec or saved explicit human authority. Keep that session path for every later command.
+2. Ask `next` for permitted tasks. It reports `READY`, `WAITING`, `BLOCKED` or `DONE`; an empty task list is not completion.
+3. Reuse an idle agent or allocate a standby instance with explicit instructions to await dispatch without starting repository work. Obtain its actual instance ID, then reserve a returned task with `claim` using that ID. Role names are not instance identities. A failed claim leaves the instance idle.
+4. After a successful claim, check the returned task and role, then dispatch work to that same instance. Send its operation and skill, authority, current plan where present, result contract and assigned session paths. The task-packet template is a short human-readable brief; it does not replace the JSON contract.
+5. Read-only workers return exact plan/report/review content and result fields without editing files. Save their returned content and result JSON at the assigned session paths without changing their facts or verdicts. Write-capable workers save only files already permitted by their accepted scope and existing permissions; save any remaining session content they return. Submit `complete` with the original claim ID, same worker instance ID and result path. Saving returned content does not make you its author. Inspect failure output; never infer success from absent or malformed output.
+6. Ask `next` again. Follow the permitted operation after rejection or blocking. Stop only when the runner reports `DONE` after a fresh full conformance `PASS` with an explicit empty findings list.
+
+`next` is a view, not a reservation. Another task can reserve conflicting work before `claim`. A failed claim means no dispatch permission. Do not edit `state.json` to force progress.
+
+Persisting returned plans, reports and results uses your existing control-file authority; it does not permit project source edits. Ask the originating worker for missing content. Keep file contents separate from the result JSON so that its schema stays exact. The default `conformance-reviewer` routes `conformance` to `$conformance` and `plan_review` to `$plan-review`; always pass the task's operation explicitly.
 
 ## Agent hierarchy
 
-Indentation means ownership/delegation. A deeper level is an agent or sub-agent working for the level above it.
+Indentation means ownership/delegation. A deeper level is an agent or sub-agent working for the level above it. This is an ownership view; the DSL defines operation order.
 
+```text
+USER: project intent and authority
+    ORCHESTRATOR: checked dispatch and session control
+        CONFORMANCE REVIEW AGENT(S): full scope evidence
+            Optional read-only sub-agents: bounded inspection
+        COLLATION / SELECTION: orchestrator skills within claimed tasks
+        PLANNING AGENT: one selected workstream
+            Optional supporting skills: first-principles, bounded-execution, plan-desk-check
+        PLAN REVIEW AGENT: independent judgement of the current plan
+            Optional review lenses: plan-preflight, change-impact-analysis, plan-elegance, peer-review
+        IMPLEMENTATION AGENT: one accepted current plan
+            Relevant implementation skills and bounded read-only sub-agents
+            plan-sub: local execution decomposition only
+        IMPLEMENTATION REVIEW AGENT: independent evidence and exact verdict
+```
+### Diagram
 ```text
 USER: input prompt
 |
@@ -106,273 +123,54 @@ After the selected workstreams finish, return to SPEC REVIEW.
 If SPEC REVIEW returns no misalignments, report DONE.
 ```
 
-## Core loop
 
-```text
-SPEC REVIEW
-    -> misalignments[]
+The runner limits active DSL claims; it does not count every live agent. Reserve every DSL operation before dispatch. Optional supporting sub-agents are not additional DSL operations and are not visible to that claim counter. The orchestrator must count them against real platform/agent capacity and keep their read-only work inside the parent task's reserved scope. They cannot create a new workflow stage.
 
-COLLATE
-    -> workstreams[]
+## Judgement inside operations
 
-SELECT NEXT N
-    -> selected_workstreams[]
+Conformance review must cover the whole relevant authority. Each finding needs a stable ID, exact authority, repository evidence, expected and actual behaviour, and severity. Aim for maximum discovery so that a clean result is meaningful. Use `$finding-verification` only when evidence is disputed, weak or ambiguous. Missing findings or an incomplete review is not `PASS`.
 
-PLAN EACH
-    -> plans[]
+Collation uses `$outcome-decomposition`. Split only genuinely independent durable outcomes. Required tests, config changes and behaviour documentation may remain supporting changes within the capability workstream. Each current finding has one owning workstream; represent dependencies between workstreams explicitly rather than duplicating finding ownership. Keep one Primary Work Type and one Workflow Class per workstream.
 
-REVIEW EACH PLAN
-    -> accepted_plans[]
+Selection uses `$select-ready-work`. Prefer the largest useful ready workstreams: material spec misalignment, work that unblocks others, then core behaviour before cleanup. Capacity is a limit, not a target. Never split, duplicate or invent work to fill it. Do not select blocked dependencies.
 
-PARALLEL IMPLEMENT + REVIEW
-    -> accepted implementations
-    -> rejected implementations return to planning
+Planning uses `$plan`. Include source findings, exact spec authority, one outcome, bounded write scope, read assumptions, ordered steps, meaningful validation, protected invariants and prohibited shortcuts. Declare shared git/GPU resources consistently. Include `Am I going in Circles?` and `Is there a more elegant way of doing this?`. The structured packet points to the plan; it does not replace its reasoning. Every revised plan needs a new plan ID within its workstream and independent review. Never reuse an earlier ID for that workstream.
 
-BACK TO SPEC REVIEW
+Plan review uses `$plan-review` on the current saved plan. The reviewer must be a different actual instance from its planner. Preflight follows the workflow file: optional may be `SKIPPED`; required must `PASS`. Known mechanical defects require correction. `$parallel-safety`, `$plan-elegance`, `$change-impact-analysis`, `$peer-review` and maintenance skills remain useful supporting lenses. Command manifests and old ledgers are used only when the accepted plan requires them.
 
-STOP when misalignments[] is empty.
-```
+Implementation follows the accepted current plan. Relevant implementation skills and `$plan-sub` may help within that authority. Material scope or requirement changes return to planning. Record all changed product files, actual validation command arguments, exit codes, logs and a report. The external worker runs commands; the DSL runner only checks submitted evidence.
 
-## Pseudocode
+Implementation review uses a different actual instance from the implementer. It checks the work against the current accepted plan, source findings, scope and meaningful validation. Return `ACCEPT_IMPLEMENTATION`, `REJECT_IMPLEMENTATION` or `BLOCKED` through the result contract. Passing exit codes alone do not prove useful validation.
 
-```python
-while True:
-    findings = conformance_review(spec, repo)
+## Parallel work and stale plans
 
-    if not findings:
-        return DONE
+Use the DSL's capacity, declared read/write scopes and shared resources. Global and planning operations hold conservative repository-wide read reservations. Implementation review holds the plan's read and write scopes as read reservations. This may serialise tasks whose independence has not been established.
 
-    workstreams = decompose_outcomes(findings)
-    selected = select_ready_work(workstreams, N)
+Identify semantic dependency conflicts as well as path overlaps. Serialise uncertain cases or use `$parallel-safety`. Scope declarations schedule work; they do not grant filesystem or tool permissions. Use the existing sandbox and `AGENTS.md` authority rules for actual access.
 
-    plans = parallel(
-        plan(ws)
-        for ws in selected
-    )
+Submitted implementation changes invalidate other pending plans whose declared read/write scopes overlap. Interrupted or blocked implementation uses its whole write scope because its partial changes are unknown. The affected work returns to planning with the invalidation reason. A changed plan file cannot retain its old acceptance.
 
-    accepted_plans = []
-
-    for plan in plans:
-        while True:
-            verdict = review_plan(plan)
-
-            if verdict == ACCEPT:
-                accepted_plans.append(plan)
-                break
-
-            if verdict == BLOCKED:
-                mark_blocked(plan.workstream)
-                break
-
-            plan = replan(plan.workstream, verdict.findings)
-
-    results = parallel(
-        implement(plan)
-        for plan in accepted_plans
-        if parallel_safe(plan)
-    )
-
-    for result in results:
-        verdict = review_implementation(result)
-
-        if verdict == ACCEPT_IMPLEMENTATION:
-            mark_accepted(result.workstream)
-
-        elif verdict == REJECT_IMPLEMENTATION:
-            # Implementation failure is always planning failure.
-            mark_for_replanning(result.workstream, verdict.findings)
-
-        elif verdict == BLOCKED:
-            mark_blocked(result.workstream)
-
-    # Return to the product authority after every batch.
-    # The next spec review decides what still matters.
-```
-
-The pseudocode is policy, not a requirement to implement a software scheduler.
-
-## 1. Review the spec
-
-Run `$conformance` against the current repository and the whole relevant `AI_SPACE/SPEC.md`.
-
-The output is a list of material misalignments. Each misalignment needs:
-
-- a stable finding ID such as `F001`;
-- exact spec authority;
-- exact repository evidence;
-- expected behaviour or state;
-- actual behaviour or state;
-- severity.
-
-A clean review returns `PASS` and an empty misalignment list.
-Aim to maintain as many findings as possible for fast convergence we need maxmium discovery.
-
-Use `$finding-verification` only when a finding is disputed, weakly evidenced, or materially ambiguous. Do not add a verification stage to findings that are already clear.
-
-## 2. Collate misalignments into workstreams
-
-Run `$outcome-decomposition` on the current misalignment list.
-
-Split only genuinely independent durable outcomes. Required tests, config changes and behaviour documentation may remain supporting changes within the capability workstream.
-
-Each misalignment belongs to one active workstream unless an explicit dependency makes shared ownership unavoidable.
-
-A workstream needs only:
-
-- workstream ID;
-- title and durable outcome;
-- source finding IDs;
-- relevant spec authority;
-- rough affected area;
-- dependencies, if any;
-- status.
-
-Do not build a second requirements system around the spec. The spec review will run again after implementation.
-
-## 3. Select the next N workstreams
-
-Run `$select-ready-work`.
-
-Select up to the available agent capacity. 
-Prefer the largest useful independent workstreams that are ready now. Do not select blocked work merely to fill capacity.
-Aim to have many workstreams prepared, so that they can be planned whenever a parallel slot is ready.
-
-Prioritise:
-
-1. large amounts of material spec misalignment;
-2. work that unblocks other work;
-3. core behaviour before cleanup;
-4. work that can proceed independently with low collision risk.
-
-N is a capacity limit, not a target. Use fewer workstreams when independence is uncertain.
-
-## 4. Plan each workstream
-
-Delegate one selected workstream to one planning agent. Run `$plan`.
-
-A plan needs:
-
-- workstream ID and finding IDs;
-- exact spec authority;
-- one coherent intended outcome;
-- exact or bounded write scope;
-- important read/dependency assumptions;
-- ordered implementation steps;
-- meaningful validation;
-- protected invariants and prohibited shortcuts;
-- `Am I going in Circles?`;
-- `Is there a more elegant way of doing this?`.
-
-The planner may use supporting skills such as `$first-principles`, `$bounded-execution`, `$plan-desk-check`, or domain skills when they help. Supporting skills do not create workflow stages.
-Aim to have many workstream plans prepared, so that they can be reviewed whenever a parallel slot is ready.
-
-## 5. Review each plan
-
-Every plan gets independent `$plan-review` before source writing begins.
-
-The reviewer returns exactly one plan verdict:
-
-- `ACCEPT`;
-- `REJECT`;
-- `BLOCKED`.
-
-`REJECT` returns the workstream to planning with concrete findings. It is not permission for an implementation worker to improvise a repair.
-
-Use `$plan-preflight`, `$parallel-safety`, `$change-impact-analysis`, `$plan-elegance`, `$peer-review`, or maintenance skills only when their specific question matters. 
-They are review tools, not mandatory global phases.
-
-Before parallel implementation, compare accepted plans. Parallelise only workstreams whose write scopes, git state and important shared dependencies do not conflict.
-If that is unclear, use `$parallel-safety`.
-Aim to have many workstream reviews prepared, so that they can be implemented whenever a parallel slot is ready.
-
-## 6. Implement and review
-
-Assign each accepted plan to the most suitable write-capable implementation agent.
-
-Implementation agents are deliberately flexible. They may use any relevant implementation skill or read-only sub-agent. They may not change the accepted workstream outcome, broaden its write scope, invent new product requirements, choose future work, or change orchestration state.
-
-`$plan-sub` is allowed only for local execution decomposition inside the accepted plan. If a material plan change is required, stop implementation and return to planning.
-
-Workers may use safe local git only when the accepted plan authorises it.
-
-Safe local git includes local branches, worktrees, stage, commit, merge and rebase.
-
-Serialise git work when it can change shared checkout state.
-
-Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
-
-Review every implementation independently. The review decision uses exactly:
-
-- `ACCEPT_IMPLEMENTATION`;
-- `REJECT_IMPLEMENTATION`;
-- `BLOCKED`.
-
-`ACCEPT_IMPLEMENTATION` means the work matches the accepted plan and its source findings, and its meaningful validation passes.
-
-`REJECT_IMPLEMENTATION` means the result does not deserve acceptance. Rejection findings must describe what is wrong. They must not authorise an ad hoc patch.
-
-Implementation failure is always planning failure. Anything that goes wrong during implementation means the accepted plan was not clear, complete or correct enough for one controlled implementation attempt. Return the workstream to planning with a new or revised plan that addresses the evidence.
-
-A tooling/access failure before source edits may retry once. `BLOCKED` is for unavailable authority, tooling, data, or a safe execution path.
-
-## 7. Return to spec review
-
-After the selected workstreams have been reviewed, run a fresh `$conformance` against the current repository.
-
-Do not rely on old workstream status as proof of completion. The repository must now satisfy the spec.
-
-The new review may:
-
-- find nothing, in which case report `[DONE]`;
-- rediscover a previous finding, in which case it was not actually closed;
-- expose a new consequence of earlier work;
-- produce a smaller remaining misalignment list.
-
-Then repeat the same loop.
+After source changes outside this protocol, stop active work, explicitly release outstanding claims as needed, and use `invalidate` before trusting any saved acceptance or completion. The runner cannot detect unreported edits. Changed workflow configuration or spec authority requires a new explicit session.
 
 ## Failure discipline
 
-Implementation failure is always planning failure, eitehr in planning itself, or in campaign/orchestration after multiple plan failures.
+Implementation failure is always planning failure, either in the plan itself or in campaign/orchestration after multiple failures. A rejected implementation returns to planning. Reviewer next-step text is evidence only; it cannot authorise an ad hoc repair phase.
 
-Do not create repair phases, fix-forward packets, emergency patch stages, or special retry workflows.
+Do not create repair phases, fix-forward packets, emergency patch stages or special retry workflows. Source-writing tasks are never retried automatically. After an interrupted task, `release` records a block. Resolve the exact need and use `resume` with an explicit reason; an interrupted implementation resumes through planning.
+
+A tooling/access failure before source edits may retry once within this explicit protocol. `BLOCKED` is for unavailable authority, tooling, data or a safe execution path. A blocked task is not an accepted task and cannot make a session complete.
 
 After repeated failure ask:
 
 - `Am I going in Circles?`
 - `Is there a more elegant way of doing this?`
 
-Use `$diagnose`, `$first-principles`, or `$strategy-review` when repeated failure shows that the workstream boundary, plan, or campaign direction is wrong. 
-Then return to the same simple loop.
+Use `$diagnose`, `$first-principles` or `$strategy-review` when the workstream boundary, plan or campaign direction is wrong. Then return to the same simple loop.
 
-## Authority
+Workers may use safe local git only when the accepted plan authorises it. Safe local git includes local branches, worktrees, stage, commit, merge and rebase. Serialise git work when shared checkout state can change. Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
 
-The orchestrator alone:
+## Session memory and progress
 
-- owns the current finding and workstream lists;
-- selects N;
-- assigns agents;
-- records plan and implementation verdicts;
-- decides whether a workstream returns to planning;
-- declares `[DONE]` only after a clean outer spec review.
+Use the minimal session layout in `.agents/workflow/README.md`: runner state, current plans, result packets and required evidence. Add readable findings or workstream summaries only when they help review or resumption. Do not require old ledgers, snapshots or requirement registers by default. These files are durable memory, not a second product authority.
 
-Workers and reviewers return facts and verdicts. 
-They do not choose future work.
-
-## Minimal session artefacts
-
-For substantial orchestrated work use:
-
-```text
-AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/
-  misalignments.md
-  workstreams.md
-  selected_workstreams.md
-  plans/
-    WS001__P001.md
-  plan_reviews/
-    WS001__P001.md
-  implementation_reviews/
-    WS001.md
-```
-
-Use these files as durable memory, not as a second product authority. Small work can remain lighter when the same loop is still clear.
+When the human requests `$progress-report`, delegate it to `progress-reporter`. Pass the explicit session path, report timestamp and supplied chat timestamps. The worker may read session evidence and write only that session's `progress_reports/` directory. The report is optional and adds no stage to the convergence loop.

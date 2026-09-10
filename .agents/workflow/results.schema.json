@@ -1,0 +1,461 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Checked workflow result packets v1",
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "verdict",
+        "coverage",
+        "report",
+        "findings"
+      ],
+      "properties": {
+        "operation": {
+          "const": "conformance",
+          "type": "string"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "FINDINGS"
+          ]
+        },
+        "coverage": {
+          "const": "full",
+          "type": "string"
+        },
+        "report": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "findings": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "authority",
+              "expected",
+              "actual",
+              "evidence",
+              "severity"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+              },
+              "authority": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "expected": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "actual": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "evidence": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "severity": {
+                "type": "string",
+                "enum": [
+                  "critical",
+                  "major",
+                  "minor"
+                ]
+              }
+            }
+          },
+          "minItems": 0
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "verdict",
+        "workstreams"
+      ],
+      "properties": {
+        "operation": {
+          "const": "collate",
+          "type": "string"
+        },
+        "verdict": {
+          "const": "COLLATED",
+          "type": "string"
+        },
+        "workstreams": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "findings",
+              "outcome",
+              "depends_on",
+              "work_type",
+              "workflow_class"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+              },
+              "findings": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                },
+                "minItems": 1,
+                "uniqueItems": true
+              },
+              "outcome": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              },
+              "depends_on": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+                },
+                "minItems": 0,
+                "uniqueItems": true
+              },
+              "work_type": {
+                "type": "string",
+                "enum": [
+                  "CAPABILITY.RESEARCH",
+                  "CAPABILITY.PRODUCT",
+                  "EVIDENCE.VALIDATION",
+                  "FIX.ALIGNMENT",
+                  "DEPENDENCY.LOCAL",
+                  "TEMPORARY.DIAGNOSTIC",
+                  "ENVIRONMENT.ADAPTATION",
+                  "WORKAROUND.QUARANTINED",
+                  "FLUFF.DISPOSABLE",
+                  "DOCS.MEMORY",
+                  "AGENT.WORKFLOW",
+                  "CLEANUP.HYGIENE",
+                  "SPEC.EDIT"
+                ]
+              },
+              "workflow_class": {
+                "type": "string",
+                "enum": [
+                  "SMALL",
+                  "STANDARD",
+                  "CAMPAIGN"
+                ]
+              }
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "verdict",
+        "workstreams"
+      ],
+      "properties": {
+        "operation": {
+          "const": "select",
+          "type": "string"
+        },
+        "verdict": {
+          "const": "SELECTED",
+          "type": "string"
+        },
+        "workstreams": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "verdict",
+        "plan_id",
+        "path",
+        "write_scope",
+        "read_scope",
+        "resources",
+        "preflight"
+      ],
+      "properties": {
+        "operation": {
+          "const": "planning",
+          "type": "string"
+        },
+        "verdict": {
+          "const": "PLANNED",
+          "type": "string"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "write_scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "read_scope": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "implementation_agent": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S",
+          "description": "Optional agent role override. Defaults to operations.implementation.agent."
+        },
+        "preflight": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "SKIPPED"
+          ]
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "verdict",
+        "plan_id",
+        "evidence"
+      ],
+      "properties": {
+        "operation": {
+          "const": "plan_review",
+          "type": "string"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "ACCEPT",
+            "REJECT"
+          ]
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "verdict",
+        "plan_id",
+        "changed_files",
+        "report",
+        "validation"
+      ],
+      "properties": {
+        "operation": {
+          "const": "implementation",
+          "type": "string"
+        },
+        "verdict": {
+          "const": "IMPLEMENTED",
+          "type": "string"
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+        },
+        "changed_files": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "report": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        },
+        "validation": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "argv",
+              "exit_code",
+              "log"
+            ],
+            "properties": {
+              "argv": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "minLength": 1,
+                  "pattern": "\\S"
+                },
+                "minItems": 1
+              },
+              "exit_code": {
+                "type": "integer"
+              },
+              "log": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          },
+          "minItems": 1
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "verdict",
+        "plan_id",
+        "evidence"
+      ],
+      "properties": {
+        "operation": {
+          "const": "implementation_review",
+          "type": "string"
+        },
+        "verdict": {
+          "type": "string",
+          "enum": [
+            "ACCEPT_IMPLEMENTATION",
+            "REJECT_IMPLEMENTATION"
+          ]
+        },
+        "plan_id": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"
+        },
+        "evidence": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "operation",
+        "verdict",
+        "reason"
+      ],
+      "properties": {
+        "operation": {
+          "type": "string",
+          "enum": [
+            "conformance",
+            "collate",
+            "select",
+            "planning",
+            "plan_review",
+            "implementation",
+            "implementation_review"
+          ]
+        },
+        "verdict": {
+          "const": "BLOCKED",
+          "type": "string"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
+        }
+      }
+    }
+  ]
+}

@@ -25,7 +25,7 @@ Accept only when the plan:
 - answers `Am I going in Circles?`;
 - answers `Is there a more elegant way of doing this?`
 
-- preflight status and unresolved mechanical defects;
+- preflight status under `.agents/workflow/workflow.toml` and unresolved mechanical defects;
 - source finding and spec traceability;
 - one coherent workstream outcome;
 - correct Primary Work Type;
@@ -41,8 +41,8 @@ Accept only when the plan:
 - protected invariants and prohibited behaviour;
 - implementation-order logic;
 - behavioural validation strength;
-- structured command/evidence manifest quality;
-- result-packet and evidence-ledger completeness;
+- clear validation commands and evidence paths; assess command manifests when the accepted scope requires them;
+- completeness of the DSL planning handoff and required evidence; assess extra ledgers only when the plan requires them;
 - overengineering, technical debt and repository fit;
 - whether `Am I going in Circles?` honestly identifies repeated or reactive work;
 - whether `Is there a more elegant way of doing this?` considers a simpler complete repository-fitting route.
@@ -63,6 +63,10 @@ A rejection returns concrete findings about the plan. Do not write the replaceme
 
 Use `$plan-preflight`, `$change-impact-analysis`, `$plan-elegance`, `$peer-review`, or maintenance skills as optional review lenses when their question matters. They do not add stages to the orchestrator loop.
 
+For DSL sessions, review the current `plan_id` and the saved plan text provided by the task. Return the `plan_review` JSON contract in `.agents/workflow/results.schema.json`, with a written evidence file, through the orchestrator. The reviewer must be a different actual agent instance from the planner. Never approve an edited plan under its old ID; return it to planning.
+
+Preflight policy is defined once in `.agents/workflow/workflow.toml`. With `preflight = "optional"`, `SKIPPED` is allowed and is not a rejection reason. With `preflight = "required"`, only `PASS` is allowed. Known mechanical defects still require correction in either case. A command manifest, evidence ledger, baseline snapshot or requirement registry is not a default DSL prerequisite.
+
 
 ## Capability-first gate
 
@@ -70,7 +74,7 @@ Reject support-only churn unless it directly unlocks the assigned capability or 
 
 ## Reject when
 
-- preflight has not passed;
+- required preflight has not passed, or known mechanical defects remain;
 - the workstream/finding/spec traceability is absent or incorrect;
 - the plan does not fully remove the assigned misalignment;
 - it broadens into unrelated work or fragments one coherent result unnecessarily;
@@ -79,7 +83,7 @@ Reject support-only churn unless it directly unlocks the assigned capability or 
 - exact file scope, dependencies, contract effects or owner are missing;
 - it conflicts with another active workstream;
 - validation is vague, toy-only or does not prove the assigned behaviour;
-- command manifest or evidence ledger requirements are incomplete;
+- required validation/result evidence is incomplete, or a command manifest or ledger explicitly required by the plan is incomplete;
 - temporary/workaround/fluff output may survive;
 - capability progress is claimed for support-only work;
 - the plan preserves orphaned paths without evidence or authority;

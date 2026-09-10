@@ -40,6 +40,7 @@ Workflow artefacts under `AI_SPACE/` are control metadata, not product capabilit
 
 # Philosophies to Code By:
 - Keep it Simple, Stupid!
+- Parallelism is the biggest lever on coding productivity
 - Implementation failure is always planning failure
 - Fail fast, frequently and with maximum explainability
 - Activity is not progress
@@ -169,7 +170,7 @@ Implementation agents may use any relevant implementation skill inside the accep
 - Fail fast, frequently and with maximum explainability - learn from mistakes in `AI_SPACE/AI_LEARNINGS_LOG.md`.
 - For ML work, we have access to one GPU locally (RTX 5090).
 - Config driven research means that implementing new classes etc should be easy.
-- Keep it Simple, Stupid!
+- Most agent failures are not wrong answers but early exits. Clankers love to declare victory. Validate progress before declaring victory.
 - Keep temporary files (`.ruff_cache/`, `.triton_tmp/`) inside `temp/` to minimise clutter.
 - Do not use fake or toy validation as closure for real research behaviour.
     - Intermediate diagnostic checks may be small when they isolate a failure.

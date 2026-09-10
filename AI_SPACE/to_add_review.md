@@ -63,3 +63,16 @@ Treat `bulk-read` and `pattern-write` as two independent skill candidates.
 Treat `large_read_guard.py` and its hook registration as a separate feature requiring runtime-contract tests.
 
 Do not import the surrounding snapshot, copied skills, altered workflow skills, candidate config, candidate TEAM file, candidate AGENTS file, or candidate AI_SPACE writer.
+
+## Implementation update
+
+The later request to add the remaining useful material changed the decision for the focused skill ideas.
+
+The repository now contains adapted skills for `unslop`, `why`, `technical-writing`, `teach`, `show-me-your-work`, `write-concisely`, and `verbosity-review`.
+
+These skills use local repository evidence and current `AI_SPACE` paths.
+They do not copy the source's unavailable MCPs, external transcript paths, unsupported hook payloads, or fail-open style gate.
+
+`SKILL (8).md` remains subsumed by the authoritative action routing in `AGENTS.md`.
+The source `write-concisely` and `writing-guide` content is represented by the focused `write-concisely` and `technical-writing` skills.
+The source verbosity package remains a skill-level review because its hook contract is incompatible with the current `.codex/hooks.json` contract.

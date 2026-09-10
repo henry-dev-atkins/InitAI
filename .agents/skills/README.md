@@ -68,6 +68,19 @@ The orchestrator loop has six core skills. `.agents/workflow/workflow.toml` owns
 - `$session-start`: Start a minimal resumable orchestration session.
 - `$code-style`: Apply the repository coding style.
 - `$henrys-voice`: Draft free text in Henry Atkins's analytical technical voice.
+- `$technical-writing`: Write clear technical prose for a defined reader and task.
+- `$write-concisely`: Tighten prose without dropping evidence or conditions.
+- `$unslop`: Remove machine-written filler and decorative language.
+- `$verbosity-review`: Review response length and information density.
+
+## Explanation and evidence tools
+
+- `$why`: Explain repository decisions from local implementation and evidence.
+- `$teach`: Explain a repository feature, change, or flow without editing it.
+- `$show-me-your-work`: Keep a compact decision trail for long or unattended work.
+
+The action glossary and work-type rules remain in `AGENTS.md`.
+The source `SKILL (8).md` is therefore subsumed and is not installed as a duplicate skill.
 
 ## Discovery
 

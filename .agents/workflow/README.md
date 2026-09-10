@@ -1,12 +1,17 @@
 # Workflow DSL v1
 
-This adds checked handoffs and saved state to the existing spec-convergence loop. Run from the repository root with Python 3.11 or newer. No third-party packages are required.
+This adds checked handoffs and saved state to the existing spec-convergence loop. 
+Run from the repository root with Python 3.11 or newer. 
+No third-party packages are required.
 
 ```sh
 python .agents/workflow/run.py check --repo .
 ```
 
-The TOML file owns mechanical policy. The Python runner validates results, reserves tasks and advances the fixed loop. Existing Markdown skills own planning and review judgement. The orchestrator launches agents and runs tools through its normal environment.
+The TOML file owns mechanical policy. 
+The Python runner validates results, reserves tasks and advances the fixed loop. 
+Existing Markdown skills own planning and review judgement. 
+The orchestrator launches agents and runs tools through its normal environment.
 
 ## Files and changes
 
@@ -18,7 +23,9 @@ The TOML file owns mechanical policy. The Python runner validates results, reser
 | `run.py` | Standard-library CLI with checked transitions and resumable state. |
 | `tests/test_workflow.py` | Executable workflow, rejection, conflict and recovery tests. |
 
-The harness routing, team guide, orchestrator instructions, skill map, plan-review skill and task-packet template now use this protocol. Preflight is initially optional. Existing skills and support scripts remain; old command manifests, registries, snapshots and ledgers are required only when an accepted plan needs them.
+The harness routing, team guide, orchestrator instructions, skill map, plan-review skill and task-packet template now use this protocol. 
+Preflight is initially optional. 
+Existing skills and support scripts remain; old command manifests, registries, snapshots and ledgers are required only when an accepted plan needs them.
 
 ## Policy
 

@@ -1,8 +1,11 @@
 ﻿# AGENTS.md
 
-The project authority is `AI_SPACE/SPEC.md` when present.
+# Workflows
 
-If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it supplies concrete project intent and acceptance criteria. Otherwise report `[BLOCKED]`; do not invent project intent.
+The human chooses the workflow. Ask only when it is unclear.
+
+- Orchestration requires `AI_SPACE/SPEC.md`. If it is missing, use an explicit human prompt only when it supplies concrete project intent and acceptance criteria. Otherwise report `[BLOCKED]`; do not invent project intent.
+- Standalone work requires an explicit human prompt.
 
 # Global rules
 
@@ -28,6 +31,8 @@ If `AI_SPACE/SPEC.md` is missing, use the explicit human prompt only when it sup
 - All free text must use simplified technical English. This includes plans, learnings, chat outputs, orchestration artefacts, sessions and handovers.
 - Always start chats and agent-interactions with the current timestep in yyyyMMdd_hhmmss format. 
 
+
+# AI Work Space
 The AI workspace is `AI_SPACE/`:
 
 - `sessions/`: lightweight misalignment lists, workstreams, selected batches, plans and reviews.
@@ -37,6 +42,7 @@ The AI workspace is `AI_SPACE/`:
 - `archive/`: old, superseded or noisy material moved out of active project paths but retained for manual recovery.
 
 Workflow artefacts under `AI_SPACE/` are control metadata, not product capability, unless the spec explicitly says otherwise. Repository-root `archive/` stores removed product material. `AI_SPACE/archive/` stores removed control-plane material and rejected workstream copies. Archived material is outside the active product tree and must not be imported, executed, configured or counted as current implementation.
+
 
 # Philosophies to Code By:
 - Keep it Simple, Stupid!
@@ -50,7 +56,6 @@ Workflow artefacts under `AI_SPACE/` are control metadata, not product capabilit
 - Build only what the purpose can defend
 - Good code explains itself through its structure
 - Names are the first form of documentation
-
 
 # Action routing
 
@@ -85,38 +90,6 @@ Capitalised bracket keywords are human-facing actions. Lowercase hyphenated name
 
 If skill invocation is unavailable, locate the matching `SKILL.md` recursively under `.agents/skills/` using its frontmatter `name`, then apply it directly.
 
-# Orchestrator authority
-
-The project-scoped `orchestrator` custom agent owns the manager role. It loads `$orchestrator` for dispatch guidance and uses `.agents/workflow/run.py` for the convergence loop.
-
-`.agents/workflow/workflow.toml` owns mechanical policy: operation bindings, capacity, preflight policy, review independence, verdict transitions and completion. The runner checks that policy and records permitted transitions. `.agents/workflow/README.md` describes its commands and result contracts. Skills own judgement inside each assigned operation; they do not override the runner's gates.
-
-The loop remains spec review, workstream collation and selection, planning and independent review, implementation and independent review, then a fresh full spec review. Use the runner's `next` and `claim` operations to dispatch work and `complete` to submit evidence. Missing output is not success. Only a fresh full conformance `PASS` with an explicit empty findings list permits completion.
-
-Supporting skills do not create phases. Planning agents, reviewers and implementation agents may use them when useful inside their assigned operation.
-
-Operating boundaries:
-
-- The main thread is the control plane and does not implement project source code while orchestration is active.
-- Only the orchestrator owns the current finding/workstream lists, selects N, assigns agents, records verdicts and declares session completion.
-- Workers handle one accepted plan. They do not choose future work or broaden their workstream.
-- Use the workflow's `max_agents` capacity, initially six. Never split, duplicate or invent work to fill capacity.
-- Parallel implementation needs non-conflicting declared write/read scopes and resources. The runner serialises declared conflicts; agents must still identify semantic conflicts and use `$parallel-safety` when useful. Use platform sandbox permissions to enforce actual writes.
-- The default session uses the current top-level checkout.
-- Accepted plans may authorise safe local git work.
-- Safe local git includes local branches, worktrees, stage, commit, merge and rebase.
-- Serialise git work when it can change shared checkout state.
-- Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
-- A rejected plan returns to planning.
-- A rejected implementation returns to planning. Implementation failure is always planning failure.
-- Reviewer next-step text is evidence only. It cannot authorise an ad hoc repair phase.
-- A tooling/access failure before source edits may retry once through explicit release and resumption. The runner never retries source-writing tasks automatically. `[BLOCKED]` is reserved for unavailable authority, tooling, data or a safe execution path.
-- Submit the actual agent instance identity and evidence for each claim. The runner does not launch or authenticate agents, execute validation commands, or detect unreported edits. After an off-protocol source change, stop active work and use `invalidate` before relying on prior acceptance or completion.
-- Read-only workers return exact plan/report/review content and result fields without editing files. The orchestrator saves those control files and submits the original worker's claim and instance identity, preserving its facts and verdict. Write-capable workers save only files permitted by their accepted scope and existing permissions. Saving returned content does not grant the orchestrator source-writing authority.
-- After repeated failure ask `Am I going in Circles?` and `Is there a more elegant way of doing this?`. Use `$diagnose`, `$first-principles` or `$strategy-review` when needed, then return to the same loop.
-
-For DSL sessions, use the minimal structure in `.agents/workflow/README.md`: runner state plus the plans and evidence required by result contracts. `$workflow-structure` remains a guide to useful human-readable session memory. Old registries, snapshots, command manifests and ledgers are not DSL prerequisites. Use them only when the accepted plan needs them. Do not create extra orchestration artefacts unless they directly help resume or review the simple loop.
-
 # Work types
 
 Every workstream and plan declares one Primary Work Type and one Workflow Class: `SMALL`, `STANDARD` or `CAMPAIGN`. Required tests, config updates and behaviour documentation may remain supporting changes inside the same coherent workstream; split only when there are genuinely independent durable outcomes. Workflow class changes control depth, not the terminal correctness standard.
@@ -138,25 +111,6 @@ Every workstream and plan declares one Primary Work Type and one Workflow Class:
 Only `CAPABILITY.RESEARCH`, `CAPABILITY.PRODUCT` and qualifying `FIX.ALIGNMENT` work count as capability progress. Supporting work does not become capability progress merely because it is packaged with capability work.
 
 `TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` outputs must not remain in active project paths at terminal completion. Remove disposable repo-local `temp/` output or move retained product recovery copies to repository-root `archive/`; move retained control-plane copies to `AI_SPACE/archive/`. Record Work Type in the workstream and plan; commit messages use the repository's normal prefix policy.
-
-# Planning and review requirements
-
-Every workstream plan must contain:
-
-- workstream ID and source finding IDs;
-- exact spec authority;
-- one coherent durable outcome;
-- exact or bounded write scope;
-- important read/dependency assumptions;
-- ordered implementation steps;
-- meaningful validation;
-- protected invariants and prohibited shortcuts;
-- an explicit `Am I going in Circles?` self-check;
-- an explicit `Is there a more elegant way of doing this?` self-check.
-
-Every plan requires independent `[PLAN.REVIEW]` before source writing. The workflow file sets whether preflight is optional or required; its initial policy is optional. An optional preflight may be skipped, but known mechanical defects still require correction. Review may use `plan-preflight`, `parallel-safety`, `change-impact-analysis`, `plan-elegance`, `maintain-review`, `maintain-elegance`, `maintain-techdebt`, `maintain-despaghettify`, `maintain-declutter` and `peer-review` when their specific question matters. These are supporting tools, not workflow stages.
-
-Implementation agents may use any relevant implementation skill inside the accepted plan. `$plan-sub` is local execution decomposition only. Material scope or requirement changes return to normal planning.
 
 # Guide
 
@@ -223,6 +177,7 @@ Implementation agents may use any relevant implementation skill inside the accep
 - Keep generated artefacts in intentional locations and large data/checkpoints out of commits unless repository policy requires them.
 - Apply GPU/ML rules only when the current repository or spec contains ML work. Use one GPU-heavy run at a time unless explicitly authorised otherwise.
 - Worker `[DONE]` means only that its assigned work completed. Session `[DONE]` requires a fresh clean spec review.
+- Markdown files require one sentence per line.
 
 
 

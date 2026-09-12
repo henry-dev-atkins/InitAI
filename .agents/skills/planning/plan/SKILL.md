@@ -102,3 +102,9 @@ All plans require explicit review for:
 - gaps, ambiguity or contradictions;
 - work type correctness;
 - file ownership/parallelisation safety.
+
+
+## Iteration 
+A plan should be reviewed by `$plan-elegance`, `$plan-desk-check`, and `$plan-review` before submission. 
+If the plan is rejected, the next plan must be a standalone plan that includes the rejection findings, then review again.
+Submit a perfect plan, possibly after many iterations of planning.

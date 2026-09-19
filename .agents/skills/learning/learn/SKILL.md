@@ -10,7 +10,11 @@ description: Use when the prompt contains [LEARN], or when work has produced les
 - Update learnings after failures, debugging discoveries, architecture/course corrections and mistakes.
 - Propose stale learnings for removal, but remove only with explicit human approval if removal changes project memory materially.
 - Make surgical doc/spec updates only with the required authority.
-- Update `AI_SPACE/TODO.md` only with concrete unresolved follow-up work.
+- Update `AI_SPACE/TODO.md` only with concrete unresolved work.
+- Use the required `Blocking`, `Ready` and `Deferred` sections.
+- Write each item as a checkbox bullet with its action and current reason, dependency or evidence.
+- Include the linked finding or workstream identifier when one exists.
+- Do not append historical session prose.
 - Do not use TODO/learnings updates as a substitute for completing requested implementation, proof, validation or spec-alignment work.
 - For orchestrated work, record agent/team process lessons only when they change future behaviour.
 - If work has turned into process churn or repeated setup migration, run `retro`, assess throughput against the user's actual goal, and pivot to the smallest packet that produces or protects the target outcome.

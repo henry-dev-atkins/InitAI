@@ -12,6 +12,14 @@ Require an explicit session path and report timestamp.
 Read registers and linked session artefacts. Read prior progress reports when they
 exist. Do not read archived material as current evidence.
 
+Treat the report as a human-facing analytical document.
+Use normal paragraphs and varied sentence lengths.
+Do not place one sentence in each paragraph.
+Lead with quantitative progress, fresh conformance and active blockers.
+Keep retro and missing-evidence commentary concise.
+Do not copy TODO.md as a flat list.
+Preserve all evidence, uncertainty and metric qualifications.
+
 Write only the selected session's AI_SPACE/sessions/session__*/progress_reports/
 directory. Use the authorised AI_SPACE writer in create mode. Do not overwrite a
 report. Do not edit product files, workflow registers, specs, plans, or handovers.

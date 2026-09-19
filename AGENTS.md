@@ -28,7 +28,8 @@ The human chooses the workflow. Ask only when it is unclear.
 - All code and validation must run from inside the repository sandbox.
 - If required network access, external data or permission is unavailable, report `[BLOCKED]` with the exact need. Do not retry silently or invent an offline substitute. A human may restart with an explicit exception.
 - Minimalist infrastructure requirements: use the repository's existing package manager. Use uv by default only for a new Python setup. Package setup is lowest priority and must not displace capability work.
-- All free text must use simplified technical English. This includes plans, learnings, chat outputs, orchestration artefacts, sessions and handovers.
+- Agent instructions, error messages, command descriptions and workflow control text must use simplified technical English.
+- Human-facing reports, retrospectives, TODOs and handovers must use the document-specific technical-writing contract.
 - Always start chats and agent-interactions with the current timestep in yyyyMMdd_hhmmss format. 
 
 
@@ -42,6 +43,13 @@ The AI workspace is `AI_SPACE/`:
 - `archive/`: old, superseded or noisy material moved out of active project paths but retained for manual recovery.
 
 Workflow artefacts under `AI_SPACE/` are control metadata, not product capability, unless the spec explicitly says otherwise. Repository-root `archive/` stores removed product material. `AI_SPACE/archive/` stores removed control-plane material and rejected workstream copies. Archived material is outside the active product tree and must not be imported, executed, configured or counted as current implementation.
+
+`TODO.md` uses the headings `Blocking`, `Ready` and `Deferred` in that order.
+Each TODO item is a checkbox bullet.
+Each item states an action and its current reason, dependency or evidence.
+Each item includes a finding or workstream identifier when one exists.
+TODO entries use normal paragraph wrapping.
+TODO entries do not reproduce historical retro text.
 
 
 # Philosophies to Code By:
@@ -177,11 +185,15 @@ Only `CAPABILITY.RESEARCH`, `CAPABILITY.PRODUCT` and qualifying `FIX.ALIGNMENT` 
 - Keep generated artefacts in intentional locations and large data/checkpoints out of commits unless repository policy requires them.
 - Apply GPU/ML rules only when the current repository or spec contains ML work. Use one GPU-heavy run at a time unless explicitly authorised otherwise.
 - Worker `[DONE]` means only that its assigned work completed. Session `[DONE]` requires a fresh clean spec review.
-- Markdown files require one sentence per line.
+- Keep validator-parsed fields, table rows and command records on separate lines.
+- Use normal paragraph wrapping for human-facing prose.
 
 
 
 # COMMUNICATION — HARD LIMITS (not preferences, these override any default verbosity)
+
+The following communication limits apply to chat and agent-facing protocol text.
+They do not override the writing contract for human-facing reports, retrospectives, TODOs or handovers.
 - Default reply: **≤4 lines of prose.** Code, diffs, tables and command blocks don't count. Blockers, terminal reports and user-requested detailed reviews may use the length needed for complete evidence.
 - First line = the answer or the decision. Never a preamble, never restating my question.
 - NO headers, NO bullet lists, NO bold labels — unless I asked for a document, or there are ≥4 genuinely parallel items.
@@ -191,12 +203,13 @@ Only `CAPABILITY.RESEARCH`, `CAPABILITY.PRODUCT` and qualifying `FIX.ALIGNMENT` 
 - Expand ONLY when I say "explain", "why", "detail", "walk me through", or ask a design question. Then take the room you need — but still no headers, and stop when the question is answered.
 - Long output belongs in a file, never in chat.
 - PLAIN ENGLISH. Short everyday words. No jargon, no buzzwords, no metaphors, no "leverage / surface / orchestrate / robust / holistic / seamless". Real command, file and product  names are fine. Everything else gets said the simple way.
-- ONE IDEA PER SENTENCE. This matters as much as length. Short and dense is still hard to read.
-  - Aim for 15 words a sentence. Never write a 30-word one.
+- For chat, commands, errors and machine-facing instructions, keep one idea per sentence.
+  - For those forms, aim for 15 words and avoid sentences longer than 30 words when precision allows.
+  - For human-facing reports and TODOs, keep one complete argument together when it needs more than one sentence.
   - NO em-dashes. NO semicolons. NO colons mid-sentence. Split it into two sentences instead.
   - NO "not X but Y", "X, not Y", or any other clever contrast. Just say the true thing.
   - NO parenthetical asides in the middle of a sentence. Put it in its own sentence or cut it.
-  - One fact per line. If a line has two facts joined by punctuation, it is two lines.
+  - Use one fact per line only when a parser or control contract requires it.
   - THE LONGER THE ANSWER, THE HARDER THIS GETS, AND THAT IS EXACTLY WHEN IT MATTERS. Measured: short replies obeyed this rule perfectly, long ones ignored it completely. Before sending anything over 10 lines, re-read this block. Count your em-dashes. Zero is the only acceptable number.
   - NEVER INHERIT THE PUNCTUATION OF WHAT YOU ARE READING. Your docs are dense on purpose. A reply is not a doc. Summarising a dense file is not permission to write like it.Take the fact, then say it in your own plain sentences.
 - On a vague or multi-item ask: derive priority from the spec, dependencies and portfolio. Ask one line only when product authority is genuinely missing.

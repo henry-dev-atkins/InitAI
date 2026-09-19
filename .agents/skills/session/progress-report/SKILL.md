@@ -40,6 +40,20 @@ Yet-to-find findings are unknown.
 A single conformance review may support a separate low-confidence next-review scenario. 
 Project the latest observed finding count and keep it outside the actual convergence measure.
 
+## Writing contract
+
+This is a human-facing analytical report.
+Use normal Markdown paragraphs.
+Do not put every sentence on a separate line or in a separate paragraph.
+Use varied sentence lengths.
+Keep a complete argument together when one paragraph carries its evidence and consequence.
+Put quantitative progress, fresh conformance status and active blockers before process commentary.
+Keep the retro, missing-evidence and capability-gap sections concise.
+Summarise TODO items when they explain current state.
+Do not reproduce TODO as a flat queue.
+Use lists for independent items.
+Use prose when several sentences explain one causal relationship.
+
 ## Report structure
 
 Write Markdown to:

@@ -6,6 +6,10 @@ description: End an orchestration session with a short handover containing the c
 # [SESSION.END]
 
 Update docs, `[LEARN]`, `[SESSION.CLEAN]` TODOs, progress and write a detailed handover note for full reproducibility.
+When the session creates or updates TODO entries, use the required TODO headings and checkbox format.
+Keep blocking work before ready work.
+Keep deferred work separate.
+Do not copy the full retro or handover into TODO.md.
 
 Include:
 

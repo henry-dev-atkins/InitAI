@@ -1,0 +1,4 @@
+interface:
+  display_name: "Writing Guide"
+  short_description: "A guide for good writing."
+  default_prompt: "Use $writing-guide to write well."

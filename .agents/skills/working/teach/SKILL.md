@@ -1,6 +1,6 @@
 ---
 name: teach
-description: Explain a repository feature or change so the reader understands what it is, how it works, and why it exists. Use for teaching requests, not implementation.
+description: Explain a repository feature or change so a non-domain-expert reader understands what it is, how it works, and why it exists. Use for teaching requests, not implementation.
 ---
 
 # Teach

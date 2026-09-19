@@ -25,10 +25,10 @@ Use `$bulk-read` for bounded factual reads. Use `$pattern-write` only for one pl
 
 1. Run `check` against the repository. Start an explicit session with `init`, using the concrete spec or saved explicit human authority. Keep that session path for every later command.
 2. Ask `next` for permitted tasks. It reports `READY`, `WAITING`, `BLOCKED` or `DONE`; an empty task list is not completion.
-3. Reuse an idle agent or allocate a standby instance with explicit instructions to await dispatch without starting repository work. Obtain its actual instance ID, then reserve a returned task with `claim` using that ID. Role names are not instance identities. A failed claim leaves the instance idle.
+3. Open an actual agent instance with `agent-open`. Reuse an idle agent or allocate a standby instance with explicit instructions to await dispatch without starting repository work. Obtain its actual instance ID, then reserve a returned task with `claim` using that ID. Role names are not instance identities. A failed claim leaves the instance idle.
 4. After a successful claim, check the returned task and role, then dispatch work to that same instance. Send its operation and skill, authority, current plan where present, result contract and assigned session paths. The task-packet template is a short human-readable brief; it does not replace the JSON contract.
 5. Read-only workers return exact plan/report/review content and result fields without editing files. Save their returned content and result JSON at the assigned session paths without changing their facts or verdicts. Write-capable workers save only files already permitted by their accepted scope and existing permissions; save any remaining session content they return. Submit `complete` with the original claim ID, same worker instance ID and result path. Saving returned content does not make you its author. Inspect failure output; never infer success from absent or malformed output.
-6. Ask `next` again. Follow the permitted operation after rejection or blocking. Stop only when the runner reports `DONE` after a fresh full conformance `PASS` with an explicit empty findings list.
+6. Mark the instance idle after `complete` or `release`. Use `agent-close` when the instance is no longer available. Ask `next` again. Follow the permitted operation after rejection or blocking. Stop only when the runner reports `DONE` after a fresh full conformance `PASS` with an explicit empty findings list.
 
 `next` is a view, not a reservation. Another task can reserve conflicting work before `claim`. A failed claim means no dispatch permission. Do not edit `state.json` to force progress.
 
@@ -126,7 +126,7 @@ If SPEC REVIEW returns no misalignments, report DONE.
 ```
 
 
-The runner limits active DSL claims; it does not count every live agent. Reserve every DSL operation before dispatch. Optional supporting sub-agents are not additional DSL operations and are not visible to that claim counter. The orchestrator must count them against real platform/agent capacity and keep their read-only work inside the parent task's reserved scope. They cannot create a new workflow stage.
+The runner counts registered live workflow and supporting agents against the configured capacity. Open each instance before claim and close it after it becomes idle. Reserve every DSL operation before dispatch. Supporting agents stay inside the parent task's reserved scope and cannot create a new workflow stage.
 
 ## Judgement inside operations
 
@@ -136,11 +136,11 @@ Collation uses `$outcome-decomposition`. Split only genuinely independent durabl
 
 Selection uses `$select-ready-work`. Prefer the largest useful ready workstreams: material spec misalignment, work that unblocks others, then core behaviour before cleanup. Capacity is a limit, not a target. Never split, duplicate or invent work to fill it. Do not select blocked dependencies.
 
-Planning uses `$plan`. Include source findings, exact spec authority, one outcome, bounded write scope, read assumptions, ordered steps, meaningful validation, protected invariants and prohibited shortcuts. Declare shared git/GPU resources consistently. Include `Am I going in Circles?` and `Is there a more elegant way of doing this?`. The structured packet points to the plan; it does not replace its reasoning. Every revised plan needs a new plan ID within its workstream and independent review. Never reuse an earlier ID for that workstream.
+Planning uses `$plan`. Include source findings, exact spec authority, one outcome, bounded write scope, read assumptions, ordered steps, meaningful validation, protected invariants and prohibited shortcuts. Include a command manifest with a timeout from 1 to 300 seconds for every command. Declare shared git/GPU resources consistently. Include `Am I going in Circles?` and `Is there a more elegant way of doing this?`. Mandatory preflight runs before semantic review. The structured packet points to the plan; it does not replace its reasoning. Every revised plan needs a new plan ID within its workstream and independent review. Never reuse an earlier ID for that workstream.
 
 Plan review uses `$plan-review` on the current saved plan. The reviewer must be a different actual instance from its planner. Preflight follows the workflow file: optional may be `SKIPPED`; required must `PASS`. Known mechanical defects require correction. `$parallel-safety`, `$plan-elegance`, `$change-impact-analysis`, `$peer-review` and maintenance skills remain useful supporting lenses. Command manifests and old ledgers are used only when the accepted plan requires them.
 
-Implementation follows the accepted current plan. Relevant implementation skills and `$plan-sub` may help within that authority. Material scope or requirement changes return to planning. Record all changed product files, actual validation command arguments, exit codes, logs and a report. The external worker runs commands; the DSL runner only checks submitted evidence.
+Implementation follows the accepted current plan. Relevant implementation skills and `$plan-sub` may help within that authority. Material scope or requirement changes return to planning. Run the reviewed command manifest and submit its validation ledger. The external worker runs commands. The runner checks the ledger, current tree and declared changes.
 
 Implementation review uses a different actual instance from the implementer. It checks the work against the current accepted plan, source findings, scope and meaningful validation. Return `ACCEPT_IMPLEMENTATION`, `REJECT_IMPLEMENTATION` or `BLOCKED` through the result contract. Passing exit codes alone do not prove useful validation.
 

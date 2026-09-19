@@ -33,6 +33,7 @@
           "purpose",
           "phase",
           "expected_status",
+          "timeout_seconds",
           "requirement_ids",
           "finding_ids"
         ],
@@ -73,6 +74,11 @@
               "pass",
               "fail"
             ]
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 300
           },
           "requirement_ids": {
             "type": "array",

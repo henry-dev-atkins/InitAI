@@ -219,6 +219,11 @@
         "write_scope",
         "read_scope",
         "resources",
+        "requirement_ids",
+        "off_limits_scope",
+        "contracts_changed",
+        "contracts_consumed",
+        "dependencies",
         "preflight"
       ],
       "properties": {
@@ -267,6 +272,36 @@
             "minLength": 1,
             "pattern": "\\S"
           },
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "requirement_ids": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1, "pattern": "\\S"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "off_limits_scope": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1, "pattern": "\\S"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "contracts_changed": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1, "pattern": "\\S"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "contracts_consumed": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1, "pattern": "\\S"},
+          "minItems": 0,
+          "uniqueItems": true
+        },
+        "dependencies": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1, "pattern": "\\S"},
           "minItems": 0,
           "uniqueItems": true
         },
@@ -327,7 +362,7 @@
         "plan_id",
         "changed_files",
         "report",
-        "validation"
+        "validation_ledger"
       ],
       "properties": {
         "operation": {
@@ -358,37 +393,10 @@
           "minLength": 1,
           "pattern": "\\S"
         },
-        "validation": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": [
-              "argv",
-              "exit_code",
-              "log"
-            ],
-            "properties": {
-              "argv": {
-                "type": "array",
-                "items": {
-                  "type": "string",
-                  "minLength": 1,
-                  "pattern": "\\S"
-                },
-                "minItems": 1
-              },
-              "exit_code": {
-                "type": "integer"
-              },
-              "log": {
-                "type": "string",
-                "minLength": 1,
-                "pattern": "\\S"
-              }
-            }
-          },
-          "minItems": 1
+        "validation_ledger": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "\\S"
         }
       }
     },

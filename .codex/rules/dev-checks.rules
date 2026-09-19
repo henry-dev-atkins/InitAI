@@ -82,3 +82,26 @@ prefix_rule(
         "uv run streamlit run app.py",
     ],
 )
+
+prefix_rule(
+    pattern = ["uv", "python"],
+    decision = "allow",
+    justification = "Safe interpreter discovery and version checks.",
+    match = [
+        "uv python --version",
+        "uv python find",
+    ],
+)
+
+prefix_rule(
+    pattern = ["uv", "run", "python"],
+    decision = "allow",
+    justification = "Repository validation and workflow scripts.",
+    match = [
+        "uv run python --version",
+        "uv run python -m unittest discover -s .agents/workflow/tests -v",
+        "uv run python -m unittest discover -s .agents/skills/session/progress-report/tests -v",
+        "uv run python -m pytest",
+        "uv run python -m pytest -q",
+    ],
+)

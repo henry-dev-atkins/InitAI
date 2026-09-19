@@ -80,62 +80,58 @@ def file_time_window(session: Path, report_time: datetime) -> dict[str, str] | N
     }
 
 
-def table_rows(text: str) -> list[dict[str, str]]:
-    """Read rows from a Markdown table."""
-
-    lines = [line.strip() for line in text.splitlines() if line.strip().startswith("|")]
-    if len(lines) < 3:
-        return []
-    headers = [cell.strip() for cell in lines[0].strip("|").split("|")]
-    rows: list[dict[str, str]] = []
-    for line in lines[2:]:
-        cells = [cell.strip() for cell in line.strip("|").split("|")]
-        if len(cells) != len(headers) or set(cells) <= {"-"}:
-            continue
-        rows.append(dict(zip(headers, cells)))
-    return rows
-
-
 def read_findings(session: Path) -> list[dict[str, str]]:
-    """Read findings from the canonical register or a lightweight Markdown record."""
-
-    register = session / "finding_register.json"
-    if register.exists():
-        data = load_json(register)
-        return [{"id": item["id"], "status": item["status"]} for item in data.get("findings", [])]
-    for path in (session / "finding_register.md", session / "misalignments.md"):
-        if path.exists():
-            text = path.read_text(encoding="utf-8", errors="replace")
-            rows = table_rows(text)
-            if rows:
-                return [{"id": row.get("Finding ID", row.get("ID", "")), "status": row.get("Status", "OPEN")} for row in rows]
-            ids = sorted(set(re.findall(r"\bF\d{3,}\b", text)))
-            return [{"id": finding_id, "status": "OPEN"} for finding_id in ids]
-    return []
+    """Read finding status from the current workflow state only."""
+    state_path = session / "state.json"
+    if not state_path.is_file():
+        return []
+    state = load_json(state_path)
+    workstream_by_finding = {
+        finding_id: workstream
+        for workstream in state.get("workstreams", {}).values()
+        for finding_id in workstream.get("findings", [])
+    }
+    records: list[dict[str, str]] = []
+    for finding in state.get("findings", []):
+        workstream = workstream_by_finding.get(finding["id"])
+        if workstream is None or workstream.get("stage") == "pending":
+            status = "OPEN"
+        elif workstream.get("blocked") is not None:
+            status = "BLOCKED"
+        elif workstream.get("stage") == "accepted":
+            status = "RESOLVED"
+        else:
+            status = "ASSIGNED"
+        records.append({"id": finding["id"], "status": status})
+    return records
 
 
 def read_workstreams(session: Path) -> list[dict[str, str]]:
-    """Read workstream rows from the current or lightweight register."""
-
-    for path in (session / "workstream_register.md", session / "workstreams.md"):
-        if path.exists():
-            rows = table_rows(path.read_text(encoding="utf-8", errors="replace"))
-            if rows:
-                return [{"id": row.get("Workstream", row.get("ID", "")), "outcome": row.get("Outcome", ""), "status": row.get("State", row.get("Status", ""))} for row in rows]
-    return []
+    """Read workstream status from the current workflow state only."""
+    state_path = session / "state.json"
+    if not state_path.is_file():
+        return []
+    state = load_json(state_path)
+    return [
+        {
+            "id": item["id"],
+            "outcome": item["outcome"],
+            "status": "BLOCKED" if item.get("blocked") else (
+                "ACCEPTED" if item.get("stage") == "accepted"
+                else item.get("stage", "").upper()
+            ),
+        }
+        for item in state.get("workstreams", {}).values()
+    ]
 
 
 def conformance_status(session: Path) -> str:
-    """Find a recorded conformance result without treating missing text as a pass."""
-
-    candidates = sorted(session.glob("**/*"), key=lambda path: path.stat().st_mtime)
-    for path in reversed(candidates):
-        if not path.is_file() or "progress_reports" in path.parts:
-            continue
-        text = path.read_text(encoding="utf-8", errors="replace")
-        if re.search(r"\bSPEC(?:IFICATION)?[_ ]REVIEW\b.*\bPASS\b|\bCONFORMANCE\b.*\bPASS\b", text, re.IGNORECASE):
-            return "PASS"
-    return "NOT_RECORDED"
+    """Read fresh conformance status from the current workflow state only."""
+    state_path = session / "state.json"
+    if not state_path.is_file():
+        return "NOT_RECORDED"
+    state = load_json(state_path)
+    return "PASS" if state.get("stage") == "done" else "NOT_RECORDED"
 
 
 def build_metrics(session: Path, report_time: datetime, chat_events: list[str] | None = None) -> dict[str, Any]:

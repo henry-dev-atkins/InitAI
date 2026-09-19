@@ -128,6 +128,8 @@
           "argv",
           "cwd",
           "expected_status",
+          "timeout_seconds",
+          "timed_out",
           "requirement_ids",
           "finding_ids",
           "started_at",
@@ -166,6 +168,14 @@
               "pass",
               "fail"
             ]
+          },
+          "timeout_seconds": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 300
+          },
+          "timed_out": {
+            "type": "boolean"
           },
           "requirement_ids": {
             "type": "array",

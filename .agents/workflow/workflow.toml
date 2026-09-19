@@ -2,7 +2,8 @@
 version = 1
 name = "spec-convergence"
 max_agents = 6
-preflight = "optional"
+preflight = "required"
+max_plan_rejections = 3
 independent_reviews = true
 completion = "fresh_full_conformance"
 

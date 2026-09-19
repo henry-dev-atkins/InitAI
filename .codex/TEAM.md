@@ -22,21 +22,21 @@ Use `[TEAM]`, `[agentic]` or `[ORCHESTRATOR]` to select the project-scoped `orch
 
 ## Core execution pattern
 
-Use the operation bindings and transitions in `.agents/workflow/workflow.toml` instead of maintaining another workflow definition here. The orchestrator asks `next` for permitted work, obtains an actual ID from an idle or newly allocated standby instance, reserves the task with `claim`, dispatches work to that instance after success, and submits its result with `complete`. A standby instance must not begin repository work before a successful claim.
+Use the operation bindings and transitions in `.agents/workflow/workflow.toml` instead of maintaining another workflow definition here. The orchestrator opens each real workflow or supporting agent, asks `next` for permitted work, obtains an actual ID from an idle or newly allocated standby instance, reserves the task with `claim`, dispatches work to that instance after success, and submits its result with `complete`. A standby instance must not begin repository work before a successful claim.
 
 Every source-writing task needs acceptance of its current plan and independent implementation review. Rejection returns to planning. Implementation failure is always planning failure. A fresh full conformance `PASS` is the only completion gate.
 
-The runner checks supplied identities, scopes and evidence. It does not authenticate agent instances or launch models. The orchestrator supplies real instance identities, checks that evidence represents actual work, and uses platform sandbox permissions for write enforcement.
+The runner checks supplied identities, scopes, evidence and repository inventories. It does not authenticate platform instances or launch models. The orchestrator supplies real instance identities, closes idle agents, checks that evidence represents actual work, and uses platform sandbox permissions for write enforcement.
 
 Read-only planners and reviewers return exact plan/report/review content and result fields. The orchestrator saves those control files and submits the original worker's claim and instance identity, preserving its facts and verdict. Write-capable workers save only files permitted by their accepted scope and existing permissions. No role gains new source-writing authority through this handoff.
 
 ## Concurrency and checkout
 
 - Use the workflow's `max_agents` limit, initially six, when that many useful independent tasks exist.
-- The runner counts active DSL claims. The orchestrator must count optional supporting sub-agents against real platform/agent capacity; they are not separate DSL operations.
+- The runner counts registered live workflow and supporting agents against `max_agents`.
 - The default session uses the current top-level checkout.
 - Parallel write agents need accepted plans with non-conflicting read/write scopes and declared resources.
-- The runner serialises declared conflicts. Agents must identify semantic conflicts and declare shared git/GPU resources consistently.
+- The runner serialises declared resources and rejects overlapping accepted plan scopes. Agents must declare shared git/GPU resources consistently.
 - Accepted plans may authorise safe local git work.
 - Safe local git includes local branches, worktrees, stage, commit, merge and rebase.
 - Serialise git work when it can change shared checkout state.

@@ -12,7 +12,7 @@
       "minItems": 1,
       "items": {
         "type": "object",
-        "required": ["id", "argv", "cwd", "purpose", "phase", "expected_status", "requirement_ids", "finding_ids"],
+        "required": ["id", "argv", "cwd", "purpose", "phase", "expected_status", "timeout_seconds", "requirement_ids", "finding_ids"],
         "additionalProperties": false,
         "properties": {
           "id": { "type": "string", "pattern": "^CMD[0-9]{3,}$" },
@@ -21,6 +21,7 @@
           "purpose": { "type": "string", "minLength": 1 },
           "phase": { "const": "final-validation" },
           "expected_status": { "type": "string", "enum": ["pass", "fail"] },
+          "timeout_seconds": { "type": "integer", "minimum": 1, "maximum": 300 },
           "requirement_ids": { "type": "array", "items": { "type": "string", "pattern": "^REQ[0-9]{3,}$" } },
           "finding_ids": { "type": "array", "items": { "type": "string", "pattern": "^F[0-9]{3,}$" } },
           "artefact_paths": { "type": "array", "items": { "type": "string", "minLength": 1 } },

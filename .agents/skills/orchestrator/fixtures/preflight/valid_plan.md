@@ -54,7 +54,7 @@ Mutable resources:
 ## Command Manifest
 
 - Path: `.agents/skills/orchestrator/fixtures/preflight/valid_manifest.json`
-- SHA-256: `df1036be0175c72d4ade4a0e0e3178083b1aa1116f3a7aaae54f50537b9bc6aa`
+- SHA-256: `71e44c6e0597e19649ae114c03751a22a686cd5e8848632a80a468b33033cde6`
 
 The manifest is the only command source of truth.
 

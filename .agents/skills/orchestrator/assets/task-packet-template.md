@@ -44,7 +44,7 @@ Off-limits: every product file outside the write scope, and `AI_SPACE/SPEC.md` w
 - Implement only the accepted current plan. Stop and return to planning if its scope or assumptions must change.
 - Do not broaden the workstream, choose future work, or edit the runner state.
 - Use safe local git only when the accepted plan authorises it.
-- Serialise branch, worktree, stage, commit, merge and rebase work when shared state can change.
+- Serialise branch, worktree, stage, commit, merge and rebase work when shared state can change. Open the worker instance before claim and close it when idle work ends.
 - Do not push, clean, hard reset, restore or discard paths unless the human explicitly authorises that exact action.
 - Do not ask for repeated command permissions. Use allowed repo-local tools.
 - Report unavailable authority, tooling, data or a safe execution path as `BLOCKED` with the exact reason.
@@ -54,14 +54,14 @@ Off-limits: every product file outside the write scope, and `AI_SPACE/SPEC.md` w
 ## Validation gate
 
 - {actual argv} proves {required behaviour}; record actual exit code and log. Save output only where existing permissions and accepted scope permit; otherwise return the exact content for orchestrator persistence.
-- When the accepted plan requires a command manifest, use `.agents/skills/orchestrator/scripts/run_command_manifest.py` and its generated ledger. Do not write execution claims into that ledger manually. Copy actual command arguments, exit codes and log paths into the DSL validation result.
+- When the accepted plan requires a command manifest, use `.agents/skills/orchestrator/scripts/run_command_manifest.py` and its generated ledger. Do not write execution claims into that ledger manually. Return the ledger path and changed-file facts to the DSL runner.
 
 Command manifests, ledgers and baseline snapshots are optional plan-specific evidence. The DSL does not require the old nested plan layout or derive a diff from a baseline snapshot.
 
 ## Return contract
 
-Return the JSON fields for the assigned operation from `.agents/workflow/results.schema.json`, using the assigned repository-relative session paths. If your role is read-only, return exact plan/report/review text alongside the result fields without writing files; the orchestrator saves that content and result JSON before `complete`. Keep file content outside the schema-defined JSON. Write-capable workers may save only files permitted by their accepted scope and existing permissions, returning their paths and any remaining content for orchestrator persistence.
+Return the JSON fields for the assigned operation from `.agents/workflow/results.schema.json`, using the assigned repository-relative session paths. If your role is read-only, return exact plan/report/review text alongside the result fields without writing files; the orchestrator saves that content and result JSON before `complete`. Keep file content outside the schema-defined JSON. Write-capable workers may save only files permitted by their accepted scope and existing permissions, returning their paths and any remaining content for orchestrator persistence. Implementation results must contain the runner-produced validation ledger path. The runner rejects undeclared repository changes.
 
-For implementation, include the current `plan_id`, all changed product files, a report, and actual `argv`/`exit_code`/`log` records. For review, include the current `plan_id`, exact verdict and evidence path. For a blocked task, return only `operation`, `verdict: "BLOCKED"` and `reason`.
+For implementation, include the current `plan_id`, all changed product files, a report, the runner-produced validation ledger path, and actual changed-file facts. For review, include the current `plan_id`, exact verdict and evidence path. For a blocked task, return only `operation`, `verdict: "BLOCKED"` and `reason`.
 
 The orchestrator preserves the originating worker's facts, verdict, recorded claim and actual instance ID when saving returned content and submitting `complete`. It does not become the plan/review author by saving the file. The runner validates supplied facts; it does not execute commands, authenticate authors, or discover unreported changes. Report every off-protocol edit so the orchestrator can stop active work and invalidate stale session acceptance.

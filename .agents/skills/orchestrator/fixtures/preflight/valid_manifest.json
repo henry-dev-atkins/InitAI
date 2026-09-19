@@ -14,6 +14,7 @@
       "purpose": "prove the workflow preflight fixture can run",
       "phase": "final-validation",
       "expected_status": "pass",
+      "timeout_seconds": 30,
       "requirement_ids": [
         "REQ001"
       ],

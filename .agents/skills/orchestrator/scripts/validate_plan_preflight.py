@@ -9,6 +9,7 @@ import re
 import shlex
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 
 from schema_validation import validate as validate_schema
 from workflow_common import (
@@ -166,36 +167,19 @@ def compare_exact(
         errors.append(f"{label} does not match authority: actual={sorted(actual_set)} expected={sorted(expected_set)}")
 
 
-def main() -> int:
-    parser = argparse.ArgumentParser()
-    parser.add_argument("plan", type=Path)
-    parser.add_argument("--manifest", type=Path, required=True)
-    parser.add_argument("--repo-root", type=Path, default=Path.cwd())
-    parser.add_argument("--parent-session", type=Path)
-    parser.add_argument("--workstream", required=True)
-    parser.add_argument("--plan-id", required=True)
-    parser.add_argument("--expected-finding", action="append", default=[])
-    parser.add_argument("--expected-requirement", action="append", default=[])
-    parser.add_argument("--allowed-write-scope", action="append", default=[])
-    parser.add_argument("--stable-read-scope", action="append", default=[])
-    parser.add_argument("--off-limits-scope", action="append", default=[])
-    parser.add_argument("--contract-changed", action="append", default=[])
-    parser.add_argument("--contract-consumed", action="append", default=[])
-    parser.add_argument("--mutable-resource", action="append", default=[])
-    parser.add_argument("--dependency", action="append", default=[])
-    args = parser.parse_args()
-
+def _validate_from_args(args: SimpleNamespace) -> list[str]:
+    """Run every mechanical check and return errors without producing output."""
     repo = args.repo_root.resolve()
     errors: list[str] = []
     try:
         plan_path = repo_path(repo, str(args.plan))
         manifest_path = repo_path(repo, str(args.manifest))
     except ValueError as exc:
-        return fail([str(exc)])
+        return [str(exc)]
     if not plan_path.is_file():
-        return fail([f"plan does not exist: {args.plan}"])
+        return [f"plan does not exist: {args.plan}"]
     if not manifest_path.is_file():
-        return fail([f"manifest does not exist: {args.manifest}"])
+        return [f"manifest does not exist: {args.manifest}"]
     if args.parent_session:
         try:
             session_path = repo_path(repo, str(args.parent_session))
@@ -204,7 +188,7 @@ def main() -> int:
         except ValueError as exc:
             errors.append(str(exc))
 
-    text = plan_path.read_text(encoding="utf-8")
+    text = args.plan_text if args.plan_text is not None else plan_path.read_text(encoding="utf-8")
     for section in REQUIRED_SECTIONS:
         if not re.search(rf"^##\s+{re.escape(section)}\s*$", text, re.MULTILINE):
             errors.append(f"missing required section: {section}")
@@ -313,6 +297,11 @@ def main() -> int:
     for command in manifest.get("commands", []):
         command_id = str(command.get("id"))
         command_ids.append(command_id)
+        timeout_seconds = command.get("timeout_seconds")
+        if not isinstance(timeout_seconds, int) or isinstance(timeout_seconds, bool):
+            errors.append(f"{command_id}: timeout_seconds must be an integer")
+        elif not 1 <= timeout_seconds <= 300:
+            errors.append(f"{command_id}: timeout_seconds must be between 1 and 300")
         all_command_requirements.update(command.get("requirement_ids", []))
         all_command_findings.update(command.get("finding_ids", []))
         try:
@@ -372,10 +361,80 @@ def main() -> int:
         errors.append("validation table command order/set must exactly match the manifest")
 
     if errors:
+        return errors
+    return []
+
+
+def validate_plan(
+    repo: Path,
+    plan_path: Path,
+    plan_text: str,
+    manifest_path: Path,
+    parent_session: Path | None,
+    workstream_id: str,
+    plan_id: str,
+    expected_findings: list[str],
+    expected_requirements: list[str],
+    allowed_write_scope: list[str],
+    stable_read_scope: list[str],
+    off_limits_scope: list[str],
+    contracts_changed: list[str],
+    contracts_consumed: list[str],
+    mutable_resources: list[str],
+    dependencies: list[str],
+) -> list[str]:
+    """Validate one plan through the same function used by the CLI."""
+    repo = repo.resolve()
+    plan_value = plan_path.resolve().relative_to(repo).as_posix()
+    manifest_value = manifest_path.resolve().relative_to(repo).as_posix()
+    parent_session_value = (
+        parent_session.resolve().relative_to(repo).as_posix()
+        if parent_session is not None else None
+    )
+    args = SimpleNamespace(
+        plan=plan_value,
+        manifest=manifest_value,
+        repo_root=repo,
+        parent_session=parent_session_value,
+        plan_text=plan_text,
+        workstream=workstream_id,
+        plan_id=plan_id,
+        expected_finding=expected_findings,
+        expected_requirement=expected_requirements,
+        allowed_write_scope=allowed_write_scope,
+        stable_read_scope=stable_read_scope,
+        off_limits_scope=off_limits_scope,
+        contract_changed=contracts_changed,
+        contract_consumed=contracts_consumed,
+        mutable_resource=mutable_resources,
+        dependency=dependencies,
+    )
+    return _validate_from_args(args)
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("plan", type=Path)
+    parser.add_argument("--manifest", type=Path, required=True)
+    parser.add_argument("--repo-root", type=Path, default=Path.cwd())
+    parser.add_argument("--parent-session", type=Path)
+    parser.add_argument("--workstream", required=True)
+    parser.add_argument("--plan-id", required=True)
+    parser.add_argument("--expected-finding", action="append", default=[])
+    parser.add_argument("--expected-requirement", action="append", default=[])
+    parser.add_argument("--allowed-write-scope", action="append", default=[])
+    parser.add_argument("--stable-read-scope", action="append", default=[])
+    parser.add_argument("--off-limits-scope", action="append", default=[])
+    parser.add_argument("--contract-changed", action="append", default=[])
+    parser.add_argument("--contract-consumed", action="append", default=[])
+    parser.add_argument("--mutable-resource", action="append", default=[])
+    parser.add_argument("--dependency", action="append", default=[])
+    args = parser.parse_args()
+    errors = _validate_from_args(SimpleNamespace(**vars(args), plan_text=None))
+    if errors:
         return fail(errors)
     print("PASS")
-    print(f"validated_plan={plan_path}")
-    print("validated_command_ids=" + ",".join(command_ids))
+    print(f"validated_plan={repo_path(args.repo_root.resolve(), str(args.plan))}")
     return 0
 
 

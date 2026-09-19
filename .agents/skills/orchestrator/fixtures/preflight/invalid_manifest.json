@@ -15,6 +15,7 @@
       "purpose": "invalid pytest command",
       "phase": "final-validation",
       "expected_status": "pass",
+      "timeout_seconds": 30,
       "requirement_ids": [
         "REQ001"
       ],
@@ -38,6 +39,7 @@
       "purpose": "invalid inline Python",
       "phase": "diagnostic",
       "expected_status": "pass",
+      "timeout_seconds": 30,
       "requirement_ids": [
         "REQ001"
       ],

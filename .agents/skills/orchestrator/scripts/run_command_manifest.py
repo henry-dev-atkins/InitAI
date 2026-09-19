@@ -94,6 +94,8 @@ def main() -> int:
                     "argv": command["argv"],
                     "cwd": command["cwd"],
                     "expected_status": command["expected_status"],
+                    "timeout_seconds": command["timeout_seconds"],
+                    "timed_out": False,
                     "requirement_ids": command["requirement_ids"],
                     "finding_ids": command["finding_ids"],
                     "started_at": None,
@@ -128,6 +130,7 @@ def main() -> int:
                 prerequisite_errors.append(f"required path does not exist: {required}")
 
         started_at = utc_now()
+        timed_out = False
         if prerequisite_errors:
             exit_code = 125
             stdout = b""
@@ -140,10 +143,18 @@ def main() -> int:
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
                     check=False,
+                    timeout=command["timeout_seconds"],
                 )
                 exit_code = int(completed.returncode)
                 stdout = completed.stdout
                 stderr = completed.stderr
+            except subprocess.TimeoutExpired:
+                timed_out = True
+                exit_code = 124
+                stdout = b""
+                stderr = (
+                    f"Command timed out after {command['timeout_seconds']} seconds.\n"
+                ).encode("utf-8")
             except OSError as exc:
                 exit_code = 126
                 stdout = b""
@@ -153,7 +164,10 @@ def main() -> int:
         stderr_path.write_bytes(stderr)
 
         expected_pass = command["expected_status"] == "pass"
-        gate_passed = (exit_code == 0) if expected_pass else (exit_code != 0)
+        gate_passed = (
+            not timed_out
+            and ((exit_code == 0) if expected_pass else (exit_code != 0))
+        )
         status = "PASS" if gate_passed else "FAIL"
         if status == "FAIL" and first_failed is None:
             first_failed = command_id
@@ -183,6 +197,8 @@ def main() -> int:
                 "argv": command["argv"],
                 "cwd": command["cwd"],
                 "expected_status": command["expected_status"],
+                "timeout_seconds": command["timeout_seconds"],
+                "timed_out": timed_out,
                 "requirement_ids": command["requirement_ids"],
                 "finding_ids": command["finding_ids"],
                 "started_at": started_at,

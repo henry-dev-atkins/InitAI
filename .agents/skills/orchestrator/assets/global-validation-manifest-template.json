@@ -9,6 +9,7 @@
       "purpose": "prove archived material is outside active behaviour",
       "phase": "final-validation",
       "expected_status": "pass",
+      "timeout_seconds": 300,
       "requirement_ids": [],
       "finding_ids": [],
       "artefact_paths": [],

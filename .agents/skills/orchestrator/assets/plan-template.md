@@ -56,7 +56,7 @@ Mutable resources:
 - Path: `AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/workstream__WSXXX__short-name/plans/PXXX/plan_command_manifest.json`
 - SHA-256: `{manifest-sha256}`
 
-The manifest is the only command source of truth. It uses `plan-command-manifest.v1`, repeats this workstream and plan ID, and uses argv arrays only.
+The manifest is the only command source of truth. It uses `plan-command-manifest.v1`, repeats this workstream and plan ID, uses argv arrays only, and gives every command a timeout from 1 to 300 seconds.
 
 ## Implementation Steps
 
@@ -74,7 +74,7 @@ The manifest is the only command source of truth. It uses `plan-command-manifest
 
 ## Result Packet Contract
 
-Return `.agents/skills/orchestrator/assets/result-packet-template.md` fields. Run the reviewed manifest through `run_command_manifest.py`. Do not write execution claims into the evidence ledger manually.
+Return `.agents/skills/orchestrator/assets/result-packet-template.md` fields. Run the reviewed manifest through `run_command_manifest.py`. Return the generated validation ledger path. Do not write execution claims into the evidence ledger manually.
 
 ## Executive Summary
 

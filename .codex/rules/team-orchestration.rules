@@ -41,13 +41,6 @@ prefix_rule(
 )
 
 prefix_rule(
-    pattern = ["git", "commit"],
-    decision = "allow",
-    justification = "Safe local commit work is allowed when the accepted plan or session policy authorises it.",
-    match = ["git commit -m 'FIX: example'"],
-)
-
-prefix_rule(
     pattern = ["git", "switch"],
     decision = "allow",
     justification = "Safe local branch work is allowed when the accepted plan or session policy authorises it.",

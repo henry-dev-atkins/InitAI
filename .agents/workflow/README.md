@@ -24,8 +24,8 @@ The orchestrator launches agents and runs tools through its normal environment.
 | `tests/test_workflow.py` | Executable workflow, rejection, conflict and recovery tests. |
 
 The harness routing, team guide, orchestrator instructions, skill map, plan-review skill and task-packet template now use this protocol. 
-Preflight is initially optional. 
-Existing skills and support scripts remain; old command manifests, registries, snapshots and ledgers are required only when an accepted plan needs them.
+Preflight is required for every plan.
+The runner checks the saved plan and command manifest before semantic review.
 
 ## Policy
 
@@ -35,12 +35,13 @@ Read `workflow.toml` for the complete procedural definition; do not duplicate it
 | --- | --- |
 | `name` | Nonempty workflow name. |
 | `max_agents` | Capacity from 1 to 6. |
-| `preflight` | `optional` or `required`. Optional permits a recorded `SKIPPED`; required needs `PASS`. |
+| `max_plan_rejections` | Plan-review rejection threshold from 1 to 3. |
+| `preflight` | `required`. The runner executes mechanical preflight and accepts only `PASS`. |
 | `operations.<operation>.agent` | An existing agent role from `.codex/agents/`. |
 | `operations.<operation>.skill` | An existing skill frontmatter name, for operations that use a skill. |
 | `version`, `independent_reviews`, `completion`, transitions | Fixed v1 invariants; unsafe changes are rejected. |
 
-For example, change the existing `max_agents = 6` to `max_agents = 3`, or `preflight = "optional"` to `preflight = "required"`, then run `check`. Unknown fields, roles, skills and verdict transitions fail validation. A planning result may override its implementation role through `implementation_agent`; when omitted, it uses `operations.implementation.agent` from the TOML file.
+Run `check` after changing policy. Unknown fields, roles, skills and verdict transitions fail validation. A planning result may override its implementation role through `implementation_agent`; when omitted, it uses `operations.implementation.agent` from the TOML file.
 
 The parsed configuration and authority text are pinned at session creation. Changing either requires a new explicit session; there is no silent migration. Skills and agent instruction files are not frozen by the runner.
 
@@ -51,6 +52,7 @@ The default authority is `AI_SPACE/SPEC.md`. Create a unique session:
 ```sh
 python .agents/workflow/run.py init --repo . --session AI_SPACE/sessions/session__20260909_160000
 python .agents/workflow/run.py next --repo . --session AI_SPACE/sessions/session__20260909_160000
+python .agents/workflow/run.py agent-open --repo . --session AI_SPACE/sessions/session__20260909_160000 --agent ACTUAL_INSTANCE_ID --role repo-engineer
 ```
 
 If the spec is absent, `AGENTS.md` permits an explicit human prompt only when it supplies concrete intent and acceptance criteria. Save that exact authority in a repository-local text file, then pass its path with `init --authority PATH`. Do not invent substitute authority.
@@ -80,6 +82,8 @@ Call `next` after each result. `READY` means tasks are available; `WAITING` mean
 | `init` | Optional `--authority PATH`. | Create a session with pinned policy and authority. |
 | `status` | None. | Return the saved state. |
 | `next` | None. | Show permitted, currently available tasks. |
+| `agent-open` | `--agent INSTANCE --role ROLE`, optional `--kind supporting`. | Register a live workflow or supporting agent. |
+| `agent-close` | `--agent INSTANCE`. | Close an idle registered agent. |
 | `claim` | `--task ID --agent INSTANCE`. | Reserve a task and its declared scopes/resources. |
 | `complete` | `--claim ID --agent INSTANCE --result PATH`. | Validate and record one result, then advance state. |
 | `release` | `--claim ID --agent INSTANCE --reason TEXT`. | Mark an interrupted claim blocked. |
@@ -164,12 +168,17 @@ The plan text contains the reasoning and requirements from `$plan`. The packet c
   "write_scope": ["src/batch.py", "tests/test_batch.py"],
   "read_scope": ["src/batch.py", "pyproject.toml"],
   "resources": [],
+  "requirement_ids": ["REQ001"],
+  "off_limits_scope": ["AI_SPACE/SPEC.md"],
+  "contracts_changed": [],
+  "contracts_consumed": [],
+  "dependencies": [],
   "implementation_agent": "repo-engineer",
-  "preflight": "SKIPPED"
+  "preflight": "PASS"
 }
 ```
 
-Scopes are literal files or directory roots; `.` reserves the repository root. Scope comparisons are conservatively case-insensitive for Windows portability. Resource names are exact, case-sensitive identifiers. Paths need not exist yet when a plan creates new files. The runner saves the submitted plan text and rejects stale edits before review or implementation. Optional preflight can be skipped; known defects must still be fixed before claiming the plan is ready.
+Scopes are literal files or directory roots; `.` reserves the repository root. Scope comparisons are conservatively case-insensitive for Windows portability. Resource names are exact, case-sensitive identifiers. Paths need not exist yet when a plan creates new files. The runner saves the submitted plan text and rejects stale edits before review or implementation. Plan preflight is mandatory and runs before semantic review.
 
 Plan review is performed by an actual instance different from the planner. Replace `ACCEPT` with `REJECT` for a rejected plan and give concrete evidence; rejection returns to planning.
 
@@ -182,7 +191,7 @@ Plan review is performed by an actual instance different from the planner. Repla
 }
 ```
 
-Implementation reports every changed file in its authorised scope and at least one actual validation record. The command below is an example recorded invocation, not a command executed by the runner. The reviewer must assess whether validation proves the required behaviour.
+Implementation reports every changed file in its authorised scope and submits a runner-produced validation ledger. The command manifest is the command source of truth. The reviewer must assess whether the ledger proves the required behaviour.
 
 ```json
 {
@@ -191,11 +200,7 @@ Implementation reports every changed file in its authorised scope and at least o
   "plan_id": "P001",
   "changed_files": ["src/batch.py", "tests/test_batch.py"],
   "report": "AI_SPACE/sessions/session__20260909_160000/evidence/implementation__WS001__P001.md",
-  "validation": [{
-    "argv": ["python", "-m", "unittest", "discover", "-s", "tests"],
-    "exit_code": 0,
-    "log": "AI_SPACE/sessions/session__20260909_160000/evidence/validation__WS001__P001.log"
-  }]
+  "validation_ledger": "AI_SPACE/sessions/session__20260909_160000/evidence/evidence_ledger__WS001__P001.json"
 }
 ```
 
@@ -230,15 +235,15 @@ Any operation may instead return exactly this blocked shape, using its own opera
 
 ## Conflicts, recovery and limits
 
-At most `max_agents` claims may be active, with one task per instance. Declared write/write and read/write overlaps and equal resource names conflict. Global and planning operations hold a conservative whole-repository read reservation. Reviews hold the plan's read/write scopes as read reservations and reserve its resources. Undeclared semantic dependencies remain the orchestrator's responsibility.
+At most `max_agents` registered agents may be live, with one task per instance. Declared write/write and read/write overlaps and equal resource names conflict. Global and planning operations hold a conservative whole-repository read reservation. Reviews hold the plan's read/write scopes as read reservations and reserve its resources. Undeclared semantic dependencies remain the orchestrator's responsibility.
 
-The runner counts active DSL claims, not every live agent. Optional supporting sub-agents are not extra DSL operations and do not appear in that counter. The orchestrator must count them against real platform/agent capacity and keep their work within the parent task's reserved scope.
+The runner records live workflow and supporting agents. Open an agent before claiming work. Close an idle agent when it finishes. Supporting agents count against `max_agents`.
 
 An implementation result invalidates other pending plans whose declared scopes overlap its submitted changed files, including queued implementation reviews. Interrupted or blocked implementation uses its whole authorised write scope because partial changes are unknown. The runner records the reason and routes those workstreams back to planning. Plans produced after the writes are unaffected.
 
 State replacement is atomic and protected by an OS advisory lock. Outstanding claims survive process restarts. Do not assume the worker stopped merely because the caller did. Confirm it has stopped, then `release` the interrupted claim. After resolving the need, `resume --workstream WS001 --reason "..."` resumes that workstream. Interrupted implementation always resumes through planning. There are no automatic source-writing retries.
 
-The runner checks caller-supplied facts. It does not launch/authenticate models, execute validation, inspect actual diffs, intercept writes or detect arbitrary source changes. Declared scopes do not grant OS/tool access; existing sandbox and human authority rules still apply. Reviewers must judge actual evidence and the orchestrator must submit real instance identities.
+The runner records an inventory at every claim and compares it at completion. Only implementation tasks may change repository paths, and their declared files must match exactly. It does not launch or authenticate models, execute worker validation commands, or intercept platform writes. An unexpected repository change blocks the task before the next gate. Declared scopes do not grant OS or tool access. Existing sandbox and human authority rules still apply.
 
 For an edit outside the protocol, stop active work, release outstanding claims as needed, then run `invalidate --reason "Describe the external edit"`. This requires no active claims and returns even a completed session to fresh conformance. Do not trust old acceptance after unreported changes. Configuration or authority changes instead require a new session.
 

@@ -12,10 +12,14 @@ from calculate_progress import build_metrics
 
 
 class ProgressMetricsTests(unittest.TestCase):
+    def write_state(self, session: Path, state: dict) -> None:
+        (session / "state.json").write_text(json.dumps(state), encoding="utf-8")
+
     def test_cli_emits_versioned_metrics(self) -> None:
         with tempfile.TemporaryDirectory(dir=Path.cwd() / "temp") as temporary:
             session = Path(temporary) / "session__20260907_120000"
             session.mkdir()
+            self.write_state(session, {"stage": "conformance", "findings": [], "workstreams": {}})
             result = subprocess.run(
                 [
                     sys.executable,
@@ -36,16 +40,14 @@ class ProgressMetricsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=Path.cwd() / "temp") as temporary:
             session = Path(temporary) / "session__20260907_120000"
             session.mkdir()
-            (session / "finding_register.json").write_text(
-                '{"schema":"finding-register-current.v1","findings":['
-                '{"id":"F001","status":"RESOLVED"},'
-                '{"id":"F002","status":"ASSIGNED"},'
-                '{"id":"F003","status":"OPEN"}]}', encoding="utf-8"
-            )
-            (session / "workstream_register.md").write_text(
-                "| Workstream | Outcome | State |\n|---|---|---|\n"
-                "| WS001 | done | ACCEPTED |\n| WS002 | work | IMPLEMENTING |\n", encoding="utf-8"
-            )
+            self.write_state(session, {
+                "stage": "conformance",
+                "findings": [{"id": "F001"}, {"id": "F002"}, {"id": "F003"}],
+                "workstreams": {
+                    "WS001": {"id": "WS001", "outcome": "done", "stage": "accepted", "blocked": None, "findings": ["F001"]},
+                    "WS002": {"id": "WS002", "outcome": "work", "stage": "implementation", "blocked": None, "findings": ["F002"]},
+                },
+            })
             metrics = build_metrics(session, datetime(2026, 9, 7, 13, 0, tzinfo=timezone.utc))
             self.assertEqual(metrics["findings"]["known_total"], 3)
             self.assertEqual(metrics["findings"]["solved"], 1)
@@ -58,6 +60,7 @@ class ProgressMetricsTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(dir=Path.cwd() / "temp") as temporary:
             session = Path(temporary) / "session__20260907_120000"
             session.mkdir()
+            self.write_state(session, {"stage": "conformance", "findings": [], "workstreams": {}})
             metrics = build_metrics(
                 session,
                 datetime(2026, 9, 7, 13, 0, tzinfo=timezone.utc),
@@ -65,7 +68,7 @@ class ProgressMetricsTests(unittest.TestCase):
             )
             self.assertEqual(metrics["evidence"]["chat_events"][0]["label"], "prompt")
             self.assertEqual(metrics["evidence"]["chat_events"][0]["timestamp"], "2026-09-07T12:05:00+00:00")
-            self.assertEqual(metrics["evidence"]["file_times"], None)
+            self.assertEqual(metrics["evidence"]["file_times"]["quality"], "weak")
 
     def test_missing_records_mark_metrics_without_inventing_counts(self) -> None:
         with tempfile.TemporaryDirectory(dir=Path.cwd() / "temp") as temporary:

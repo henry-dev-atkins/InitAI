@@ -74,11 +74,12 @@ def validate_ledger(ledger_path: Path, repo: Path, explicit_manifest: Path | Non
         if index >= len(ledger_commands):
             break
         record = ledger_commands[index]
-        for key in ["id", "argv", "cwd", "expected_status", "requirement_ids", "finding_ids"]:
+        for key in ["id", "argv", "cwd", "expected_status", "timeout_seconds", "requirement_ids", "finding_ids"]:
             if record.get(key) != manifest_command.get(key):
                 errors.append(f"{record.get('id', index)}: {key} does not match manifest")
         status = record.get("status")
         exit_code = record.get("exit_code")
+        timed_out = record.get("timed_out")
         expected = manifest_command.get("expected_status")
         started_at = record.get("started_at")
         finished_at = record.get("finished_at")
@@ -100,6 +101,10 @@ def validate_ledger(ledger_path: Path, repo: Path, explicit_manifest: Path | Non
             errors.append(f"{record.get('id')}: NOT_RUN timestamps must be null")
         if status in {"PASS", "FAIL"} and exit_code is None:
             errors.append(f"{record.get('id')}: executed command requires an exit code")
+        if timed_out and (status != "FAIL" or exit_code != 124):
+            errors.append(f"{record.get('id')}: timeout must be a failed gate with exit code 124")
+        if timed_out and status == "PASS":
+            errors.append(f"{record.get('id')}: timed out command cannot pass")
         if status == "PASS":
             if expected == "pass" and exit_code != 0:
                 errors.append(f"{record.get('id')}: expected pass but exit code was non-zero")

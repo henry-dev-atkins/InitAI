@@ -27,6 +27,11 @@
       "minimum": 1,
       "maximum": 6
     },
+    "max_plan_rejections": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 3
+    },
     "preflight": {
       "type": "string",
       "enum": [

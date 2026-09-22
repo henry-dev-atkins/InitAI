@@ -1,9 +1,9 @@
 prefix_rule(
-    pattern = ["./tools/orchestrator_final_commit.ps1"],
+    pattern = ["./AI_SPACE/tools/orchestrator_final_commit.ps1"],
     decision = "allow",
     justification = "The wrapper validates terminal coverage before creating the workflow's one final local commit. Direct git commit is not a finalisation route.",
     match = [
-        "./tools/orchestrator_final_commit.ps1 -TerminalReview AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/reports/terminal-review/TR001.json -Message 'FIX: align implementation to spec'",
+        "./AI_SPACE/tools/orchestrator_final_commit.ps1 -TerminalReview AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/reports/terminal-review/TR001.json -Message 'FIX: align implementation to spec'",
     ],
     not_match = [
         "git add .",
@@ -12,10 +12,10 @@ prefix_rule(
 )
 
 prefix_rule(
-    pattern = ["./tools/orchestrator_final_commit.cmd"],
+    pattern = ["./AI_SPACE/tools/orchestrator_final_commit.cmd"],
     decision = "allow",
     justification = "CMD entry point for the same terminal-gated final local commit wrapper.",
     match = [
-        "./tools/orchestrator_final_commit.cmd -TerminalReview AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/reports/terminal-review/TR001.json -Message \"FIX: align implementation to spec\"",
+        "./AI_SPACE/tools/orchestrator_final_commit.cmd -TerminalReview AI_SPACE/sessions/session__YYYYMMDD_HHMMSS/reports/terminal-review/TR001.json -Message \"FIX: align implementation to spec\"",
     ],
 )

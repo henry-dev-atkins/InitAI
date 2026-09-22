@@ -521,7 +521,7 @@ A single command is the simplest route.
         self.assertIn('"uv sync"', rules)
         self.assertIn('"uv python --version"', rules)
         self.assertIn('"uv run python -m unittest discover -s .agents/workflow/tests -v"', rules)
-        self.assertIn("./tools/orchestrator_final_commit.ps1", commit_rules)
+        self.assertIn("./AI_SPACE/tools/orchestrator_final_commit.ps1", commit_rules)
         self.assertNotIn('pattern = ["git", "commit"]',
                           (ROOT / ".codex/rules/team-orchestration.rules").read_text(encoding="utf-8"))
         active_scripts = list((ROOT / ".agents/skills/orchestrator/scripts").glob("*.py"))

@@ -9,8 +9,9 @@ from pathlib import Path
 import unittest
 
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "tools"))
+ROOT = Path(__file__).resolve().parents[3]
+TOOLS = ROOT / "AI_SPACE/tools"
+sys.path.insert(0, str(TOOLS))
 
 from calculator import CalculatorError, evaluate_expression  # noqa: E402
 
@@ -28,7 +29,7 @@ class CalculatorTests(unittest.TestCase):
     def test_cli_reads_expression_from_stdin(self) -> None:
         """The CLI evaluates one expression supplied through standard input."""
         result = subprocess.run(
-            [sys.executable, "-B", str(ROOT / "tools/calculator.py")],
+            [sys.executable, "-B", str(TOOLS / "calculator.py")],
             cwd=ROOT,
             input="1.20 + 2.30\n",
             capture_output=True,
@@ -60,7 +61,7 @@ class FinalCommitWrapperTests(unittest.TestCase):
             [
                 sys.executable,
                 "-B",
-                str(ROOT / "tools/orchestrator_final_commit.py"),
+                str(TOOLS / "orchestrator_final_commit.py"),
                 *arguments,
             ],
             cwd=ROOT,

@@ -27,7 +27,7 @@ class FinalCommitError(RuntimeError):
 
 def repository_root() -> Path:
     """Return the repository root containing this tool directory."""
-    return Path(__file__).resolve().parents[1]
+    return Path(__file__).resolve().parents[2]
 
 
 def run_process(arguments: list[str], root: Path) -> subprocess.CompletedProcess[str]:

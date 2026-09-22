@@ -2,7 +2,7 @@
 
 My base AI starting point for my projects.
 
-Copy `AGENTS.md`, `AI_SPACE/`, `.codex/`, `.agents/` and `tools/` into whatever
+Copy `AGENTS.md`, `AI_SPACE/`, `.codex/` and `.agents/` into whatever
 repo you are in.
 
 Write your spec at `AI_SPACE/SPEC.md`.
@@ -159,7 +159,6 @@ being subtly wrong is expensive. It is silly for a one-file script.
 
 No stubs. No "looks good to me". No agent declaring victory because it made a
 nice table. Keep going until the repo matches the spec.
-
 
 
 

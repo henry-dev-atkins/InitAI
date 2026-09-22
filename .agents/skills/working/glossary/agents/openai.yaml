@@ -1,0 +1,4 @@
+interface:
+  display_name: "Glossary"
+  short_description: "Resolve repository workflow and agent-skill terms"
+  default_prompt: "Use $glossary to resolve workflow terms and apply the repository's accepted names."

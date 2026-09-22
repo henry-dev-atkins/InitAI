@@ -16,11 +16,6 @@ SCANNED_SUFFIXES = {
     ".json", ".ini", ".cfg", ".sh", ".ps1", ".cmd",
 }
 CONTROL_ROOTS = {".agents", ".codex", "AI_SPACE"}
-CONTROL_FILES = {
-    "tools/write_ai_space_artifact.py",
-    "tools/orchestrator_final_commit.py",
-    "tools/workflow_check.py",
-}
 REFERENCE = re.compile(r"(?:AI_SPACE/)?archive[\\/]", re.IGNORECASE)
 
 
@@ -36,7 +31,7 @@ def main() -> int:
         relative = path.relative_to(repo).as_posix()
         if is_excluded(relative):
             continue
-        if relative.split("/", 1)[0] in CONTROL_ROOTS or relative in CONTROL_FILES:
+        if relative.split("/", 1)[0] in CONTROL_ROOTS:
             continue
         try:
             text = path.read_text(encoding="utf-8", errors="replace")

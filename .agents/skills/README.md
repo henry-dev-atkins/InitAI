@@ -21,6 +21,7 @@ The orchestrator loop has six core skills. `.agents/workflow/workflow.toml` owns
 - `$plan-elegance`: Review whether a plan is the simplest coherent solution.
 - `$plan-preflight`: Check mechanical plan completeness when useful or required by the workflow's preflight policy.
 - `$plan-sub`: Break one accepted plan step into local execution substeps.
+- `$plan-parallel-collate`: Collate parallel plan results into one reviewable plan state.
 - `$strategy-review`: Reframe the current approach after repeated failure or no progress.
 - `$procedural-task-entry-points`: Keep concrete task control flow procedural.
 
@@ -28,6 +29,7 @@ The orchestrator loop has six core skills. `.agents/workflow/workflow.toml` owns
 
 - `$requirements-discovery`: Explore unclear requirements or repository evidence before conformance review or planning.
 - `$finding-verification`: Independently verify one disputed or weakly evidenced conformance finding.
+- `$verify-finding`: Verify one disputed, ambiguous, or weakly evidenced finding.
 - `$spec-edit`: Apply an explicitly authorised minimal edit to `AI_SPACE/SPEC.md`.
 
 ## Implementation and diagnostic tools
@@ -62,6 +64,7 @@ The orchestrator loop has six core skills. `.agents/workflow/workflow.toml` owns
 - `$maintain-review`: Review drift away from the spec and core capabilities.
 - `$maintain-techdebt`: Review technical debt and future maintenance cost.
 - `$parsimonious`: Review caller-scoped work for unnecessary cost and unjustified complexity.
+- `$find-dev-artifacts`: Find development-process names that obscure stable capabilities.
 - `$maintain-terminology`: Check resources for accepted project terminology and prohibited ideas.
 - `$session-clean`: Consolidate session clutter without deleting durable evidence.
 - `$session-compact`: Compact session state while preserving resumability.
@@ -70,6 +73,7 @@ The orchestrator loop has six core skills. `.agents/workflow/workflow.toml` owns
 - `$code-style`: Apply the repository coding style.
 - `$henrys-voice`: Draft free text in Henry Atkins's analytical technical voice.
 - `$technical-writing`: Write clear technical prose for a defined reader and task.
+- `$writing-guide`: Apply the repository writing guide to agent-facing and human-facing text.
 - `$write-concisely`: Tighten prose without dropping evidence or conditions.
 - `$unslop`: Remove machine-written filler and decorative language.
 - `$verbosity-review`: Review response length and information density.
@@ -79,6 +83,7 @@ The orchestrator loop has six core skills. `.agents/workflow/workflow.toml` owns
 - `$why`: Explain repository decisions from local implementation and evidence.
 - `$teach`: Explain a repository feature, change, or flow without editing it.
 - `$show-me-your-work`: Keep a compact decision trail for long or unattended work.
+- `$glossary`: Resolve repository workflow, agent, and skill terms using accepted vocabulary.
 
 The action glossary and work-type rules remain in `AGENTS.md`.
 The source `SKILL (8).md` is therefore subsumed and is not installed as a duplicate skill.

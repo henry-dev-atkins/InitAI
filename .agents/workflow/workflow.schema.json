@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "AI workflow DSL v1",
+  "title": "AI workflow DSL v2",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -10,12 +10,12 @@
     "preflight",
     "independent_reviews",
     "completion",
-    "operations"
+    "nodes"
   ],
   "properties": {
     "version": {
       "type": "integer",
-      "const": 1
+      "const": 2
     },
     "name": {
       "type": "string",
@@ -46,6 +46,24 @@
     "completion": {
       "const": "fresh_full_conformance",
       "type": "string"
+    },
+    "loop": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["replanning", "revision_mode", "failure_policy", "cancellation"],
+      "properties": {
+        "replanning": {"const": "continuous", "type": "string"},
+        "revision_mode": {"const": "checkpointed", "type": "string"},
+        "failure_policy": {"const": "rsi_decides", "type": "string"},
+        "cancellation": {"const": "policy_defined", "type": "string"}
+      }
+    },
+    "nodes": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "$ref": "#/$defs/node"
+      }
     },
     "operations": {
       "type": "object",
@@ -336,6 +354,34 @@
             }
           }
         }
+      }
+    }
+  },
+  "$defs": {
+    "port": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema"],
+      "properties": {
+        "schema": {"type": "string", "minLength": 1, "pattern": "\\S"},
+        "source": {"type": "string", "minLength": 1, "pattern": "^[A-Za-z][A-Za-z0-9_-]*\\.[A-Za-z][A-Za-z0-9_-]*$|^session\\.[A-Za-z][A-Za-z0-9_-]*$"}
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "agent", "depends_on", "inputs", "outputs", "read_scope", "write_scope", "resources"],
+      "properties": {
+        "kind": {"enum": ["agent_task", "command", "control"], "type": "string"},
+        "agent": {"type": "string", "minLength": 1, "pattern": "\\S"},
+        "skill": {"type": "string", "minLength": 1, "pattern": "\\S"},
+        "command": {"type": "string", "minLength": 1, "pattern": "\\S"},
+        "depends_on": {"type": "array", "items": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}, "uniqueItems": true},
+        "inputs": {"type": "object", "additionalProperties": {"$ref": "#/$defs/port"}},
+        "outputs": {"type": "object", "additionalProperties": {"$ref": "#/$defs/port"}},
+        "read_scope": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "write_scope": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
+        "resources": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
       }
     }
   }

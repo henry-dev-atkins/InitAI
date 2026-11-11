@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import copy
 from contextlib import contextmanager
 import importlib.util
 from itertools import combinations
@@ -218,11 +219,54 @@ def load_workflow(repo: Path, filename: str) -> tuple[str, dict[str, Any], set[s
     workflow = tomllib.loads((repo / relative).read_text(encoding="utf-8-sig"))
     validate_packet(workflow, "workflow.schema.json")
     roles, skills = roles_and_skills(repo)
-    for operation, binding in workflow["operations"].items():
+    validate_loop_graph(workflow, roles, skills)
+    for operation, binding in workflow.get("operations", {}).items():
         require(binding["agent"] in roles, f"Unknown agent role for {operation}: {binding['agent']}")
         if "skill" in binding:
             require(binding["skill"] in skills, f"Unknown skill for {operation}: {binding['skill']}")
     return relative, workflow, roles
+
+
+def validate_loop_graph(workflow: dict[str, Any], roles: set[str], skills: set[str]) -> None:
+    """Validate the project-defined DAG before any session can use it."""
+    nodes = workflow.get("nodes", {})
+    require(isinstance(nodes, dict) and nodes, "Workflow must define at least one node")
+    identifiers = set(nodes)
+    for identifier, node in nodes.items():
+        require(re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", identifier) is not None,
+                f"Invalid node ID: {identifier}")
+        require(node["agent"] in roles, f"Unknown agent binding for node {identifier}: {node['agent']}")
+        if "skill" in node and skills:
+            require(node["skill"] in skills, f"Unknown skill binding for node {identifier}: {node['skill']}")
+        dependencies = node["depends_on"]
+        require(set(dependencies) <= identifiers,
+                f"Node {identifier} has an unknown dependency")
+        require(identifier not in dependencies, f"Node {identifier} depends on itself")
+        for port_name, port in node["inputs"].items():
+            require(re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", port_name) is not None,
+                    f"Invalid input port {identifier}.{port_name}")
+            source = port.get("source")
+            if source and not source.startswith("session."):
+                source_node, source_port = source.split(".", 1)
+                require(source_node in identifiers, f"Input source node does not exist: {source}")
+                require(source_port in nodes[source_node]["outputs"],
+                        f"Input source port does not exist: {source}")
+                require(source_node in dependencies,
+                        f"Input source {source} must be a declared dependency of {identifier}")
+        for port_name in node["outputs"]:
+            require(re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", port_name) is not None,
+                    f"Invalid output port {identifier}.{port_name}")
+        for scope in node["read_scope"] + node["write_scope"]:
+            require(isinstance(scope, str) and scope.strip() == scope and scope,
+                    f"Invalid scope on node {identifier}")
+        require(len(node["resources"]) == len(set(node["resources"])),
+                f"Duplicate resources on node {identifier}")
+    remaining = {identifier: set(node["depends_on"]) for identifier, node in nodes.items()}
+    while remaining:
+        ready = {identifier for identifier, dependencies in remaining.items() if not dependencies}
+        require(ready, "Workflow node dependencies contain a cycle")
+        remaining = {identifier: dependencies - ready for identifier, dependencies in remaining.items()
+                     if identifier not in ready}
 
 
 @contextmanager
@@ -274,6 +318,9 @@ def overlap(first: str, second: str) -> bool:
 
 def reservations(task: dict[str, Any]) -> tuple[list[str], list[str], list[str]]:
     """Return declared read, write and exclusive resource reservations for a task."""
+    if task.get("generic_node"):
+        node = task["node"]
+        return node["read_scope"], node["write_scope"], node["resources"]
     operation = task["operation"]
     if operation in GLOBAL_OPERATIONS or operation == "planning":
         return ["."], [], []
@@ -316,12 +363,27 @@ def validate_selected_plan_set(state: dict[str, Any]) -> None:
 
 def task_packet(state: dict[str, Any], operation: str, workstream_id: str | None = None) -> dict[str, Any]:
     """Describe one permitted task with pinned authority and its current plan."""
-    binding = state["workflow"]["operations"][operation]
+    binding = state["workflow"].get("operations", {}).get(operation,
+             state["workflow"].get("nodes", {}).get(operation, {}))
     task: dict[str, Any] = {
         "task_id": f"{state['cycle']}:global:{operation}", "operation": operation,
-        "workstream_id": workstream_id, "agent_role": binding["agent"],
+        "workstream_id": workstream_id, "agent_role": binding.get("agent"),
         "skill": binding.get("skill"), "authority": state["authority"],
         "result_schema": ".agents/workflow/results.schema.json",
+        }
+    node = state["workflow"].get("nodes", {}).get(operation)
+    if node is not None:
+        task["generic_node"] = "operations" not in state["workflow"]
+        task["node"] = {
+            "id": operation,
+            "kind": node["kind"],
+            "depends_on": node["depends_on"],
+            "inputs": node["inputs"],
+            "outputs": node["outputs"],
+            "read_scope": node["read_scope"],
+            "write_scope": node["write_scope"],
+            "resources": node["resources"],
+            "revision": state.get("loop_revision", 1),
         }
     if workstream_id is not None:
         workstream = state["workstreams"][workstream_id]
@@ -343,8 +405,39 @@ def task_packet(state: dict[str, Any], operation: str, workstream_id: str | None
     return task
 
 
+def generic_next_tasks(state: dict[str, Any]) -> dict[str, Any]:
+    """Schedule ready nodes for a workflow that uses only the generic DAG DSL."""
+    if state.get("loop_blocked") is not None:
+        return {"ok": True, "status": "BLOCKED", "tasks": []}
+    claims = list(state["claims"].values())
+    candidates = []
+    for identifier, record in state["nodes"].items():
+        if record["status"] != "pending":
+            continue
+        if all(state["nodes"][dependency]["status"] == "complete"
+               for dependency in record["definition"]["depends_on"]):
+            candidates.append(task_packet(state, identifier))
+    available = [task for task in candidates if all(
+        task["task_id"] != claim["task"]["task_id"] and not conflict(task, claim["task"])
+        for claim in claims)]
+    live_agents = sum(item["status"] == "live" for item in state.get("agents", {}).values())
+    if live_agents >= state["workflow"]["max_agents"]:
+        available = []
+    if available:
+        status = "READY"
+    elif claims:
+        status = "WAITING"
+    elif all(item["status"] == "complete" for item in state["nodes"].values()):
+        status = "DONE"
+    else:
+        status = "BLOCKED"
+    return {"ok": True, "status": status, "tasks": available}
+
+
 def next_tasks(state: dict[str, Any]) -> dict[str, Any]:
     """List unclaimed tasks whose reservations fit the current active claims."""
+    if "nodes" in state and "operations" not in state["workflow"]:
+        return generic_next_tasks(state)
     candidates: list[dict[str, Any]] = []
     if state["stage"] == "done":
         return {"ok": True, "status": "DONE", "tasks": []}
@@ -492,6 +585,33 @@ def apply_result(repo: Path, state: dict[str, Any], claim: dict[str, Any],
     """Check the current operation's facts, then advance exactly one permitted gate."""
     validate_packet(result, "results.schema.json")
     task = claim["task"]
+    if result.get("operation") == "node":
+        require("nodes" in state and task.get("node", {}).get("id") == result["node_id"],
+                "Generic result does not match the claimed node")
+        observed = diff_inventories(claim["audit_inventory"], audit_inventory(repo))
+        observed_paths = sorted(observed["added"] + observed["modified"] + observed["deleted"])
+        if observed_paths and not task["node"]["write_scope"]:
+            raise UnexpectedRepositoryChange(
+                f"Node changed undeclared repository paths: {observed_paths}"
+            )
+        node = state["nodes"][result["node_id"]]
+        if result["verdict"] == "BLOCKED":
+            state["loop_blocked"] = {"node_id": result["node_id"], "reason": result.get("reason", "Node blocked")}
+            node["status"] = "blocked"
+        elif result["verdict"] == "FAILED":
+            node["status"] = "failed"
+            state["loop_blocked"] = {"node_id": result["node_id"], "reason": result.get("reason", "Node failed")}
+        else:
+            node["status"] = "complete"
+        node["outputs"] = result["outputs"]
+        node["report"] = result["report"]
+        node["measurements"] = result["measurements"]
+        state["history"].append({"event": "node_complete", "node_id": result["node_id"],
+                                  "verdict": result["verdict"], "outputs": result["outputs"],
+                                  "measurements": result["measurements"]})
+        if result.get("loop_revision") is not None:
+            apply_loop_revision(state, result["loop_revision"], roles)
+        return
     operation, identifier = task["operation"], task["workstream_id"]
     require(result["operation"] == operation, "Result operation does not match the claim")
     observed = diff_inventories(claim["audit_inventory"], audit_inventory(repo))
@@ -635,6 +755,29 @@ def apply_result(repo: Path, state: dict[str, Any], claim: dict[str, Any],
         state["cycle"] += 1
 
 
+def apply_loop_revision(state: dict[str, Any], revision: dict[str, Any], roles: set[str]) -> None:
+    """Checkpoint an RSI-proposed DAG revision after structural validation."""
+    candidate = copy.deepcopy(state["workflow"])
+    candidate.pop("operations", None)
+    candidate["nodes"] = revision["nodes"]
+    validate_loop_graph(candidate, roles, roles if False else set())
+    previous = state.get("loop_revision", 1)
+    state["loop_revision"] = previous + 1
+    state["workflow"]["nodes"] = revision["nodes"]
+    for identifier, node in revision["nodes"].items():
+        old = state["nodes"].get(identifier, {})
+        state["nodes"][identifier] = {
+            "definition": node,
+            "status": old.get("status", "pending"),
+            "attempt": old.get("attempt", 0),
+            "outputs": old.get("outputs", {}),
+            "report": old.get("report"),
+            "measurements": old.get("measurements", {}),
+        }
+    state["history"].append({"event": "loop_revision", "revision": state["loop_revision"],
+                              "nodes": sorted(revision["nodes"])})
+
+
 def run_command(args: argparse.Namespace) -> dict[str, Any]:
     """Execute one CLI operation under the session lock, saving only valid changes."""
     repo = Path(args.repo).resolve()
@@ -668,7 +811,15 @@ def run_command(args: argparse.Namespace) -> dict[str, Any]:
                 "findings": [], "workstreams": {}, "selected": [], "plan_ids": [],
                 "agents": {},
                 "global_blocked": None, "history": [],
+                "loop_revision": 1,
                 }
+            if "operations" not in workflow:
+                state["nodes"] = {
+                    identifier: {"definition": node, "status": "pending", "attempt": 0,
+                                 "outputs": {}, "report": None, "measurements": {}}
+                    for identifier, node in workflow["nodes"].items()
+                }
+                state["loop_blocked"] = None
             save_state(session, state)
             return {"ok": True, "state": state}
         state = read_json(state_path)
@@ -735,6 +886,9 @@ def run_command(args: argparse.Namespace) -> dict[str, Any]:
                 "audit_inventory": audit_inventory(repo),
             }
             state["claims"][claim_id] = claim
+            if "nodes" in state and task["operation"] in state["nodes"]:
+                state["nodes"][task["operation"]]["status"] = "running"
+                state["nodes"][task["operation"]]["attempt"] += 1
             state["agents"][args.agent]["status"] = "busy"
             state["agents"][args.agent]["claim_id"] = claim_id
             state["next_claim"] += 1

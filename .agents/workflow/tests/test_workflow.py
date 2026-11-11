@@ -676,7 +676,7 @@ A single command is the simplest route.
         config = self.repo / ".agents/workflow/workflow.toml"
         original = config.read_text()
         for number, text in enumerate([original.replace("max_agents = 6", 'max_agents = "six"'),
-                     original.replace("version = 1", "version = 1\nunknown = true"),
+                     original.replace("version = 2", "version = 2\nunknown = true"),
                      original.replace('REJECT = "planning"', 'REJECT = "implementation"'),
                      original.replace('agent = "research-architect"', 'agent = "missing-agent"'),
                      original.replace('skill = "plan"', 'skill = "missing-skill"')]):

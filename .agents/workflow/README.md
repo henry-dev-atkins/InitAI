@@ -1,6 +1,6 @@
-# Workflow DSL v1
+# Workflow DSL v2
 
-This adds checked handoffs and saved state to the existing spec-convergence loop. 
+This provides checked handoffs and saved state for project-defined DAG loops.
 Run from the repository root with Python 3.11 or newer. 
 No third-party packages are required.
 
@@ -8,8 +8,8 @@ No third-party packages are required.
 python .agents/workflow/run.py check --repo .
 ```
 
-The TOML file owns mechanical policy. 
-The Python runner validates results, reserves tasks and advances the fixed loop. 
+The TOML file owns the loop graph and project policy.
+The Python runner validates results, reserves tasks and advances ready DAG nodes.
 Existing Markdown skills own planning and review judgement. 
 The orchestrator launches agents and runs tools through its normal environment.
 
@@ -17,19 +17,19 @@ The orchestrator launches agents and runs tools through its normal environment.
 
 | File | Purpose |
 | --- | --- |
-| `workflow.toml` | Operation bindings, policy and permitted verdict transitions. |
-| `workflow.schema.json` | Exact v1 configuration shape and invariant gates. |
-| `results.schema.json` | Exact result shapes for all seven operations and blocking. |
-| `run.py` | Standard-library CLI with checked transitions and resumable state. |
+| `workflow.toml` | Node bindings, typed ports, graph dependencies and loop policy. |
+| `workflow.schema.json` | Exact v2 configuration shape and graph gates. |
+| `results.schema.json` | Generic node results plus existing workflow result shapes. |
+| `run.py` | Standard-library CLI with DAG scheduling and resumable state. |
 | `tests/test_workflow.py` | Executable workflow, rejection, conflict and recovery tests. |
 
 The harness routing, team guide, orchestrator instructions, skill map, plan-review skill and task-packet template now use this protocol. 
 Preflight is required for every plan.
 The runner checks the saved plan and command manifest before semantic review.
 
-## Policy
+## Loop policy
 
-Read `workflow.toml` for the complete procedural definition; do not duplicate its transitions in other configuration. This is one fixed convergence workflow, not a general graph language.
+Read `workflow.toml` for the complete graph and policy definition. Nodes reference existing agent and skill names. The runner checks graph structure, bindings, ports, scopes and resources. Runtime revisions are checkpointed in session history.
 
 | Field | Allowed change |
 | --- | --- |

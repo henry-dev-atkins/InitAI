@@ -5,6 +5,20 @@
     {
       "type": "object",
       "additionalProperties": false,
+      "required": ["operation", "node_id", "verdict", "outputs", "report", "measurements"],
+      "properties": {
+        "operation": {"const": "node", "type": "string"},
+        "node_id": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"},
+        "verdict": {"type": "string", "enum": ["COMPLETE", "FAILED", "BLOCKED"]},
+        "outputs": {"type": "object"},
+        "report": {"type": "string", "minLength": 1, "pattern": "\\S"},
+        "measurements": {"type": "object"},
+        "loop_revision": {"type": "object"}
+      }
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
       "required": [
         "operation",
         "verdict",

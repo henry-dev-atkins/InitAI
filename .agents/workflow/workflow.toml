@@ -1,11 +1,92 @@
 # Checked policy for the fixed spec-convergence loop.
-version = 1
+version = 2
 name = "spec-convergence"
 max_agents = 6
 preflight = "required"
 max_plan_rejections = 3
 independent_reviews = true
 completion = "fresh_full_conformance"
+
+[loop]
+replanning = "continuous"
+revision_mode = "checkpointed"
+failure_policy = "rsi_decides"
+cancellation = "policy_defined"
+
+[nodes.conformance]
+kind = "agent_task"
+agent = "conformance-reviewer"
+skill = "conformance"
+depends_on = []
+inputs = { authority = { schema = "schemas/authority.json", source = "session.authority" } }
+outputs = { report = { schema = "schemas/report.json" }, findings = { schema = "schemas/findings.json" } }
+read_scope = ["."]
+write_scope = []
+resources = []
+
+[nodes.collate]
+kind = "agent_task"
+agent = "orchestrator"
+skill = "outcome-decomposition"
+depends_on = ["conformance"]
+inputs = { findings = { schema = "schemas/findings.json", source = "conformance.findings" } }
+outputs = { workstreams = { schema = "schemas/workstreams.json" } }
+read_scope = ["."]
+write_scope = []
+resources = []
+
+[nodes.select]
+kind = "agent_task"
+agent = "orchestrator"
+skill = "select-ready-work"
+depends_on = ["collate"]
+inputs = { workstreams = { schema = "schemas/workstreams.json", source = "collate.workstreams" } }
+outputs = { selected = { schema = "schemas/selection.json" } }
+read_scope = ["."]
+write_scope = []
+resources = []
+
+[nodes.planning]
+kind = "agent_task"
+agent = "research-architect"
+skill = "plan"
+depends_on = ["select"]
+inputs = { selected = { schema = "schemas/selection.json", source = "select.selected" } }
+outputs = { plan = { schema = "schemas/plan.json" } }
+read_scope = ["."]
+write_scope = []
+resources = []
+
+[nodes.plan_review]
+kind = "agent_task"
+agent = "conformance-reviewer"
+skill = "plan-review"
+depends_on = ["planning"]
+inputs = { plan = { schema = "schemas/plan.json", source = "planning.plan" } }
+outputs = { decision = { schema = "schemas/review.json" } }
+read_scope = ["."]
+write_scope = []
+resources = []
+
+[nodes.implementation]
+kind = "agent_task"
+agent = "repo-engineer"
+depends_on = ["plan_review", "planning"]
+inputs = { plan = { schema = "schemas/plan.json", source = "planning.plan" } }
+outputs = { implementation = { schema = "schemas/implementation.json" } }
+read_scope = ["."]
+write_scope = ["."]
+resources = []
+
+[nodes.implementation_review]
+kind = "agent_task"
+agent = "merge-captain"
+depends_on = ["implementation"]
+inputs = { implementation = { schema = "schemas/implementation.json", source = "implementation.implementation" } }
+outputs = { decision = { schema = "schemas/review.json" } }
+read_scope = ["."]
+write_scope = []
+resources = []
 
 [operations.conformance]
 agent = "conformance-reviewer"

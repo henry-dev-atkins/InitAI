@@ -160,5 +160,17 @@ being subtly wrong is expensive. It is silly for a one-file script.
 No stubs. No "looks good to me". No agent declaring victory because it made a
 nice table. Keep going until the repo matches the spec.
 
+## Codex compaction profiles
+
+InitAI can install a global Codex compaction dispatcher with human-maintained profiles under `.codex/compaction/profiles/`.
+
+```text
+python -B AI_SPACE/tools/configure_codex_compaction.py install
+python -B AI_SPACE/tools/configure_codex_compaction.py install --apply
+python -B AI_SPACE/tools/configure_codex_compaction.py verify
+```
+
+The dispatcher chooses one profile for each compaction and emits a shared continuation checkpoint. Installation changes the Codex user configuration, so `--apply` is required.
+
 
 

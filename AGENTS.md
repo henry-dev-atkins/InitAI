@@ -15,7 +15,7 @@ The human chooses the workflow. Ask only when it is unclear.
 - No spec rewriting unless `[SPEC.EDIT_REQUIRED]` or `[SPEC EDIT REQUIRED]` is present.
 - Raise spec/prompt conflict immediately and explicitly. Do not silently choose one authority over the other.
 - Do not edit outside the working repository unless `[EXTERNAL_EDIT_ALLOWED]` is present.
-- Do not destructively delete durable repository material. Move product removals to repository-root `archive/` and control-plane removals to `AI_SPACE/archive/`. Disposable files created under repo-local `temp/` may be removed after their evidence is recorded.
+- Never delete any files or folders. Instead, deletions (removals, cleanups, etc.) mean 'move to archive'. Never delete, only move to archive Never run recursive deletion or an equivalent command. A failed command never authorises a different deletion command or a retry.
 - Check files, paths, modules and commands before referencing them.
 - No silent fallback behaviour, silent errors, unsupported behaviour or GPU-to-CPU fallback.
 - No placeholder content as a deliverable. Template field markers are allowed only inside templates.
@@ -118,7 +118,7 @@ Every workstream and plan declares one Primary Work Type and one Workflow Class:
 
 Only `CAPABILITY.RESEARCH`, `CAPABILITY.PRODUCT` and qualifying `FIX.ALIGNMENT` work count as capability progress. Supporting work does not become capability progress merely because it is packaged with capability work.
 
-`TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` outputs must not remain in active project paths at terminal completion. Remove disposable repo-local `temp/` output or move retained product recovery copies to repository-root `archive/`; move retained control-plane copies to `AI_SPACE/archive/`. Record Work Type in the workstream and plan; commit messages use the repository's normal prefix policy.
+`TEMPORARY.DIAGNOSTIC`, `FLUFF.DISPOSABLE`, unapproved `ENVIRONMENT.ADAPTATION` and `WORKAROUND.QUARANTINED` outputs must not become deliverables. They may remain in ignored `temp/` paths while the work is reported. Move retained product recovery copies to repository-root `archive/`; move retained control-plane copies to `AI_SPACE/archive/`. Record Work Type in the workstream and plan; commit messages use the repository's normal prefix policy.
 
 # Guide
 

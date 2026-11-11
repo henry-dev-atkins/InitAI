@@ -43,9 +43,10 @@ Do not leave shims, adapters, no-op wrappers, empty extension points, reserved p
 
 ## Repository rules
 
-Do not destructively delete durable product material. 
-Move it to repository-root `archive/`. Move durable control-plane material to `AI_SPACE/archive/`. 
-Disposable files created under `temp/` may be removed after their evidence is recorded.
+Never delete files or directories.
+Move 'deleted' files to `AI_SPACE/archive/` only when an accepted plan explicitly authorises the move.
+
+Never run recursive deletion or switch to another deletion command after a failure.
 
 Do not edit `AI_SPACE/SPEC.md` without explicit spec-edit authority. 
 Keep temporary diagnostics, workarounds, and fluff out of active paths.

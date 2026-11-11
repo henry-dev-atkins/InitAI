@@ -31,6 +31,8 @@ class WorkflowBehaviour(unittest.TestCase):
         self.temporary = tempfile.TemporaryDirectory(prefix="workflow-test-", dir=ROOT / "temp")
         self.addCleanup(self.temporary.cleanup)
         self.repo = Path(self.temporary.name)
+        subprocess.run(["git", "init", "--quiet", str(self.repo)], check=True,
+                       capture_output=True, text=True)
         ignore_bytecode = shutil.ignore_patterns("__pycache__", "*.pyc")
         shutil.copytree(ROOT / ".agents/skills", self.repo / ".agents/skills", ignore=ignore_bytecode)
         shutil.copytree(ROOT / ".codex/agents", self.repo / ".codex/agents", ignore=ignore_bytecode)
@@ -640,6 +642,20 @@ A single command is the simplest route.
         worker = self.claim("implementation", "worker-W1", "W1")
         self.complete(worker, self.implementation_packet(changed=["src_extra/file.py"]))
         self.assertEqual(self.cli("next")["status"], "BLOCKED")
+
+    def test_repository_boundary_rejects_non_git_path(self) -> None:
+        """Workflow commands require the supplied path to be a Git root."""
+        non_repo = Path(self.temporary.name) / "outside"
+        non_repo.mkdir()
+        process = subprocess.run(
+            [sys.executable, "-B", str(RUNNER), "check", "--repo", str(non_repo)],
+            cwd=non_repo,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertNotEqual(process.returncode, 0)
+        self.assertIn("repository boundary", process.stderr.lower())
 
 
     def test_one_instance_cannot_claim_two_parallel_tasks(self) -> None:

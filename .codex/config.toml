@@ -1,6 +1,6 @@
 # Autonomous inside the repository, blocked from network access.
 sandbox_mode = "workspace-write"
-approval_policy = "never"
+approval_policy = "on-request"
 
 [sandbox_workspace_write]
 network_access = false

@@ -51,6 +51,24 @@ def require(condition: bool, message: str) -> None:
         raise WorkflowError(message)
 
 
+def validate_repository_boundary(repo: Path) -> None:
+    """Require the supplied path to be the resolved Git repository root."""
+    result = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        cwd=repo,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    require(result.returncode == 0,
+            "Repository boundary check failed: path is not a Git repository")
+    reported = Path(result.stdout.strip()).resolve()
+    require(reported == repo.resolve(),
+            f"Repository boundary check failed: Git root is {reported}, expected {repo.resolve()}")
+    require(not repo.is_symlink(),
+            "Repository boundary check failed: repository path is a symlink")
+
+
 def read_json(path: Path) -> Any:
     """Read one UTF-8 JSON document and reject duplicate object keys."""
     def unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -621,6 +639,7 @@ def run_command(args: argparse.Namespace) -> dict[str, Any]:
     """Execute one CLI operation under the session lock, saving only valid changes."""
     repo = Path(args.repo).resolve()
     require(repo.is_dir(), f"Repository does not exist: {repo}")
+    validate_repository_boundary(repo)
     workflow_path, workflow, roles = load_workflow(repo, args.workflow)
     if args.command == "check":
         return {"ok": True, "workflow": workflow}

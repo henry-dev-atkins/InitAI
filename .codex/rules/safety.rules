@@ -9,11 +9,48 @@ prefix_rule(
 )
 
 prefix_rule(
+    pattern = ["rd"],
+    decision = "forbidden",
+    justification = "Agents never permanently delete files or directories. Preserve temporary output and report it.",
+    match = [
+        "rd /s /q temp/fixture",
+        "rd /s /q C:\\workspace\\temp\\fixture",
+    ],
+)
+
+prefix_rule(
     pattern = ["rmdir"],
     decision = "forbidden",
     justification = "Never delete folders. Move unwanted folders into archive/ instead.",
     match = [
         "rmdir old_folder",
+    ],
+)
+
+prefix_rule(
+    pattern = ["del"],
+    decision = "forbidden",
+    justification = "Agents never permanently delete files or directories. Preserve temporary output and report it.",
+    match = [
+        "del file.py",
+        "del /s /q temp\\fixture\\*",
+    ],
+)
+
+prefix_rule(
+    pattern = ["erase"],
+    decision = "forbidden",
+    justification = "Agents never permanently delete files or directories. Preserve temporary output and report it.",
+    match = ["erase file.py"],
+)
+
+prefix_rule(
+    pattern = ["Remove-Item"],
+    decision = "forbidden",
+    justification = "Agents never permanently delete files or directories. Preserve temporary output and report it.",
+    match = [
+        "Remove-Item file.txt",
+        "Remove-Item -Recurse temp/fixture",
     ],
 )
 

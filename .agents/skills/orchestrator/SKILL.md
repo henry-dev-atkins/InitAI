@@ -136,7 +136,15 @@ Collation uses `$outcome-decomposition`. Split only genuinely independent durabl
 
 Selection uses `$select-ready-work`. Prefer the largest useful ready workstreams: material spec misalignment, work that unblocks others, then core behaviour before cleanup. Capacity is a limit, not a target. Never split, duplicate or invent work to fill it. Do not select blocked dependencies.
 
-Planning uses `$plan`. Include source findings, exact spec authority, one outcome, bounded write scope, read assumptions, ordered steps, meaningful validation, protected invariants and prohibited shortcuts. Include a command manifest with a timeout from 1 to 300 seconds for every command. Declare shared git/GPU resources consistently. Include `Am I going in Circles?` and `Is there a more elegant way of doing this?`. Mandatory preflight runs before semantic review. The structured packet points to the plan; it does not replace its reasoning. Every revised plan needs a new plan ID within its workstream and independent review. Never reuse an earlier ID for that workstream.
+Planning uses `$plan`. 
+Include source findings verbatim, exact spec authority, one outcome, bounded write scope, read assumptions, ordered steps, meaningful validation, protected invariants and prohibited shortcuts. 
+Include a command manifest with a timeout from 1 to 300 seconds for every command. 
+Declare shared git/GPU resources consistently. Include the exact `Findings`, `Plan Quality Review`, `Am I going in Circles?`, elegance, and final `Plan Quality Summary` sections. 
+The summary table must use Y/N values and end the plan. 
+Mandatory preflight runs before semantic review. 
+The structured packet points to the plan and carries complete finding records. 
+Every revised plan needs a new plan ID within its workstream and independent review. 
+Never reuse an earlier ID for that workstream.
 
 Plan review uses `$plan-review` on the current saved plan. The reviewer must be a different actual instance from its planner. Preflight follows the workflow file: optional may be `SKIPPED`; required must `PASS`. Known mechanical defects require correction. `$parallel-safety`, `$plan-elegance`, `$change-impact-analysis`, `$peer-review` and maintenance skills remain useful supporting lenses. Command manifests and old ledgers are used only when the accepted plan requires them.
 

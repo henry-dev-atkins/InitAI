@@ -390,6 +390,8 @@ def task_packet(state: dict[str, Any], operation: str, workstream_id: str | None
         task["task_id"] = f"{state['cycle']}:{workstream_id}:{workstream['attempt']}:{operation}"
         task["workstream"] = {key: workstream[key] for key in
                               ("id", "findings", "outcome", "depends_on", "work_type", "workflow_class")}
+        task["finding_records"] = [finding for finding in state.get("findings", [])
+                                    if finding["id"] in workstream["findings"]]
         if workstream["plan"] is not None:
             task["plan"] = workstream["plan"]
         if workstream.get("implementation") is not None:

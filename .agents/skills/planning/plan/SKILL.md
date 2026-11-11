@@ -33,8 +33,26 @@ Plan one workstream only.
 11. `Executive Summary`
 12. `Am I going in Circles?`
 13. `Is there a more elegant way of doing this?`
+14. `Findings`
+15. `Plan Quality Review`
+16. `Plan Quality Summary`
 
-If there is a more elegant way of doing it, replan with that elegant method and iterate until the plan is as elegant as possible. 
+The elegance section must contain exactly `No` or `Yes, <specific explanation and examples>`. `No` has no further explanation.
+
+The `Findings` section must contain the complete assigned finding records verbatim. Use exactly `Findings: none` only when the workstream has no findings.
+
+The `Plan Quality Review` section must record independent results from `$code-style`, `$maintain-review`, `$maintain-elegance`, `$parsimonious`, `$adversarial-review`, and `$plan-desk-check`. It must explicitly report Solutions.1.a-d and Solutions.2.a-d:
+
+- Solutions.1.a: code-style adherence.
+- Solutions.1.b: `AGENTS.md` adherence.
+- Solutions.1.c: most elegant solution.
+- Solutions.1.d: finding resolution, or proof that no finding exists.
+- Solutions.2.a: no bug added.
+- Solutions.2.b: no software-BS added.
+- Solutions.2.c: no code bloat added.
+- Solutions.2.d: no specification misalignment added.
+
+The final `Plan Quality Summary` section must be the last section. It must contain a Y/N table for every listed check. `Y` requires evidence. `N` is unresolved and prevents plan acceptance.
 
 The plan must be clear enough for one implementation agent to execute without inventing requirements or broadening scope.
 
@@ -61,6 +79,7 @@ For a successor plan after rejection, state what the previous plan failed to mak
 - Do not assume a later repair phase. The plan must be complete enough for one controlled implementation attempt, while implementation rejection still returns through the normal finding/workstream loop.
 - Do not create legacy compatibility, special cases, wrapper layers or speculative abstractions unless the spec requires them.
 - What is the simplest thing that could work?
+- Run the required review skills during planning and revise until every quality summary row is `Y`.
 
 ## Planning philosophy
 

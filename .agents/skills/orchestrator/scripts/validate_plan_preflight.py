@@ -35,7 +35,58 @@ REQUIRED_SECTIONS = [
     "Executive Summary",
     "Am I going in Circles?",
     "Is there a more elegant way of doing this?",
+    "Findings",
+    "Plan Quality Review",
+    "Plan Quality Summary",
 ]
+
+QUALITY_ROWS = (
+    "Most elegant",
+    "Most parsimonious",
+    "Code-styled",
+    "AGENTS.md compliant",
+    "Fixes findings or proves none exist",
+    "No bug added",
+    "No software-BS added",
+    "No code bloat added",
+    "No spec misalignment added",
+    "Adversarial review passed",
+    "Independent desk-check passed",
+)
+
+
+def validate_plan_quality_contract(text: str, findings: list[str], errors: list[str]) -> None:
+    """Check the compact planning review block and its final Y/N summary."""
+    findings_body = section_body(text, "Findings").strip()
+    if not findings and findings_body != "Findings: none":
+        errors.append("empty finding set must use exact text: Findings: none")
+    if findings and findings_body == "Findings: none":
+        errors.append("assigned findings cannot be replaced with Findings: none")
+    quality_body = section_body(text, "Plan Quality Review")
+    for required in (
+        "Solutions.1.a", "Solutions.1.b", "Solutions.1.c", "Solutions.1.d",
+        "Solutions.2.a", "Solutions.2.b", "Solutions.2.c", "Solutions.2.d",
+        "$code-style", "$maintain-review", "$maintain-elegance", "$parsimonious",
+        "$adversarial-review", "$plan-desk-check",
+    ):
+        if required not in quality_body:
+            errors.append(f"Plan Quality Review is missing {required}")
+    elegance = section_body(text, "Is there a more elegant way of doing this?").strip()
+    if not (elegance == "No" or re.fullmatch(r"Yes,\s+.+", elegance)):
+        errors.append("elegance section must be exactly No or Yes, <specific explanation and examples>")
+    headings = re.findall(r"^##\s+(.+?)\s*$", text, re.MULTILINE)
+    if not headings or headings[-1] != "Plan Quality Summary":
+        errors.append("Plan Quality Summary must be the final plan section")
+    rows = {}
+    for line in section_body(text, "Plan Quality Summary").splitlines():
+        match = re.match(r"^\|\s*([^|]+?)\s*\|\s*([YN])\s*\|", line.strip())
+        if match:
+            rows[match.group(1).strip()] = match.group(2)
+    for row in QUALITY_ROWS:
+        if row not in rows:
+            errors.append(f"Plan Quality Summary is missing row: {row}")
+        elif rows[row] != "Y":
+            errors.append(f"Plan Quality Summary has unresolved N: {row}")
 
 VALID_WORK_TYPES = {
     "CAPABILITY.RESEARCH", "CAPABILITY.PRODUCT", "EVIDENCE.VALIDATION", "FIX.ALIGNMENT",
@@ -216,6 +267,7 @@ def _validate_from_args(args: SimpleNamespace) -> list[str]:
             errors.append("successor plan requires Material causal delta")
     compare_exact("source findings", findings, args.expected_finding, errors, repo=repo)
     compare_exact("requirement IDs", requirements, args.expected_requirement, errors, repo=repo)
+    validate_plan_quality_contract(text, findings, errors)
 
     workflow_class = extract_field(text, "Workflow class")
     if workflow_class not in {"SMALL", "STANDARD", "CAMPAIGN"}:

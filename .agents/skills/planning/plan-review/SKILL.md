@@ -27,8 +27,9 @@ Accept only when the plan:
 - contains the complete assigned finding records verbatim, or exactly `Findings: none`;
 - contains substantive Solutions.1.a-d and Solutions.2.a-d evidence;
 - records independent `$code-style`, `$maintain-review`, `$maintain-elegance`, `$parsimonious`, `$adversarial-review`, and `$plan-desk-check` results;
-- ends with a `Plan Quality Summary` Y/N table whose every row is `Y`;
-- uses exactly `No` or `Yes, <specific explanation and examples>` for the elegance section.
+- contains explicit evidence sections for code style, `AGENTS.md`, parsimony, elegance, finding resolution, bugs, software-BS, code bloat, specification alignment, adversarial evaluation, and independent desk-check;
+- ends with an `In-Plan Review Evidence Table` Y/N table whose every row is `Y`;
+- uses exactly `No` or `Yes, <specific explanation and examples>` for the elegance section, with `Yes, ...` requiring replanning rather than acceptance.
 
 - preflight status under `.agents/workflow/workflow.toml` and unresolved mechanical defects;
 - source finding and spec traceability;
@@ -68,7 +69,7 @@ A rejection returns concrete findings about the plan. Do not write the replaceme
 
 Use `$plan-preflight`, `$change-impact-analysis`, `$plan-elegance`, `$peer-review`, or maintenance skills as optional review lenses when their question matters. They do not add stages to the orchestrator loop.
 
-For this contract, the named quality skills are required review lenses. Run them independently from the planner and report only exceptions. Reject missing evidence, missing rows, `N` values, malformed elegance text, incomplete finding copies, or a summary table that is not the final plan section.
+For this contract, the named quality skills are required review lenses. Run them independently from the planner and report only exceptions. Reject missing explicit review sections, missing evidence, missing rows, duplicate rows, `N` values, malformed or contradictory elegance text, incomplete finding copies, or a summary table that is not the final plan section. The summary table is evidence of the sections, not a substitute for them.
 
 For DSL sessions, review the current `plan_id` and the saved plan text provided by the task. Return the `plan_review` JSON contract in `.agents/workflow/results.schema.json`, with a written evidence file, through the orchestrator. The reviewer must be a different actual agent instance from the planner. Never approve an edited plan under its old ID; return it to planning.
 

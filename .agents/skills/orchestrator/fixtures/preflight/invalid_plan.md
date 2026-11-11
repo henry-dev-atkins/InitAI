@@ -104,7 +104,7 @@ Solutions.2.c: Y.
 Solutions.2.d: Y.
 Skills: $code-style, $maintain-review, $maintain-elegance, $parsimonious, $adversarial-review, $plan-desk-check.
 
-## Plan Quality Summary
+## In-Plan Review Evidence Table
 
 | Check | Y/N | Evidence |
 | --- | --- | --- |

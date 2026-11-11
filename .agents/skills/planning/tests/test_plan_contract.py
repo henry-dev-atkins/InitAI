@@ -10,7 +10,10 @@ REVIEW = (ROOT / ".agents/skills/planning/plan-review/SKILL.md").read_text(encod
 class PlanContractTests(unittest.TestCase):
     def test_plan_requires_quality_contract(self):
         for value in (
-            "Findings", "Findings: none", "Plan Quality Review", "Plan Quality Summary",
+            "Findings", "Findings: none", "Plan Quality Review", "In-Plan Review Evidence Table",
+            "Code-style Adherence", "AGENTS.md Adherence", "Parsimony Review", "Elegance Review",
+            "Finding Resolution", "Bug Check", "Software-BS Check", "Code-Bloat Check",
+            "Specification-Alignment Check", "Adversarial Evaluation", "Independent Desk-Check",
             "Solutions.1.a", "Solutions.1.b", "Solutions.1.c", "Solutions.1.d",
             "Solutions.2.a", "Solutions.2.b", "Solutions.2.c", "Solutions.2.d",
             "$code-style", "$maintain-review", "$maintain-elegance", "$parsimonious",
@@ -19,13 +22,14 @@ class PlanContractTests(unittest.TestCase):
             self.assertIn(value, PLAN)
 
     def test_plan_review_requires_independent_checks(self):
-        for value in ("Findings: none", "Plan Quality Summary", "independently",
+        for value in ("Findings: none", "In-Plan Review Evidence Table", "independently",
                       "exception", "N", "Yes, <specific explanation and examples>"):
             self.assertIn(value, REVIEW)
 
     def test_elegance_contract_is_exact(self):
         self.assertIn("exactly `No` or `Yes, <specific explanation and examples>`", PLAN)
         self.assertIn("exactly `No` or `Yes, <specific explanation and examples>`", REVIEW)
+        self.assertIn("Yes, ...` requiring replanning", REVIEW)
 
 
 if __name__ == "__main__":

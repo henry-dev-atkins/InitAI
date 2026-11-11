@@ -35,11 +35,25 @@ Plan one workstream only.
 13. `Is there a more elegant way of doing this?`
 14. `Findings`
 15. `Plan Quality Review`
-16. `Plan Quality Summary`
+16. `In-Plan Review Evidence Table`
 
 The elegance section must contain exactly `No` or `Yes, <specific explanation and examples>`. `No` has no further explanation.
 
 The `Findings` section must contain the complete assigned finding records verbatim. Use exactly `Findings: none` only when the workstream has no findings.
+
+The plan must contain these explicit review-evidence sections, each with evidence and a conclusion (a clean result must say so explicitly):
+
+- `Code-style Adherence`;
+- `AGENTS.md Adherence`;
+- `Parsimony Review`;
+- `Elegance Review`;
+- `Finding Resolution`;
+- `Bug Check`;
+- `Software-BS Check`;
+- `Code-Bloat Check`;
+- `Specification-Alignment Check`;
+- `Adversarial Evaluation`;
+- `Independent Desk-Check`.
 
 The `Plan Quality Review` section must record independent results from `$code-style`, `$maintain-review`, `$maintain-elegance`, `$parsimonious`, `$adversarial-review`, and `$plan-desk-check`. It must explicitly report Solutions.1.a-d and Solutions.2.a-d:
 
@@ -52,7 +66,9 @@ The `Plan Quality Review` section must record independent results from `$code-st
 - Solutions.2.c: no code bloat added.
 - Solutions.2.d: no specification misalignment added.
 
-The final `Plan Quality Summary` section must be the last section. It must contain a Y/N table for every listed check. `Y` requires evidence. `N` is unresolved and prevents plan acceptance.
+The final `In-Plan Review Evidence Table` section must be the last section. It must contain a Y/N table for every listed check. `Y` requires evidence. `N` is unresolved and prevents plan acceptance. The table summarizes the explicit sections; it cannot replace them.
+
+For a final accepted plan, `Is there a more elegant way of doing this?` must contain exactly `No`. `Yes, <specific explanation and examples>` means the plan must be revised and cannot pass acceptance.
 
 The plan must be clear enough for one implementation agent to execute without inventing requirements or broadening scope.
 

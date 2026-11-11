@@ -86,4 +86,83 @@ Return `.agents/skills/orchestrator/assets/result-packet-template.md` fields. Ru
 
 ## Is there a more elegant way of doing this?
 
-{compare the chosen approach with simpler repository-fitting alternatives and explain why this is the minimal complete route}
+No
+
+## Findings
+
+{copy all assigned findings verbatim, or write exactly `Findings: none`}
+
+## Plan Quality Review
+
+{record Solutions.1.a-d and Solutions.2.a-d, plus independent results from `$code-style`, `$maintain-review`, `$maintain-elegance`, `$parsimonious`, `$adversarial-review`, and `$plan-desk-check`}
+
+## Code-style Adherence
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## AGENTS.md Adherence
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## Parsimony Review
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## Elegance Review
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## Finding Resolution
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## Bug Check
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## Software-BS Check
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## Code-Bloat Check
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## Specification-Alignment Check
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## Adversarial Evaluation
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## Independent Desk-Check
+
+Evidence: {evidence}
+Conclusion: {conclusion}
+
+## In-Plan Review Evidence Table
+
+| Check | Y/N | Evidence |
+| --- | --- | --- |
+| Most elegant | Y | {evidence} |
+| Most parsimonious | Y | {evidence} |
+| Code-styled | Y | {evidence} |
+| AGENTS.md compliant | Y | {evidence} |
+| Fixes findings or proves none exist | Y | {evidence} |
+| No bug added | Y | {evidence} |
+| No software-BS added | Y | {evidence} |
+| No code bloat added | Y | {evidence} |
+| No spec misalignment added | Y | {evidence} |
+| Adversarial review passed | Y | {evidence} |
+| Independent desk-check passed | Y | {evidence} |

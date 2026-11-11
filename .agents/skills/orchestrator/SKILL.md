@@ -139,7 +139,7 @@ Selection uses `$select-ready-work`. Prefer the largest useful ready workstreams
 Planning uses `$plan`. 
 Include source findings verbatim, exact spec authority, one outcome, bounded write scope, read assumptions, ordered steps, meaningful validation, protected invariants and prohibited shortcuts. 
 Include a command manifest with a timeout from 1 to 300 seconds for every command. 
-Declare shared git/GPU resources consistently. Include the exact `Findings`, `Plan Quality Review`, `Am I going in Circles?`, elegance, and final `Plan Quality Summary` sections. 
+Declare shared git/GPU resources consistently. Include the exact `Findings`, explicit review-evidence sections, `Plan Quality Review`, `Am I going in Circles?`, elegance, and final `In-Plan Review Evidence Table` sections. A final plan must answer `No` to the elegance question; `Yes, ...` requires replanning.
 The summary table must use Y/N values and end the plan. 
 Mandatory preflight runs before semantic review. 
 The structured packet points to the plan and carries complete finding records. 

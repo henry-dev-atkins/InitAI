@@ -37,8 +37,22 @@ REQUIRED_SECTIONS = [
     "Is there a more elegant way of doing this?",
     "Findings",
     "Plan Quality Review",
-    "Plan Quality Summary",
+    "In-Plan Review Evidence Table",
 ]
+
+REVIEW_EVIDENCE_SECTIONS = (
+    "Code-style Adherence",
+    "AGENTS.md Adherence",
+    "Parsimony Review",
+    "Elegance Review",
+    "Finding Resolution",
+    "Bug Check",
+    "Software-BS Check",
+    "Code-Bloat Check",
+    "Specification-Alignment Check",
+    "Adversarial Evaluation",
+    "Independent Desk-Check",
+)
 
 QUALITY_ROWS = (
     "Most elegant",
@@ -62,6 +76,12 @@ def validate_plan_quality_contract(text: str, findings: list[str], errors: list[
         errors.append("empty finding set must use exact text: Findings: none")
     if findings and findings_body == "Findings: none":
         errors.append("assigned findings cannot be replaced with Findings: none")
+    for section in REVIEW_EVIDENCE_SECTIONS:
+        body = section_body(text, section).strip()
+        if not body:
+            errors.append(f"{section} must contain evidence and a conclusion")
+        elif "evidence" not in body.lower() or "conclusion" not in body.lower():
+            errors.append(f"{section} must state evidence and conclusion")
     quality_body = section_body(text, "Plan Quality Review")
     for required in (
         "Solutions.1.a", "Solutions.1.b", "Solutions.1.c", "Solutions.1.d",
@@ -74,19 +94,29 @@ def validate_plan_quality_contract(text: str, findings: list[str], errors: list[
     elegance = section_body(text, "Is there a more elegant way of doing this?").strip()
     if not (elegance == "No" or re.fullmatch(r"Yes,\s+.+", elegance)):
         errors.append("elegance section must be exactly No or Yes, <specific explanation and examples>")
+    elif elegance != "No":
+        errors.append("elegance review found a better approach; replan before acceptance")
     headings = re.findall(r"^##\s+(.+?)\s*$", text, re.MULTILINE)
-    if not headings or headings[-1] != "Plan Quality Summary":
-        errors.append("Plan Quality Summary must be the final plan section")
+    if not headings or headings[-1] != "In-Plan Review Evidence Table":
+        errors.append("In-Plan Review Evidence Table must be the final plan section")
     rows = {}
-    for line in section_body(text, "Plan Quality Summary").splitlines():
+    duplicate_rows = set()
+    for line in section_body(text, "In-Plan Review Evidence Table").splitlines():
         match = re.match(r"^\|\s*([^|]+?)\s*\|\s*([YN])\s*\|", line.strip())
         if match:
-            rows[match.group(1).strip()] = match.group(2)
+            row = match.group(1).strip()
+            if row in rows:
+                duplicate_rows.add(row)
+            rows[row] = match.group(2)
+    for row in sorted(duplicate_rows):
+        errors.append(f"In-Plan Review Evidence Table has duplicate row: {row}")
     for row in QUALITY_ROWS:
         if row not in rows:
-            errors.append(f"Plan Quality Summary is missing row: {row}")
+            errors.append(f"In-Plan Review Evidence Table is missing row: {row}")
         elif rows[row] != "Y":
-            errors.append(f"Plan Quality Summary has unresolved N: {row}")
+            errors.append(f"In-Plan Review Evidence Table has unresolved N: {row}")
+    if elegance == "No" and rows.get("Most elegant") != "Y":
+        errors.append("Most elegant must be Y when the elegance section is No")
 
 VALID_WORK_TYPES = {
     "CAPABILITY.RESEARCH", "CAPABILITY.PRODUCT", "EVIDENCE.VALIDATION", "FIX.ALIGNMENT",

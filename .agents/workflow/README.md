@@ -45,6 +45,8 @@ Run `check` after changing policy. Unknown fields, roles, skills and verdict tra
 
 The parsed configuration and authority text are pinned at session creation. Changing either requires a new explicit session; there is no silent migration. Skills and agent instruction files are not frozen by the runner.
 
+Nodes may name one central executor profile: `coding_monkey`, `standard`, `expert`, `adversarial`, `long_context`, or `math_genius`. The Codex harness maps profiles to available models and starts subagents. The runner validates the profile and carries it in the task packet. It does not launch models or store provider-specific model policy. Returned model, timing, usage, validation and repair data belong in the existing result `measurements` object.
+
 ## Start and dispatch
 
 The default authority is `AI_SPACE/SPEC.md`. Create a unique session:

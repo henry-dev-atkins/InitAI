@@ -13,10 +13,30 @@ revision_mode = "checkpointed"
 failure_policy = "rsi_decides"
 cancellation = "policy_defined"
 
+[executors.coding_monkey]
+reasoning = "low"
+
+[executors.standard]
+reasoning = "medium"
+
+[executors.expert]
+reasoning = "high"
+
+[executors.adversarial]
+reasoning = "high"
+independent = true
+
+[executors.long_context]
+context = "large"
+
+[executors.math_genius]
+reasoning = "maximum"
+
 [nodes.conformance]
 kind = "agent_task"
 agent = "conformance-reviewer"
 skill = "conformance"
+executor = "expert"
 depends_on = []
 inputs = { authority = { schema = "schemas/authority.json", source = "session.authority" } }
 outputs = { report = { schema = "schemas/report.json" }, findings = { schema = "schemas/findings.json" } }
@@ -28,6 +48,7 @@ resources = []
 kind = "agent_task"
 agent = "orchestrator"
 skill = "outcome-decomposition"
+executor = "standard"
 depends_on = ["conformance"]
 inputs = { findings = { schema = "schemas/findings.json", source = "conformance.findings" } }
 outputs = { workstreams = { schema = "schemas/workstreams.json" } }
@@ -39,6 +60,7 @@ resources = []
 kind = "agent_task"
 agent = "orchestrator"
 skill = "select-ready-work"
+executor = "standard"
 depends_on = ["collate"]
 inputs = { workstreams = { schema = "schemas/workstreams.json", source = "collate.workstreams" } }
 outputs = { selected = { schema = "schemas/selection.json" } }
@@ -50,6 +72,7 @@ resources = []
 kind = "agent_task"
 agent = "research-architect"
 skill = "plan"
+executor = "expert"
 depends_on = ["select"]
 inputs = { selected = { schema = "schemas/selection.json", source = "select.selected" } }
 outputs = { plan = { schema = "schemas/plan.json" } }
@@ -61,6 +84,7 @@ resources = []
 kind = "agent_task"
 agent = "conformance-reviewer"
 skill = "plan-review"
+executor = "adversarial"
 depends_on = ["planning"]
 inputs = { plan = { schema = "schemas/plan.json", source = "planning.plan" } }
 outputs = { decision = { schema = "schemas/review.json" } }
@@ -71,6 +95,7 @@ resources = []
 [nodes.implementation]
 kind = "agent_task"
 agent = "repo-engineer"
+executor = "standard"
 depends_on = ["plan_review", "planning"]
 inputs = { plan = { schema = "schemas/plan.json", source = "planning.plan" } }
 outputs = { implementation = { schema = "schemas/implementation.json" } }
@@ -81,6 +106,7 @@ resources = []
 [nodes.implementation_review]
 kind = "agent_task"
 agent = "merge-captain"
+executor = "adversarial"
 depends_on = ["implementation"]
 inputs = { implementation = { schema = "schemas/implementation.json", source = "implementation.implementation" } }
 outputs = { decision = { schema = "schemas/review.json" } }

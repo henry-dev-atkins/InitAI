@@ -34,6 +34,7 @@ from validate_plan_preflight import validate_plan  # noqa: E402
 
 
 GLOBAL_OPERATIONS = {"conformance", "collate", "select"}
+EXECUTOR_PROFILES = {"coding_monkey", "standard", "expert", "adversarial", "long_context", "math_genius"}
 STATE_VERSION = 2
 AUDIT_EXCLUDES = (".git", "AI_SPACE/sessions", "temp")
 
@@ -231,11 +232,22 @@ def validate_loop_graph(workflow: dict[str, Any], roles: set[str], skills: set[s
     """Validate the project-defined DAG before any session can use it."""
     nodes = workflow.get("nodes", {})
     require(isinstance(nodes, dict) and nodes, "Workflow must define at least one node")
+    executors = workflow.get("executors", {})
+    require(set(executors) == EXECUTOR_PROFILES,
+            "Workflow must define exactly the supported executor profiles")
+    for profile, definition in executors.items():
+        require(not ("reasoning" in definition and "context" in definition),
+                f"Executor profile cannot combine reasoning and context: {profile}")
+        if profile == "adversarial":
+            require(definition.get("independent") is True,
+                    "Adversarial executor must require independent execution")
     identifiers = set(nodes)
     for identifier, node in nodes.items():
         require(re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]*", identifier) is not None,
                 f"Invalid node ID: {identifier}")
         require(node["agent"] in roles, f"Unknown agent binding for node {identifier}: {node['agent']}")
+        require(node["executor"] in EXECUTOR_PROFILES,
+                f"Unknown executor profile for node {identifier}: {node['executor']}")
         if "skill" in node and skills:
             require(node["skill"] in skills, f"Unknown skill binding for node {identifier}: {node['skill']}")
         dependencies = node["depends_on"]
@@ -383,8 +395,10 @@ def task_packet(state: dict[str, Any], operation: str, workstream_id: str | None
             "read_scope": node["read_scope"],
             "write_scope": node["write_scope"],
             "resources": node["resources"],
+            "executor": node["executor"],
             "revision": state.get("loop_revision", 1),
         }
+        task["executor"] = node["executor"]
     if workstream_id is not None:
         workstream = state["workstreams"][workstream_id]
         task["task_id"] = f"{state['cycle']}:{workstream_id}:{workstream['attempt']}:{operation}"

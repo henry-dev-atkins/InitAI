@@ -58,6 +58,19 @@
         "cancellation": {"const": "policy_defined", "type": "string"}
       }
     },
+    "executors": {
+      "type": "object",
+      "required": ["coding_monkey", "standard", "expert", "adversarial", "long_context", "math_genius"],
+      "additionalProperties": false,
+      "properties": {
+        "coding_monkey": {"$ref": "#/$defs/executor"},
+        "standard": {"$ref": "#/$defs/executor"},
+        "expert": {"$ref": "#/$defs/executor"},
+        "adversarial": {"$ref": "#/$defs/executor"},
+        "long_context": {"$ref": "#/$defs/executor"},
+        "math_genius": {"$ref": "#/$defs/executor"}
+      }
+    },
     "nodes": {
       "type": "object",
       "minProperties": 1,
@@ -370,11 +383,12 @@
     "node": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["kind", "agent", "depends_on", "inputs", "outputs", "read_scope", "write_scope", "resources"],
+      "required": ["kind", "agent", "executor", "depends_on", "inputs", "outputs", "read_scope", "write_scope", "resources"],
       "properties": {
         "kind": {"enum": ["agent_task", "command", "control"], "type": "string"},
         "agent": {"type": "string", "minLength": 1, "pattern": "\\S"},
         "skill": {"type": "string", "minLength": 1, "pattern": "\\S"},
+        "executor": {"enum": ["coding_monkey", "standard", "expert", "adversarial", "long_context", "math_genius"], "type": "string"},
         "command": {"type": "string", "minLength": 1, "pattern": "\\S"},
         "depends_on": {"type": "array", "items": {"type": "string", "pattern": "^[A-Za-z][A-Za-z0-9_-]*$"}, "uniqueItems": true},
         "inputs": {"type": "object", "additionalProperties": {"$ref": "#/$defs/port"}},
@@ -382,6 +396,16 @@
         "read_scope": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
         "write_scope": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true},
         "resources": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": true}
+      }
+    },
+    "executor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [],
+      "properties": {
+        "reasoning": {"enum": ["low", "medium", "high", "maximum"], "type": "string"},
+        "context": {"const": "large", "type": "string"},
+        "independent": {"type": "boolean"}
       }
     }
   }

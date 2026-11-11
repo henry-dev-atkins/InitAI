@@ -61,6 +61,7 @@ The orchestrator loop has six core skills. `.agents/workflow/workflow.toml` owns
 - `$maintain-elegance`: Review repository-wide simplicity, coherence, and capability fit.
 - `$maintain-review`: Review drift away from the spec and core capabilities.
 - `$maintain-techdebt`: Review technical debt and future maintenance cost.
+- `$parsimonious`: Review caller-scoped work for unnecessary cost and unjustified complexity.
 - `$maintain-terminology`: Check resources for accepted project terminology and prohibited ideas.
 - `$session-clean`: Consolidate session clutter without deleting durable evidence.
 - `$session-compact`: Compact session state while preserving resumability.
